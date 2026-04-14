@@ -1,0 +1,28 @@
+{
+  "name": "adapt-demo",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build --outDir ../server/public",
+    "dev:client": "vite",
+    "node:alpha": "node server/index.js --port=4000 --ws=4010 --id=alpha --name='Node Alpha' --peer=ws://localhost:4011",
+    "node:beta": "node server/index.js --port=4001 --ws=4011 --id=beta --name='Node Beta' --peer=ws://localhost:4010",
+    "start": "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\"",
+    "dev": "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\""
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "multer": "^1.4.5-lts.1",
+    "ws": "^8.17.0",
+    "concurrently": "^8.2.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "lucide-react": "^0.383.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.1",
+    "vite": "^5.4.2"
+  }
+}
