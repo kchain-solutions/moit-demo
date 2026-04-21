@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "adapt-alpha",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["server/index.js", "--port=4000", "--ws=4010", "--id=alpha", "--name=Node Alpha", "--peer=ws://localhost:4011"],
+      "port": 4000
+    }
+  ]
+}

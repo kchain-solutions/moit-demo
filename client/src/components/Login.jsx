@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNode } from '../context/NodeContext';
+import { Globe } from 'lucide-react';
 
 export default function Login() {
   const { login } = useNode();
@@ -21,15 +22,23 @@ export default function Login() {
     setLoading(false);
   };
 
+  const handleQuick = (u) => { setUsername(u); setPassword('demo'); };
+
   return (
     <div className="login-pg">
       <div className="login-box">
-        <h1>ADAPT</h1>
-        <p className="sub">Distributed Trade Platform — Sign in to your organisation</p>
-        <div style={{ padding: '8px 12px', background: 'var(--gr50)', borderRadius: 6, marginBottom: 16, fontSize: 11, color: 'var(--gr500)' }}>
-          Node: <strong style={{ color: 'var(--g700)' }}>{port === '4001' ? 'Node Beta' : 'Node Alpha'}</strong> — Port {port}
+        <div className="login-brand">
+          <div className="login-logo"><Globe /></div>
+          <h1>ADAPT</h1>
         </div>
+        <p className="sub">Global Trade Operations — Sign in to your organisation</p>
+
+        <div className="node-badge">
+          Connected to: <strong>{port === '4001' ? 'Node Beta (Importer)' : 'Node Alpha (Exporter / Customs)'}</strong>
+        </div>
+
         {error && <div className="err">{error}</div>}
+
         <form onSubmit={handleSubmit}>
           <div className="fg">
             <label>Username</label>
@@ -39,16 +48,29 @@ export default function Login() {
             <label>Password</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" />
           </div>
-          <button type="submit" className="btn btn-p" style={{ width: '100%', justifyContent: 'center', padding: '10px' }} disabled={loading}>
+          <button type="submit" className="btn btn-p" style={{ width: '100%', justifyContent: 'center', padding: '10px 16px' }} disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <div style={{ marginTop: 20, padding: 12, background: 'var(--g50)', borderRadius: 8, fontSize: 11, color: 'var(--gr600)' }}>
-          <div style={{ fontWeight: 600, marginBottom: 4, color: 'var(--g800)' }}>Demo Credentials</div>
+
+        <div className="demo-creds">
+          <div className="dc-title">Quick Sign-In</div>
           {port === '4001' ? (
-            <div>importer / demo</div>
+            <div className="cred-row" style={{ cursor: 'pointer' }} onClick={() => handleQuick('importer')}>
+              <span className="role">Importer</span>
+              <span>importer / demo</span>
+            </div>
           ) : (
-            <><div>exporter / demo</div><div>customs / demo</div></>
+            <>
+              <div className="cred-row" style={{ cursor: 'pointer' }} onClick={() => handleQuick('exporter')}>
+                <span className="role">Exporter</span>
+                <span>exporter / demo</span>
+              </div>
+              <div className="cred-row" style={{ cursor: 'pointer' }} onClick={() => handleQuick('customs')}>
+                <span className="role">Customs</span>
+                <span>customs / demo</span>
+              </div>
+            </>
           )}
         </div>
       </div>

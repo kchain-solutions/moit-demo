@@ -35,27 +35,53 @@ export default function Permissions() {
 
   return (
     <div className="stack">
-      <div className="card">
-        <div className="card-h"><h3>Access Control Matrix</h3><span className="pill pill-b">{consignments.length} consignments</span></div>
-        <p style={{ fontSize: 12, color: '#6b7280', marginBottom: 14 }}>Click cells to grant/revoke access. Owner (crown) always has access. Changes are anchored on the Tangle.</p>
+      <div>
+        <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>Access Control</h2>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Manage which organisations can view each consignment and its documents</div>
+      </div>
+
+      <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div style={{ padding: '16px 20px', borderBottom: '1px solid var(--card-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+            <Shield style={{ width: 16, height: 16, color: 'var(--amber)' }} />
+            <h3 style={{ fontSize: 15, fontWeight: 700, color: 'var(--text-primary)' }}>Access Matrix</h3>
+          </div>
+          <span className="pill pill-b">{consignments.length} consignments</span>
+        </div>
+        <div style={{ padding: '10px 20px 14px', fontSize: 12.5, color: 'var(--text-muted)' }}>
+          Click cells to grant or revoke access. <Crown style={{ width: 12, height: 12, color: '#f59e0b', display: 'inline', verticalAlign: 'middle' }} /> = owner. All changes are anchored on the Tangle.
+        </div>
         {consignments.length === 0 ? <div className="empty">No consignments to show permissions for.</div> : (
           <div style={{ overflowX: 'auto' }}>
             <table>
-              <thead><tr><th>Consignment</th>{allOrgs.map(o => <th key={o.id} style={{ textAlign: 'center', fontSize: 9 }}>{o.name}</th>)}</tr></thead>
+              <thead>
+                <tr>
+                  <th style={{ minWidth: 200 }}>Consignment</th>
+                  {allOrgs.map(o => <th key={o.id} style={{ textAlign: 'center', minWidth: 110, fontSize: 9.5 }}>{o.name}</th>)}
+                </tr>
+              </thead>
               <tbody>
                 {consignments.map(c => {
                   const p = permsMap[c.id] || {};
                   return (
                     <tr key={c.id}>
-                      <td><div style={{ fontWeight: 500, fontSize: 12 }}>{c.ucr}</div></td>
+                      <td>
+                        <div style={{ fontWeight: 600, fontSize: 12, fontFamily: 'var(--mono)' }}>{c.ucr}</div>
+                        {c.product && <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font)' }}>{c.product.slice(0, 30)}</div>}
+                      </td>
                       {allOrgs.map(o => {
                         const isOwner = p[o.id] === 'owner';
                         const hasAccess = isOwner || p[o.id] === 'viewer';
                         return (
                           <td key={o.id} className="perm-cell" onClick={() => toggle(c.id, o.id, o.name, p[o.id], c.creatorOrgId)} style={{ cursor: isOwner ? 'default' : 'pointer' }}>
-                            {isOwner ? <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}><Crown style={{ width: 12, height: 12, color: '#f59e0b' }} /><span style={{ color: '#16a34a', fontWeight: 700 }}>&#10003;</span></span>
-                              : hasAccess ? <span style={{ color: '#16a34a', fontWeight: 700 }}>&#10003;</span>
-                              : <span style={{ color: '#d1d5db' }}>&#10005;</span>}
+                            {isOwner
+                              ? <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
+                                  <Crown style={{ width: 12, height: 12, color: '#f59e0b' }} />
+                                  <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span>
+                                </span>
+                              : hasAccess
+                                ? <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span>
+                                : <span style={{ color: '#d1d5db' }}>✗</span>}
                           </td>
                         );
                       })}
@@ -67,19 +93,19 @@ export default function Permissions() {
           </div>
         )}
       </div>
-      <div className="card">
-        <div className="card-h"><h3>Permission Rules</h3></div>
-        <div className="g3">
-          {[{ n: '1', t: 'Owner controls', d: 'The consignment creator decides who can view their data. No central authority can override.' },
-            { n: '2', t: 'Encrypted sharing', d: 'Data is encrypted in transit. Only permitted parties receive decryption keys.' },
-            { n: '3', t: 'Auditable', d: 'Every grant and revocation is recorded on the IOTA Tangle with timestamp and hash.' }].map(r => (
-            <div key={r.n} style={{ padding: 12, background: '#f0fdf4', borderRadius: 8, borderLeft: '3px solid #22c55e' }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: '#16a34a', marginBottom: 3 }}>{r.n}</div>
-              <div style={{ fontSize: 12, fontWeight: 600, color: '#166534', marginBottom: 3 }}>{r.t}</div>
-              <div style={{ fontSize: 11, color: '#6b7280' }}>{r.d}</div>
-            </div>
-          ))}
-        </div>
+
+      <div className="g3">
+        {[
+          { n: '1', title: 'Owner controls', desc: 'The consignment creator decides who can view their data. No central authority can override.' },
+          { n: '2', title: 'Encrypted sharing', desc: 'Data is encrypted in transit. Only permitted parties receive decryption keys via TLIP.' },
+          { n: '3', title: 'Auditable', desc: 'Every grant and revocation is recorded on the IOTA Tangle with timestamp and cryptographic hash.' },
+        ].map(r => (
+          <div key={r.n} style={{ padding: 16, background: '#f0fdf4', borderRadius: 10, borderLeft: '3px solid #22c55e' }}>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#16a34a', marginBottom: 4 }}>{r.n}</div>
+            <div style={{ fontSize: 13, fontWeight: 700, color: '#166534', marginBottom: 4 }}>{r.title}</div>
+            <div style={{ fontSize: 12, color: 'var(--text-muted)', lineHeight: 1.5 }}>{r.desc}</div>
+          </div>
+        ))}
       </div>
     </div>
   );

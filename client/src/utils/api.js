@@ -20,6 +20,7 @@ export const api = {
   getDocuments: (orgId, cId) => req(`/api/documents?orgId=${orgId}${cId ? `&consignmentId=${cId}` : ''}`),
   uploadDocument: (fd) => fetch(`${BASE}/api/documents`, { method: 'POST', body: fd }).then(r => r.json()),
   downloadUrl: (id) => `${BASE}/api/documents/${id}/download`,
+  getDocumentXml: (id) => req(`/api/documents/${id}/xml`),
   getPermissions: (cId) => req(`/api/permissions/${cId}`),
   shareConsignment: (d) => req('/api/permissions/share', { method: 'POST', body: JSON.stringify(d) }),
   revokeAccess: (d) => req('/api/permissions/revoke', { method: 'POST', body: JSON.stringify(d) }),
