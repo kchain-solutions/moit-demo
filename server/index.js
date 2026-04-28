@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import { WebSocketServer, WebSocket } from 'ws';
 import multer from 'multer';
-import { existsSync, readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
@@ -18,18 +18,7 @@ const NODE_NAME= process.env.NODE_NAME || args.name || 'Node Alpha';
 const PEER_URL = process.env.PEER_URL  || args.peer || null;
 const NODE_IP  = `127.0.0.1:${PORT}`;
 
-// Use the same base-dir as the output folder so we always write where we can read
-const _projectBase = (() => {
-  const candidates = [
-    path.join(__dirname, '..'),
-    path.join(__dirname, '../../../..'),
-  ];
-  for (const c of candidates) {
-    if (existsSync(path.join(c, 'output')) || existsSync(path.join(c, 'server'))) return c;
-  }
-  return path.join(__dirname, '..');
-})();
-const DATA_DIR = path.join(_projectBase, 'data');
+const DATA_DIR = path.join(__dirname, '../data');
 const TANGLE_FILE = path.join(DATA_DIR, `tangle-${NODE_ID}.json`);
 
 function loadTangleLog() {
@@ -51,13 +40,6 @@ const genHash = () => '0x' + crypto.randomBytes(16).toString('hex');
 const genDID = () => 'did:iota:0x' + crypto.randomBytes(12).toString('hex');
 const now = () => new Date().toISOString();
 
-// Find output directory
-const possibleOutputPaths = [
-  path.join(__dirname, '../output'),
-  path.join(__dirname, '../../../../output'),
-];
-const OUTPUT_DIR = possibleOutputPaths.find(p => existsSync(p)) ?? null;
-if (OUTPUT_DIR) console.log(`[${NODE_NAME}] Output directory: ${OUTPUT_DIR}`);
 
 // ── Credential validation ──
 const BLACKLISTED = ['BRN-000000','TIN-000000','LEI-000000','DUNS-000000','BRN-999999'];
@@ -110,157 +92,124 @@ function seedLog(type, action, actor, details, timestamp) {
   store.tangleLog.push({ id: genId(), timestamp, hash: genHash(), type, action, actor, details });
 }
 
-// ── Seed output folder consignments ──
-const SEED_STATUSES = ['Delivered','In Transit','Customs','Delivered','Submitted','Released','Delivered','In Transit','Customs','Delivered'];
-let seedStatusIdx = 0;
+// ── Hardcoded demo consignments ──
+const DEMO_CONSIGNMENTS = [
+  {
+    ucr: 'UCR-2026-MA-NG-00101', product: 'Triple Super Phosphate (TSP)', hsCode: '3103.10',
+    quantity: '2,400 MT', totalValue: 340000, currency: 'USD',
+    exporter: 'AtlasPhosphate S.A.', importer: 'PrimeFert Nigeria Ltd',
+    fromCountry: 'Morocco', toCountry: 'Nigeria',
+    originPort: 'Port of Casablanca', destinationPort: 'Apapa Port, Lagos',
+    vessel: 'MV Atlas Pioneer', shipDate: '2026-02-18', incoterms: 'CFR',
+    invoiceRef: 'INV-2026-APM-0101', declRef: 'MA-EXP-2026-0101',
+    status: 'Delivered', creatorOrgId: 'org1',
+  },
+  {
+    ucr: 'UCR-2026-MA-NG-00102', product: 'Di-Ammonium Phosphate (DAP)', hsCode: '3105.30',
+    quantity: '1,800 MT', totalValue: 290000, currency: 'USD',
+    exporter: 'AtlasPhosphate S.A.', importer: 'TradeLink International Ltd',
+    fromCountry: 'Morocco', toCountry: 'Nigeria',
+    originPort: 'Port of Casablanca', destinationPort: 'Tin Can Island Port',
+    vessel: 'MV Maroc Express', shipDate: '2026-02-20', incoterms: 'FOB',
+    invoiceRef: 'INV-2026-APM-0102', declRef: 'MA-EXP-2026-0102',
+    status: 'In Transit', creatorOrgId: 'org1',
+  },
+  {
+    ucr: 'UCR-2026-MA-NG-00103', product: 'Granular Urea (46% N)', hsCode: '3102.10',
+    quantity: '3,000 MT', totalValue: 510000, currency: 'USD',
+    exporter: 'AtlasPhosphate S.A.', importer: 'PrimeFert Nigeria Ltd',
+    fromCountry: 'Morocco', toCountry: 'Nigeria',
+    originPort: 'Port of Agadir', destinationPort: 'Apapa Port, Lagos',
+    vessel: 'MV Sahara Star', shipDate: '2026-03-01', incoterms: 'CIF',
+    invoiceRef: 'INV-2026-APM-0103', declRef: 'MA-EXP-2026-0103',
+    status: 'Customs', creatorOrgId: 'org1',
+  },
+  {
+    ucr: 'UCR-2026-MA-NG-00104', product: 'Phosphoric Acid (75% P₂O₅)', hsCode: '2809.20',
+    quantity: '950 MT', totalValue: 178000, currency: 'USD',
+    exporter: 'AtlasPhosphate S.A.', importer: 'TradeLink International Ltd',
+    fromCountry: 'Morocco', toCountry: 'Nigeria',
+    originPort: 'Port of Jorf Lasfar', destinationPort: 'Onne Port',
+    vessel: 'MV Chemtrans Atlas', shipDate: '2026-03-05', incoterms: 'CFR',
+    invoiceRef: 'INV-2026-APM-0104', declRef: 'MA-EXP-2026-0104',
+    status: 'Submitted', creatorOrgId: 'org1',
+  },
+  {
+    ucr: 'UCR-2026-MA-NG-00105', product: 'Mono-Ammonium Phosphate (MAP)', hsCode: '3105.40',
+    quantity: '2,100 MT', totalValue: 375000, currency: 'USD',
+    exporter: 'AtlasPhosphate S.A.', importer: 'PrimeFert Nigeria Ltd',
+    fromCountry: 'Morocco', toCountry: 'Nigeria',
+    originPort: 'Port of Casablanca', destinationPort: 'Apapa Port, Lagos',
+    vessel: 'MV Northern Cape', shipDate: '2026-03-12', incoterms: 'FOB',
+    invoiceRef: 'INV-2026-APM-0105', declRef: 'MA-EXP-2026-0105',
+    status: 'Released', creatorOrgId: 'org1',
+  },
+  {
+    ucr: 'UCR-2026-MA-NG-00106', product: 'Sulphate of Potash (SOP)', hsCode: '3104.20',
+    quantity: '1,200 MT', totalValue: 264000, currency: 'USD',
+    exporter: 'AtlasPhosphate S.A.', importer: 'TradeLink International Ltd',
+    fromCountry: 'Morocco', toCountry: 'Nigeria',
+    originPort: 'Port of Casablanca', destinationPort: 'Tin Can Island Port',
+    vessel: 'MV Atlas Pioneer', shipDate: '2026-03-18', incoterms: 'CIF',
+    invoiceRef: 'INV-2026-APM-0106', declRef: 'MA-EXP-2026-0106',
+    status: 'In Transit', creatorOrgId: 'org1',
+  },
+];
 
-function getDocIssuer(docInfo, manifest) {
-  // Prefer issuer explicitly set in manifest document list
-  if (docInfo.issuer) return docInfo.issuer;
-  const fromMA = (manifest.direction || '').startsWith('MA') || (manifest.ucr || '').includes('-MA-NG-');
-  const name = docInfo.name || '';
-  const ref  = docInfo.reference || '';
-  if (name.includes('Invoice') || name.includes('Packing')) return manifest.exporter || 'Exporter';
-  if (name.includes('Origin'))
-    return fromMA ? 'MAEX — Morocco Agri-Export Bureau' : 'NEPT — Nigeria Export Promotion Trust';
-  if (name.includes('Insurance')) {
-    if (ref.includes('MMSA'))    return 'Maghreb Marine Assurance S.A.';
-    if (ref.includes('TSIP'))   return 'TrustShield Insurance Plc';
-    if (ref.includes('MERI')) return 'Meridian Assurance Co. Ltd';
-    if (ref.includes('ARMA'))     return 'AxiomRisk Assurance Maroc';
-    return fromMA ? 'Maghreb Marine Assurance S.A.' : 'TrustShield Insurance Plc';
-  }
-  if (name.includes('Lading')) {
-    if (ref.startsWith('NSLR')) return 'NordShip Line S.A.';
-    if (ref.startsWith('ASHR')) return 'AtlasShip S.A.';
-    if (ref.startsWith('ELSG')) return 'EuroLink Shipping AG';
-    if (ref.startsWith('GMSH')) return 'GlobalMar Shipping Co. S.A.';
-    if (ref.startsWith('PTSC')) return 'PacTrade Shipping Co., Ltd.';
-    if (ref.startsWith('GSLV')) return 'GreenSea Line';
-    return 'Carrier / Shipping Line';
-  }
-  if (name.includes('Declaration'))
-    return fromMA ? 'Morocco Customs' : 'Nigeria Customs';
-  return manifest.exporter || 'Issuer';
-}
+const DEMO_DOCS = [
+  { name: 'Commercial Invoice',     docType: 'Commercial Invoice',   issuer: 'AtlasPhosphate S.A.',              suffix: 'INV' },
+  { name: 'Packing List',           docType: 'Packing List',          issuer: 'AtlasPhosphate S.A.',              suffix: 'PL'  },
+  { name: 'Bill of Lading',         docType: 'Bill of Lading',        issuer: 'NordShip Line S.A.',               suffix: 'BL'  },
+  { name: 'Certificate of Origin',  docType: 'Certificate of Origin', issuer: 'MAEX — Morocco Agri-Export Bureau',suffix: 'CO'  },
+  { name: 'Export Declaration',     docType: 'Export Declaration',    issuer: 'Morocco Customs',                  suffix: 'ED'  },
+];
 
-function docTypeFromName(name) {
-  if (name.includes('Invoice')) return 'Commercial Invoice';
-  if (name.includes('Packing')) return 'Packing List';
-  if (name.includes('Origin')) return 'Certificate of Origin';
-  if (name.includes('Insurance')) return 'Insurance Certificate';
-  if (name.includes('Lading')) return 'Bill of Lading';
-  if (name.includes('Declaration')) return 'Export Declaration';
-  return 'General';
-}
+function seedConsignments() {
+  if (NODE_ID !== 'alpha') return;
+  if (store.consignments.length > 0) return;
 
-function seedOutputConsignments() {
-  if (!OUTPUT_DIR) return;
-  try {
-    const entries = readdirSync(OUTPUT_DIR, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isDirectory()) continue;
-      const ucr = entry.name;
-      const manifestPath = path.join(OUTPUT_DIR, ucr, 'manifest.json');
-      if (!existsSync(manifestPath)) continue;
+  for (const m of DEMO_CONSIGNMENTS) {
+    const cId = `seed-${m.ucr}`;
+    const createdAt = m.shipDate + 'T08:00:00.000Z';
+    const c = {
+      id: cId, ucr: m.ucr,
+      commercialInvoiceNo: m.invoiceRef, exportDeclarationNo: m.declRef,
+      description: m.product, product: m.product,
+      hsCode: m.hsCode, quantity: m.quantity, unit: 'MT',
+      totalValue: m.totalValue, currency: m.currency,
+      exporter: m.exporter, importer: m.importer,
+      fromCountry: m.fromCountry, toCountry: m.toCountry,
+      originPort: m.originPort, destinationPort: m.destinationPort,
+      vessel: m.vessel, shipDate: m.shipDate, incoterms: m.incoterms,
+      creatorOrgId: m.creatorOrgId, creatorOrgName: 'AtlasPhosphate S.A.',
+      createdAt, documentCount: DEMO_DOCS.length, status: m.status,
+    };
+    store.consignments.push(c);
+    store.permissions[cId] = { [m.creatorOrgId]: 'owner' };
+    store.financePermissions[cId] = { [m.creatorOrgId]: 'owner' };
+    seedLog('document', 'Consignment Anchored', m.exporter,
+      `Digital twin created: ${m.ucr} — ${m.product}. Anchored on the ledger.`, createdAt);
 
-      const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
-      const cId = `output-${ucr}`;
-      if (store.consignments.some(c => c.id === cId)) continue;
-
-      const parts = ucr.split('-');
-      const fromCode = parts[2] || '';
-      const toCode = parts[3] || '';
-      // Prefer manifest-provided country names (e.g. Kenyan consignments)
-      const fromCountry = manifest.fromCountry || (fromCode === 'NG' ? 'Nigeria' : 'Morocco');
-      const toCountry   = manifest.toCountry   || (toCode   === 'MA' ? 'Morocco'  : 'Nigeria');
-
-      const status = manifest.errorType ? 'Under Review' : SEED_STATUSES[seedStatusIdx++ % SEED_STATUSES.length];
-
-      const c = {
-        id: cId,
-        ucr: manifest.ucr,
-        commercialInvoiceNo: manifest.documents?.find(d => d.name.includes('Invoice'))?.reference || '',
-        exportDeclarationNo: manifest.documents?.find(d => d.name.includes('Export Declaration'))?.reference || '',
-        description: manifest.product,
-        product: manifest.product,
-        hsCode: manifest.hsCode,
-        quantity: manifest.quantity,
-        unit: manifest.unit,
-        totalValue: manifest.totalValue,
-        currency: manifest.currency,
-        exporter: manifest.exporter,
-        importer: manifest.importer,
-        fromCountry,
-        toCountry,
-        originPort: manifest.originPort,
-        destinationPort: manifest.destinationPort,
-        vessel: manifest.vessel,
-        shipDate: manifest.shipDate,
-        incoterms: manifest.incoterms,
-        errorType: manifest.errorType || null,
-        errorDescription: manifest.errorDescription || null,
-        creatorOrgId: manifest.creatorOrgId || store.orgs[0]?.id || 'system',
-        creatorOrgName: manifest.creatorOrgName || store.orgs[0]?.name || 'System',
-        createdAt: (manifest.shipDate || '2026-02-01') + 'T00:00:00.000Z',
-        documentCount: manifest.documents?.length || 0,
-        isOutputFolder: true,
-        status,
-      };
-
-      store.consignments.push(c);
-      store.permissions[cId] = {};
-      store.financePermissions[cId] = {};
-      // All consignments are private by default — only the creator (owner) can see them.
-      // Other orgs gain access only after the creator explicitly shares.
-      // KE* creator = KRA (org4); MA/NG creator = atlas (org1).
-      const creatorId = c.creatorOrgId;
-      store.orgs.forEach(org => {
-        if (org.id === creatorId) {
-          store.permissions[cId][org.id] = 'owner';
-        }
-        // All other orgs: no entry = no access until shared
+    for (const d of DEMO_DOCS) {
+      const docId = `${cId}-${d.suffix}`;
+      const ref = d.suffix === 'INV' ? m.invoiceRef
+                : d.suffix === 'ED'  ? m.declRef
+                : `${d.suffix}-${m.ucr.split('-').slice(-1)[0]}`;
+      store.documents.push({
+        id: docId, consignmentId: cId,
+        title: d.name, docType: d.docType,
+        filename: `${ref}.pdf`, fileSize: 0,
+        hash: genHash(),
+        creatorOrgId: m.creatorOrgId, creatorOrgName: 'AtlasPhosphate S.A.',
+        timestamp: createdAt, reference: ref,
+        format: 'PDF', issuer: d.issuer,
       });
-      store.financePermissions[cId][creatorId] = 'owner';
-      seedLog('document', 'Consignment Anchored', manifest.exporter || c.creatorOrgName,
-        `Digital twin created: ${manifest.ucr} — ${manifest.product}. Anchored on the ledger.`, c.createdAt);
-
-      for (const docInfo of (manifest.documents || [])) {
-        const docId = `${cId}-doc-${docInfo.file}`;
-        if (store.documents.some(d => d.id === docId)) continue;
-        const docPath = path.join(OUTPUT_DIR, ucr, docInfo.file);
-        let fileSize = 0;
-        try { fileSize = existsSync(docPath) ? statSync(docPath).size : 0; } catch {}
-        const issuer = getDocIssuer(docInfo, manifest);
-        const docTs = (manifest.shipDate || '2026-02-01') + 'T00:00:00.000Z';
-
-        store.documents.push({
-          id: docId,
-          consignmentId: cId,
-          title: docInfo.name,
-          docType: docTypeFromName(docInfo.name),
-          filename: docInfo.file,
-          fileSize,
-          hash: genHash(),
-          creatorOrgId: manifest.creatorOrgId || store.orgs[0]?.id || 'system',
-          creatorOrgName: manifest.creatorOrgName || store.orgs[0]?.name || 'System',
-          timestamp: docTs,
-          reference: docInfo.reference,
-          format: docInfo.format,
-          issuer,
-          isOutputFolder: true,
-          outputUcr: ucr,
-          outputFile: docInfo.file,
-        });
-        seedLog('document', 'Document Anchored', manifest.exporter || c.creatorOrgName,
-          `"${docInfo.name}" anchored to ${manifest.ucr}. Issued by ${issuer}.`, docTs);
-      }
+      seedLog('document', 'Document Anchored', m.exporter,
+        `"${d.name}" anchored to ${m.ucr}. Issued by ${d.issuer}.`, createdAt);
     }
-    saveTangleLog();
-    console.log(`[${NODE_NAME}] Seeded ${store.consignments.filter(c => c.isOutputFolder).length} consignments from output folder`);
-  } catch (e) {
-    console.error(`[${NODE_NAME}] Failed to seed output consignments:`, e.message);
   }
+  saveTangleLog();
+  console.log(`[${NODE_NAME}] Seeded ${store.consignments.length} consignments`);
 }
 
 const app = express();
@@ -399,14 +348,7 @@ app.post('/api/documents', upload.single('file'), (req, res) => {
 app.get('/api/documents/:id/download', (req, res) => {
   const doc = store.documents.find(d => d.id === req.params.id);
   if (!doc) return res.status(404).json({ error: 'Not found' });
-  if (doc.isOutputFolder && OUTPUT_DIR) {
-    const filePath = path.join(OUTPUT_DIR, doc.outputUcr, doc.outputFile);
-    if (existsSync(filePath)) {
-      res.setHeader('Content-Disposition', `inline; filename="${doc.filename}"`);
-      return res.sendFile(filePath);
-    }
-  }
-  if (!doc.fileBase64) return res.status(404).json({ error: 'File not found' });
+  if (!doc.fileBase64) return res.status(404).json({ error: 'File not stored — upload a real file to enable download' });
   res.setHeader('Content-Disposition', `attachment; filename="${doc.filename}"`);
   res.send(Buffer.from(doc.fileBase64, 'base64'));
 });
@@ -414,10 +356,6 @@ app.get('/api/documents/:id/download', (req, res) => {
 app.get('/api/documents/:id/xml', (req, res) => {
   const doc = store.documents.find(d => d.id === req.params.id);
   if (!doc) return res.status(404).json({ error: 'Not found' });
-  if (doc.isOutputFolder && OUTPUT_DIR && doc.filename?.endsWith('.xml')) {
-    const filePath = path.join(OUTPUT_DIR, doc.outputUcr, doc.outputFile);
-    if (existsSync(filePath)) return res.json({ content: readFileSync(filePath, 'utf-8'), docType: doc.docType });
-  }
   if (doc.fileBase64 && doc.filename?.endsWith('.xml')) {
     return res.json({ content: Buffer.from(doc.fileBase64, 'base64').toString('utf-8'), docType: doc.docType });
   }
@@ -788,7 +726,7 @@ function seedFinanceData() {
   console.log(`[${NODE_NAME}] Seeded finance data: 2 payments, 2 LCs, 2 smart contracts`);
 }
 
-// Seed output folder data then start
-seedOutputConsignments();
+// Seed demo data then start
+seedConsignments();
 seedFinanceData();
 httpServer.listen(PORT, () => { console.log(`[${NODE_NAME}] Listening on port ${PORT} (HTTP + WS on same port)`); });
