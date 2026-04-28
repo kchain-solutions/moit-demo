@@ -170,6 +170,129 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
   return Buffer.from(pdf, 'utf8').toString('base64');
 }
 
+// ── XML generator for seeded BOL / Export Declaration documents ──
+function makeSeedXml(docType, m, ref) {
+  // Deterministic fake values derived from the UCR so they're stable across restarts
+  const seed = parseInt(m.ucr.replace(/\D/g, '').slice(-4) || '1234');
+  const voyageNo  = `V${2600 + (seed % 99)}`;
+  const imoNo     = `IMO${9000000 + (seed % 999999)}`;
+  const blOriginals = '3';
+  const containerNo = `TCKU${3000000 + (seed % 9999999)}`;
+  const sealNo      = `SL${10000 + (seed % 89999)}`;
+  const grossMass   = m.quantity.match(/[\d,]+/)?.[0]?.replace(',','') || '1000';
+  const netMass     = Math.round(parseInt(grossMass) * 0.97);
+  const arrival     = new Date(new Date(m.shipDate).getTime() + 14 * 86400000).toISOString().slice(0,10);
+  const carrier     = m.vessel.startsWith('KQ') ? 'Kenya Airways Cargo' : 'NordShip Line S.A.';
+  const exporterAddr = m.fromCountry === 'Morocco'  ? '12 Rue Al Borj, Casablanca 20000, Morocco'
+                     : m.fromCountry === 'Kenya'    ? 'Westlands Business Park, Nairobi, Kenya'
+                     : '14 Creek Road, Apapa, Lagos, Nigeria';
+  const importerAddr = m.toCountry === 'Netherlands' ? 'Prins Bernhardplein 200, Amsterdam, Netherlands'
+                     : m.toCountry === 'Germany'      ? 'Speicherstadt 1, Hamburg, Germany'
+                     : m.toCountry === 'United Kingdom' ? '1 Dock Road, Felixstowe, Suffolk, UK'
+                     : m.toCountry === 'South Africa'   ? 'Island View, Durban, South Africa'
+                     : '24 Marina Street, Victoria Island, Lagos, Nigeria';
+
+  if (docType === 'Bill of Lading') {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<TransportDocument>
+  <TransportDocumentReference>${ref}</TransportDocumentReference>
+  <ContractQuotationReference>${m.ucr}</ContractQuotationReference>
+  <IssueDate>${m.shipDate}</IssueDate>
+  <ShippedOnBoardDate>${m.shipDate}</ShippedOnBoardDate>
+  <IssuerCode>NL-SHP-001</IssuerCode>
+  <ServiceContractReference>${m.invoiceRef}</ServiceContractReference>
+  <Shipper>
+    <PartyName>${m.exporter}</PartyName>
+    <Address>${exporterAddr}</Address>
+    <RegistrationNumber>REG-${m.fromCountry.slice(0,2).toUpperCase()}-${seed}</RegistrationNumber>
+    <TaxIdentifier>TAX-${seed + 1000}</TaxIdentifier>
+  </Shipper>
+  <Consignee>
+    <PartyName>${m.importer}</PartyName>
+    <Address>${importerAddr}</Address>
+    <RegistrationNumber>REG-${m.toCountry.slice(0,2).toUpperCase()}-${seed + 500}</RegistrationNumber>
+  </Consignee>
+  <VesselName>${m.vessel}</VesselName>
+  <VoyageNumber>${voyageNo}</VoyageNumber>
+  <IMONumber>${imoNo}</IMONumber>
+  <CarrierName>${carrier}</CarrierName>
+  <PortOfLoading>${m.originPort}</PortOfLoading>
+  <PortOfDischarge>${m.destinationPort}</PortOfDischarge>
+  <EstimatedArrival>${arrival}</EstimatedArrival>
+  <HSCode>${m.hsCode}</HSCode>
+  <DescriptionOfGoods>${m.product}</DescriptionOfGoods>
+  <Quantity>${grossMass}</Quantity>
+  <QuantityUnit>MT</QuantityUnit>
+  <GrossWeight>${grossMass}</GrossWeight>
+  <GrossWeightUnit>MT</GrossWeightUnit>
+  <NumberOfPackages>${Math.ceil(parseInt(grossMass) / 25)}</NumberOfPackages>
+  <DeclaredValue>${m.totalValue}</DeclaredValue>
+  <Currency>${m.currency}</Currency>
+  <Incoterms>${m.incoterms}</Incoterms>
+  <FreightPayableBy>${m.incoterms === 'FOB' ? 'Consignee' : 'Shipper'}</FreightPayableBy>
+  <NumberOfOriginalsBL>${blOriginals}</NumberOfOriginalsBL>
+  <IssuePlaceAndDate>${m.originPort}, ${m.shipDate}</IssuePlaceAndDate>
+  <SignatoryName>Captain, ${m.vessel}</SignatoryName>
+</TransportDocument>`;
+  }
+
+  if (docType === 'Export Declaration') {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<CustomsDeclaration>
+  <DeclarationNumber>${ref}</DeclarationNumber>
+  <UCR>${m.ucr}</UCR>
+  <DeclarationDate>${m.shipDate}</DeclarationDate>
+  <DeclarationType>EX</DeclarationType>
+  <ProcedureCode>1000</ProcedureCode>
+  <CountryOfDispatch>${m.fromCountry}</CountryOfDispatch>
+  <CountryOfDestination>${m.toCountry}</CountryOfDestination>
+  <PortOfExport>${m.originPort}</PortOfExport>
+  <PortOfDestination>${m.destinationPort}</PortOfDestination>
+  <Exporter>
+    <Name>${m.exporter}</Name>
+    <Address>${exporterAddr}</Address>
+    <Identifier>EXP-${m.fromCountry.slice(0,2).toUpperCase()}-${seed}</Identifier>
+    <TaxIdentifier>TAX-${seed + 1000}</TaxIdentifier>
+  </Exporter>
+  <Consignee>
+    <Name>${m.importer}</Name>
+    <Address>${importerAddr}</Address>
+    <Identifier>IMP-${m.toCountry.slice(0,2).toUpperCase()}-${seed + 500}</Identifier>
+  </Consignee>
+  <TransportMode>1</TransportMode>
+  <VesselName>${m.vessel}</VesselName>
+  <VoyageNumber>${voyageNo}</VoyageNumber>
+  <IMONumber>${imoNo}</IMONumber>
+  <ContainerNumber>${containerNo}</ContainerNumber>
+  <SealNumber>${sealNo}</SealNumber>
+  <HSCode>${m.hsCode}</HSCode>
+  <Description>${m.product}</Description>
+  <Quantity>${grossMass}</Quantity>
+  <QuantityUnit>MT</QuantityUnit>
+  <UnitPrice>${Math.round(m.totalValue / parseInt(grossMass))}</UnitPrice>
+  <CustomsValue>${m.totalValue}</CustomsValue>
+  <Currency>${m.currency}</Currency>
+  <GrossMass>${grossMass}</GrossMass>
+  <NetMass>${netMass}</NetMass>
+  <CountryOfOrigin>${m.fromCountry}</CountryOfOrigin>
+  <PreferenceCode>100</PreferenceCode>
+  <InvoiceNumber>${m.invoiceRef}</InvoiceNumber>
+  <InvoiceDate>${m.shipDate}</InvoiceDate>
+  <InvoiceTotal>${m.totalValue}</InvoiceTotal>
+  <InvoiceCurrency>${m.currency}</InvoiceCurrency>
+  <Incoterms>${m.incoterms}</Incoterms>
+  <BillOfLadingRef>BL-${ref.replace(/[A-Z]+-\d+-/,'')}</BillOfLadingRef>
+  <CertificateOfOriginRef>CO-${ref.replace(/[A-Z]+-\d+-/,'')}</CertificateOfOriginRef>
+  <InsuranceCertificateRef>INS-${seed}</InsuranceCertificateRef>
+  <DeclarantName>${m.fromCountry === 'Morocco' ? 'Morocco Customs' : m.fromCountry === 'Kenya' ? 'Kenya Revenue Authority' : 'Nigeria Customs'}</DeclarantName>
+  <DeclarationLocation>${m.originPort}</DeclarationLocation>
+  <Status>ACCEPTED</Status>
+</CustomsDeclaration>`;
+  }
+
+  return null;
+}
+
 // ── Hardcoded demo consignments ──
 const ALPHA_CONSIGNMENTS = [
   // Morocco → Nigeria (AtlasPhosphate, org1)
@@ -247,17 +370,21 @@ function seedConsignments() {
       const ref = d.suffix === 'INV' ? m.invoiceRef
                 : d.suffix === 'ED'  ? m.declRef
                 : `${d.suffix}-${m.ucr.split('-').pop()}`;
-      const fileBase64 = makeSeedPdf(d.docType, ref, d.issuer, m.ucr, m.shipDate, m.exporter, m.importer, m.fromCountry, m.toCountry);
+      const xmlContent = (d.suffix === 'BL' || d.suffix === 'ED') ? makeSeedXml(d.docType, m, ref) : null;
+      const fileBase64 = xmlContent
+        ? Buffer.from(xmlContent, 'utf8').toString('base64')
+        : makeSeedPdf(d.docType, ref, d.issuer, m.ucr, m.shipDate, m.exporter, m.importer, m.fromCountry, m.toCountry);
+      const filename = xmlContent ? `${ref}.xml` : `${ref}.pdf`;
+      const format   = xmlContent ? 'XML' : 'PDF';
       const fileSize = Buffer.from(fileBase64, 'base64').length;
       store.documents.push({
         id: `${cId}-${d.suffix}`, consignmentId: cId,
         title: d.name, docType: d.docType,
-        filename: `${ref}.pdf`, fileSize,
-        fileBase64,
+        filename, fileSize, fileBase64,
         hash: genHash(),
         creatorOrgId: m.creatorOrgId, creatorOrgName: m.creatorOrgName,
         timestamp: createdAt, reference: ref,
-        format: 'PDF', issuer: d.issuer,
+        format, issuer: d.issuer,
       });
       seedLog('document', 'Document Anchored', m.exporter,
         `"${d.name}" anchored to ${m.ucr}. Issued by ${d.issuer}.`, createdAt);
