@@ -23,17 +23,20 @@ const PROXY_PORT = parseInt(process.env.PROXY_PORT || '4002');
 const ALPHA = { host: '127.0.0.1', port: 4000 };
 const BETA  = { host: '127.0.0.1', port: 4001 };
 
-// Resolve target from ?node= param or adapt-node cookie
+// Resolve target — URL param always beats cookie (so sharing /?node=alpha
+// works even if the browser already has an adapt-node=beta cookie)
 function target(req) {
-  const qs = req.url?.includes('node=beta');
-  const cookie = /adapt-node=beta/.test(req.headers.cookie || '');
-  return (qs || cookie) ? BETA : ALPHA;
+  if (req.url?.includes('node=alpha')) return ALPHA;
+  if (req.url?.includes('node=beta'))  return BETA;
+  // Fall back to cookie
+  return /adapt-node=beta/.test(req.headers.cookie || '') ? BETA : ALPHA;
 }
 
-// Build a Set-Cookie header when the ?node= param is present
+// Build a Set-Cookie header when the ?node= param is present so all
+// subsequent requests (no query param) keep routing to the right node
 function nodeCookie(req) {
   if (req.url?.includes('node=alpha')) return 'adapt-node=alpha; Path=/; HttpOnly; SameSite=Lax';
-  if (req.url?.includes('node=beta'))  return 'adapt-node=beta;  Path=/; HttpOnly; SameSite=Lax';
+  if (req.url?.includes('node=beta'))  return 'adapt-node=beta; Path=/; HttpOnly; SameSite=Lax';
   return null;
 }
 
@@ -87,11 +90,6 @@ server.on('upgrade', (req, clientSocket, head) => {
     clientSocket.destroy();
   });
   clientSocket.on('error', () => serverSocket.destroy());
-});
-
-// ── Landing page ─────────────────────────────────────────────────────────────
-server.on('request', (req, res) => {
-  // Only intercept bare "/?node=..." — static files and API handled by above handler
 });
 
 server.listen(PROXY_PORT, () => {
