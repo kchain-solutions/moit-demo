@@ -49,7 +49,7 @@ export default function Permissions() {
           <span className="pill pill-b">{consignments.length} consignments</span>
         </div>
         <div style={{ padding: '10px 20px 14px', fontSize: 12.5, color: 'var(--text-muted)' }}>
-          Click cells to grant or revoke access. <Crown style={{ width: 12, height: 12, color: '#f59e0b', display: 'inline', verticalAlign: 'middle' }} /> = owner. All changes are anchored on the Tangle.
+          Click cells to grant or revoke access. <Crown style={{ width: 12, height: 12, color: '#f59e0b', display: 'inline', verticalAlign: 'middle' }} /> = owner. All changes are anchored on ledger.
         </div>
         {consignments.length === 0 ? <div className="empty">No consignments to show permissions for.</div> : (
           <div style={{ overflowX: 'auto' }}>
@@ -98,7 +98,7 @@ export default function Permissions() {
         {[
           { n: '1', title: 'Owner controls', desc: 'The consignment creator decides who can view their data. No central authority can override.' },
           { n: '2', title: 'Encrypted sharing', desc: 'Data is encrypted in transit. Only permitted parties receive decryption keys via TLIP.' },
-          { n: '3', title: 'Auditable', desc: 'Every grant and revocation is recorded on the IOTA Tangle with timestamp and cryptographic hash.' },
+          { n: '3', title: 'Auditable', desc: 'Every grant and revocation is recorded on ledger with timestamp and cryptographic hash.' },
         ].map(r => (
           <div key={r.n} style={{ padding: 16, background: '#f0fdf4', borderRadius: 10, borderLeft: '3px solid #22c55e' }}>
             <div style={{ fontSize: 18, fontWeight: 800, color: '#16a34a', marginBottom: 4 }}>{r.n}</div>

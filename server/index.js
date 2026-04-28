@@ -1,33 +1,45 @@
+import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import { WebSocketServer, WebSocket } from 'ws';
 import multer from 'multer';
-import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
+import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const args = process.argv.slice(2).reduce((a, c) => { const [k, v] = c.replace('--', '').split('='); a[k] = v; return a; }, {});
-const PORT = parseInt(args.port || '4000');
-const WS_PORT = parseInt(args.ws || '4010');
-const NODE_ID = args.id || 'alpha';
-const NODE_NAME = args.name || 'Node Alpha';
-const PEER_URL = args.peer || null;
-const NODE_IP = `127.0.0.1:${PORT}`;
+// Env vars take priority (Railway/cloud deployment), CLI args used for local dev
+const PORT     = parseInt(process.env.PORT     || args.port || '4000');
+const WS_PORT  = parseInt(process.env.WS_PORT  || args.ws   || '4010');
+const NODE_ID  = process.env.NODE_ID   || args.id   || 'alpha';
+const NODE_NAME= process.env.NODE_NAME || args.name || 'Node Alpha';
+const PEER_URL = process.env.PEER_URL  || args.peer || null;
+const NODE_IP  = `127.0.0.1:${PORT}`;
+
+const DATA_DIR = path.join(__dirname, '../data');
+const TANGLE_FILE = path.join(DATA_DIR, `tangle-${NODE_ID}.json`);
+
+function loadTangleLog() {
+  try {
+    if (existsSync(TANGLE_FILE)) return JSON.parse(readFileSync(TANGLE_FILE, 'utf-8'));
+  } catch (e) { console.error(`[${NODE_NAME}] Failed to load tangle log:`, e.message); }
+  return [];
+}
+
+function saveTangleLog() {
+  try {
+    if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
+    writeFileSync(TANGLE_FILE, JSON.stringify(store.tangleLog, null, 2));
+  } catch (e) { console.error(`[${NODE_NAME}] Failed to save tangle log:`, e.message); }
+}
 
 const genId = () => crypto.randomBytes(8).toString('hex');
 const genHash = () => '0x' + crypto.randomBytes(16).toString('hex');
 const genDID = () => 'did:iota:0x' + crypto.randomBytes(12).toString('hex');
 const now = () => new Date().toISOString();
 
-// Find output directory
-const possibleOutputPaths = [
-  path.join(__dirname, '../output'),
-  path.join(__dirname, '../../../../output'),
-];
-const OUTPUT_DIR = possibleOutputPaths.find(p => existsSync(p)) ?? null;
-if (OUTPUT_DIR) console.log(`[${NODE_NAME}] Output directory: ${OUTPUT_DIR}`);
 
 // ── Credential validation ──
 const BLACKLISTED = ['BRN-000000','TIN-000000','LEI-000000','DUNS-000000','BRN-999999'];
@@ -49,126 +61,129 @@ function validateCredential(regNumber) {
 // ── Store ──
 const store = {
   orgs: NODE_ID === 'alpha' ? [
-    { id: 'org1', name: 'Exporter Co.', role: 'Exporter', username: 'exporter', password: 'demo', did: null, verified: false, regNumber: null },
-    { id: 'org2', name: 'Customs Authority', role: 'Government Agency', username: 'customs', password: 'demo', did: null, verified: false, regNumber: null },
+    { id: 'org1', name: 'AtlasPhosphate S.A.',     role: 'Exporter · Morocco',          username: 'atlas',      password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org2', name: 'Morocco Customs',          role: 'Customs Authority · Morocco', username: 'macustoms',  password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
+    { id: 'org3', name: 'Nigeria Customs',          role: 'Customs Authority · Nigeria', username: 'ngcustoms',  password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
+    { id: 'org4', name: 'Kenya Revenue Authority',  role: 'Customs Authority · Kenya',   username: 'kra',        password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
+    { id: 'org7', name: 'Financier 1',              role: 'Financier',                   username: 'financier1', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org8', name: 'Financier 2',              role: 'Financier',                   username: 'financier2', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
   ] : [
-    { id: 'org3', name: 'Importer Co.', role: 'Importer', username: 'importer', password: 'demo', did: null, verified: false, regNumber: null },
+    { id: 'org5', name: 'PrimeFert Nigeria Ltd',        role: 'Importer · Nigeria', username: 'primefert', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org6', name: 'TradeLink International Ltd',  role: 'Importer · Nigeria', username: 'tradelink', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
   ],
-  consignments: [], documents: [], permissions: {}, docPermissions: {}, tangleLog: [],
+  consignments: [], documents: [], permissions: {}, docPermissions: {},
+  payments: [], letterOfCredits: [], smartContracts: [], financePermissions: {},
+  tangleLog: loadTangleLog(),
   peerOrgs: [], peerConnected: false,
 };
 
 function addLog(type, action, actor, details, extra = {}) {
   const entry = { id: genId(), timestamp: now(), hash: genHash(), type, action, actor, details, ...extra };
   store.tangleLog.unshift(entry);
+  saveTangleLog();
   broadcastToClients({ type: 'TANGLE_UPDATE', log: store.tangleLog });
   if (store.peerConnected && peerWs?.readyState === WebSocket.OPEN) peerWs.send(JSON.stringify({ type: 'TANGLE_ENTRY', entry }));
   return entry;
 }
 
-// ── Seed output folder consignments ──
-const SEED_STATUSES = ['Delivered','In Transit','Customs','Delivered','Submitted','Released','Delivered','In Transit','Customs','Delivered'];
-let seedStatusIdx = 0;
-
-function docTypeFromName(name) {
-  if (name.includes('Invoice')) return 'Commercial Invoice';
-  if (name.includes('Packing')) return 'Packing List';
-  if (name.includes('Origin')) return 'Certificate of Origin';
-  if (name.includes('Insurance')) return 'Insurance Certificate';
-  if (name.includes('Lading')) return 'Bill of Lading';
-  if (name.includes('Declaration')) return 'Export Declaration';
-  return 'General';
+// Idempotent seed helper — appends historical events without duplicating
+function seedLog(type, action, actor, details, timestamp) {
+  if (store.tangleLog.some(e => e.details === details)) return;
+  store.tangleLog.push({ id: genId(), timestamp, hash: genHash(), type, action, actor, details });
 }
 
-function seedOutputConsignments() {
-  if (!OUTPUT_DIR) return;
-  try {
-    const entries = readdirSync(OUTPUT_DIR, { withFileTypes: true });
-    for (const entry of entries) {
-      if (!entry.isDirectory()) continue;
-      const ucr = entry.name;
-      const manifestPath = path.join(OUTPUT_DIR, ucr, 'manifest.json');
-      if (!existsSync(manifestPath)) continue;
+// ── Hardcoded demo consignments ──
+const ALPHA_CONSIGNMENTS = [
+  // Morocco → Nigeria (AtlasPhosphate, org1)
+  { ucr:'UCR-2026-MA-NG-00101', product:'Triple Super Phosphate (TSP)',    hsCode:'3103.10', quantity:'2,400 MT', totalValue:340000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Apapa Port, Lagos',      vessel:'MV Atlas Pioneer',    shipDate:'2026-02-18', incoterms:'CFR', invoiceRef:'INV-2026-APM-0101', declRef:'MA-EXP-2026-0101', status:'Delivered',   creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00102', product:'Di-Ammonium Phosphate (DAP)',     hsCode:'3105.30', quantity:'1,800 MT', totalValue:290000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Tin Can Island Port',    vessel:'MV Maroc Express',    shipDate:'2026-02-20', incoterms:'FOB', invoiceRef:'INV-2026-APM-0102', declRef:'MA-EXP-2026-0102', status:'In Transit',  creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00103', product:'Granular Urea (46% N)',           hsCode:'3102.10', quantity:'3,000 MT', totalValue:510000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Agadir',      destinationPort:'Apapa Port, Lagos',      vessel:'MV Sahara Star',      shipDate:'2026-03-01', incoterms:'CIF', invoiceRef:'INV-2026-APM-0103', declRef:'MA-EXP-2026-0103', status:'Customs',     creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00104', product:'Phosphoric Acid (75% P₂O₅)',     hsCode:'2809.20', quantity:'950 MT',   totalValue:178000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Jorf Lasfar', destinationPort:'Onne Port',              vessel:'MV Chemtrans Atlas',  shipDate:'2026-03-05', incoterms:'CFR', invoiceRef:'INV-2026-APM-0104', declRef:'MA-EXP-2026-0104', status:'Submitted',   creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00105', product:'Mono-Ammonium Phosphate (MAP)',   hsCode:'3105.40', quantity:'2,100 MT', totalValue:375000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Apapa Port, Lagos',      vessel:'MV Northern Cape',    shipDate:'2026-03-12', incoterms:'FOB', invoiceRef:'INV-2026-APM-0105', declRef:'MA-EXP-2026-0105', status:'Released',    creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00106', product:'Sulphate of Potash (SOP)',        hsCode:'3104.20', quantity:'1,200 MT', totalValue:264000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Tin Can Island Port',    vessel:'MV Atlas Pioneer',    shipDate:'2026-03-18', incoterms:'CIF', invoiceRef:'INV-2026-APM-0106', declRef:'MA-EXP-2026-0106', status:'In Transit',  creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-E001',  product:'Rock Phosphate (35% P₂O₅)',      hsCode:'2510.20', quantity:'4,500 MT', totalValue:148500, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Jorf Lasfar', destinationPort:'Apapa Port, Lagos',      vessel:'MV Desert Wind',      shipDate:'2026-01-24', incoterms:'CFR', invoiceRef:'INV-2026-APM-E001', declRef:'MA-EXP-2026-E001', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.', errorType:'Document Discrepancy', errorDescription:'Certificate of Origin issuer code does not match Morocco Customs registry. Awaiting reissue from MAEX.' },
+  { ucr:'UCR-2026-MA-NG-E003',  product:'Ammonium Sulphate (21% N)',      hsCode:'3102.21', quantity:'1,600 MT', totalValue:214400, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Tin Can Island Port',    vessel:'MV Maroc Express',    shipDate:'2026-02-10', incoterms:'FOB', invoiceRef:'INV-2026-APM-E003', declRef:'MA-EXP-2026-E003', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.', errorType:'HS Code Mismatch', errorDescription:'HS code declared on Export Declaration (3102.29) does not match Commercial Invoice (3102.21). Nigeria Customs has flagged for reconciliation.' },
+  // Kenya exports (KRA, org4)
+  { ucr:'KE-2026-EXP-00101', product:'Fresh Cut Flowers (Mixed)',          hsCode:'0603.19', quantity:'18,400 kg',totalValue: 92000, currency:'USD', exporter:'Kenya Flower Council',   importer:'Aalsmeer Flower Auction',   fromCountry:'Kenya',   toCountry:'Netherlands', originPort:'JKIA Cargo, Nairobi',  destinationPort:'Amsterdam Schiphol',     vessel:'KQ Cargo 101',        shipDate:'2026-02-15', incoterms:'CPT', invoiceRef:'INV-2026-KFC-0101', declRef:'KE-EXP-2026-0101', status:'Delivered',   creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00102', product:'Green Tea — Orthodox (PEKOE)',       hsCode:'0902.10', quantity:'42,000 kg',totalValue:168000, currency:'USD', exporter:'Kenya Tea Development Agency',importer:'British Tea Holdings Ltd', fromCountry:'Kenya',  toCountry:'United Kingdom', originPort:'Port of Mombasa',     destinationPort:'Port of Felixstowe',     vessel:'MV Kwanza Bridge',    shipDate:'2026-02-22', incoterms:'CIF', invoiceRef:'INV-2026-KTDA-0102',declRef:'KE-EXP-2026-0102', status:'In Transit',  creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00103', product:'Washed Arabica Coffee (AA Grade)',   hsCode:'0901.11', quantity:'21,600 kg',totalValue:324000, currency:'USD', exporter:'Nairobi Coffee Exchange', importer:'Volcafe Speciality Coffee', fromCountry:'Kenya',  toCountry:'Germany',         originPort:'Port of Mombasa',     destinationPort:'Port of Hamburg',        vessel:'MV MSC Zanzibar',     shipDate:'2026-03-03', incoterms:'FOB', invoiceRef:'INV-2026-NCE-0103', declRef:'KE-EXP-2026-0103', status:'Customs',     creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00104', product:'Fresh Avocados — Hass',              hsCode:'0804.40', quantity:'38,000 kg',totalValue:114000, currency:'USD', exporter:'Kakuzi PLC',              importer:'EuroFresh Distributors B.V.',fromCountry:'Kenya', toCountry:'Netherlands',  originPort:'Port of Mombasa',     destinationPort:'Port of Rotterdam',      vessel:'MV African Spirit',   shipDate:'2026-03-08', incoterms:'CFR', invoiceRef:'INV-2026-KAK-0104', declRef:'KE-EXP-2026-0104', status:'Released',    creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00105', product:'Macadamia Nuts — Raw (In-Shell)',    hsCode:'0802.60', quantity:'14,500 kg',totalValue: 87000, currency:'USD', exporter:'Kenya Nut Company Ltd',   importer:'Olam International Ltd',    fromCountry:'Kenya',  toCountry:'South Africa',    originPort:'Port of Mombasa',     destinationPort:'Port of Durban',         vessel:'MV Safmarine Mafadi', shipDate:'2026-03-14', incoterms:'CIF', invoiceRef:'INV-2026-KNC-0105', declRef:'KE-EXP-2026-0105', status:'Submitted',   creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00106', product:'French Green Beans (Fine)',          hsCode:'0708.20', quantity:'22,000 kg',totalValue: 66000, currency:'USD', exporter:'Vegpro Group Ltd',        importer:'M&S Food Suppliers UK',     fromCountry:'Kenya',  toCountry:'United Kingdom',  originPort:'JKIA Cargo, Nairobi',  destinationPort:'Heathrow Air Cargo',     vessel:'KQ Cargo 107',        shipDate:'2026-03-19', incoterms:'DAP', invoiceRef:'INV-2026-VPG-0106', declRef:'KE-EXP-2026-0106', status:'In Transit',  creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+];
 
-      const manifest = JSON.parse(readFileSync(manifestPath, 'utf-8'));
-      const cId = `output-${ucr}`;
-      if (store.consignments.some(c => c.id === cId)) continue;
+const BETA_CONSIGNMENTS = [
+  // Nigeria → Morocco (PrimeFert/TradeLink, org5/org6)
+  { ucr:'UCR-2026-NG-MA-00201', product:'Sesame Seeds (White Hulled)',     hsCode:'1207.40', quantity:'1,200 MT', totalValue:156000, currency:'USD', exporter:'PrimeFert Nigeria Ltd',       importer:'Oleagineux du Maghreb S.A.',  fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Apapa Port, Lagos',      destinationPort:'Port of Casablanca', vessel:'MV Bight of Benin',   shipDate:'2026-02-25', incoterms:'FOB', invoiceRef:'INV-2026-PFN-0201', declRef:'NG-EXP-2026-0201', status:'Delivered',   creatorOrgId:'org5', creatorOrgName:'PrimeFert Nigeria Ltd' },
+  { ucr:'UCR-2026-NG-MA-00202', product:'Raw Cocoa Beans (Grade 1)',       hsCode:'1801.00', quantity:'850 MT',   totalValue:272000, currency:'USD', exporter:'TradeLink International Ltd', importer:'Barry Callebaut Maroc S.A.',  fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Tin Can Island Port',     destinationPort:'Port of Casablanca', vessel:'MV Ebony Star',       shipDate:'2026-03-04', incoterms:'CIF', invoiceRef:'INV-2026-TLI-0202', declRef:'NG-EXP-2026-0202', status:'In Transit',  creatorOrgId:'org6', creatorOrgName:'TradeLink International Ltd' },
+  { ucr:'UCR-2026-NG-MA-00203', product:'Palm Kernel Oil (PKO)',           hsCode:'1513.21', quantity:'600 MT',   totalValue: 78000, currency:'USD', exporter:'PrimeFert Nigeria Ltd',       importer:'Lesieur Cristal S.A.',        fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Onne Port',               destinationPort:'Port of Agadir',     vessel:'MV Atlantic Trader', shipDate:'2026-03-10', incoterms:'CFR', invoiceRef:'INV-2026-PFN-0203', declRef:'NG-EXP-2026-0203', status:'Customs',     creatorOrgId:'org5', creatorOrgName:'PrimeFert Nigeria Ltd' },
+  { ucr:'UCR-2026-NG-MA-00204', product:'Cashew Nuts RCN (W240 Grade)',    hsCode:'0801.31', quantity:'420 MT',   totalValue:189000, currency:'USD', exporter:'TradeLink International Ltd', importer:'Olam Maroc S.A.',             fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Apapa Port, Lagos',      destinationPort:'Port of Casablanca', vessel:'MV Bight of Benin',   shipDate:'2026-03-17', incoterms:'FOB', invoiceRef:'INV-2026-TLI-0204', declRef:'NG-EXP-2026-0204', status:'Submitted',   creatorOrgId:'org6', creatorOrgName:'TradeLink International Ltd' },
+  { ucr:'UCR-2026-NG-MA-E002',  product:'Soybean Meal (47% Protein)',      hsCode:'2304.00', quantity:'2,000 MT', totalValue:160000, currency:'USD', exporter:'PrimeFert Nigeria Ltd',       importer:'Coopagri Maroc',              fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Apapa Port, Lagos',      destinationPort:'Port of Casablanca', vessel:'MV African Spirit',  shipDate:'2026-02-12', incoterms:'CIF', invoiceRef:'INV-2026-PFN-E002', declRef:'NG-EXP-2026-E002', status:'Under Review', creatorOrgId:'org5', creatorOrgName:'PrimeFert Nigeria Ltd', errorType:'Phytosanitary Failure', errorDescription:'NAQS phytosanitary certificate expired 14 days before shipment date. Morocco Plant Protection Directorate has placed shipment on hold pending resubmission.' },
+];
 
-      const parts = ucr.split('-');
-      const fromCode = parts[2] || '';
-      const toCode = parts[3] || '';
-      const fromCountry = fromCode === 'NG' ? 'Nigeria' : 'Morocco';
-      const toCountry = toCode === 'MA' ? 'Morocco' : 'Nigeria';
+function docsForConsignment(m) {
+  const coIssuer = m.fromCountry === 'Kenya'   ? 'Kenya Export Promotion & Branding Agency'
+                 : m.fromCountry === 'Morocco'  ? 'MAEX — Morocco Agri-Export Bureau'
+                 : 'NEPC — Nigeria Export Promotion Council';
+  const edIssuer = m.fromCountry === 'Kenya'   ? 'Kenya Revenue Authority'
+                 : m.fromCountry === 'Morocco'  ? 'Morocco Customs'
+                 : 'Nigeria Customs';
+  return [
+    { name:'Commercial Invoice',    docType:'Commercial Invoice',   issuer:m.creatorOrgName, suffix:'INV' },
+    { name:'Packing List',          docType:'Packing List',          issuer:m.creatorOrgName, suffix:'PL'  },
+    { name:'Bill of Lading',        docType:'Bill of Lading',        issuer:'NordShip Line S.A.', suffix:'BL' },
+    { name:'Certificate of Origin', docType:'Certificate of Origin', issuer:coIssuer,         suffix:'CO'  },
+    { name:'Export Declaration',    docType:'Export Declaration',    issuer:edIssuer,          suffix:'ED'  },
+  ];
+}
 
-      const status = manifest.errorType ? 'Under Review' : SEED_STATUSES[seedStatusIdx++ % SEED_STATUSES.length];
+function seedConsignments() {
+  if (store.consignments.length > 0) return;
+  const list = NODE_ID === 'alpha' ? ALPHA_CONSIGNMENTS : BETA_CONSIGNMENTS;
 
-      const c = {
-        id: cId,
-        ucr: manifest.ucr,
-        commercialInvoiceNo: manifest.documents?.find(d => d.name.includes('Invoice'))?.reference || '',
-        exportDeclarationNo: manifest.documents?.find(d => d.name.includes('Export Declaration'))?.reference || '',
-        description: manifest.product,
-        product: manifest.product,
-        hsCode: manifest.hsCode,
-        quantity: manifest.quantity,
-        unit: manifest.unit,
-        totalValue: manifest.totalValue,
-        currency: manifest.currency,
-        exporter: manifest.exporter,
-        importer: manifest.importer,
-        fromCountry,
-        toCountry,
-        originPort: manifest.originPort,
-        destinationPort: manifest.destinationPort,
-        vessel: manifest.vessel,
-        shipDate: manifest.shipDate,
-        incoterms: manifest.incoterms,
-        errorType: manifest.errorType || null,
-        errorDescription: manifest.errorDescription || null,
-        creatorOrgId: store.orgs[0]?.id || 'system',
-        creatorOrgName: store.orgs[0]?.name || 'System',
-        createdAt: (manifest.shipDate || '2026-02-01') + 'T00:00:00.000Z',
-        documentCount: manifest.documents?.length || 0,
-        isOutputFolder: true,
-        status,
-      };
+  for (const m of list) {
+    const cId = `seed-${m.ucr}`;
+    const createdAt = m.shipDate + 'T08:00:00.000Z';
+    const docs = docsForConsignment(m);
+    const c = {
+      id: cId, ucr: m.ucr,
+      commercialInvoiceNo: m.invoiceRef, exportDeclarationNo: m.declRef,
+      description: m.product, product: m.product,
+      hsCode: m.hsCode, quantity: m.quantity, unit: '',
+      totalValue: m.totalValue, currency: m.currency,
+      exporter: m.exporter, importer: m.importer,
+      fromCountry: m.fromCountry, toCountry: m.toCountry,
+      originPort: m.originPort, destinationPort: m.destinationPort,
+      vessel: m.vessel, shipDate: m.shipDate, incoterms: m.incoterms,
+      errorType: m.errorType || null, errorDescription: m.errorDescription || null,
+      creatorOrgId: m.creatorOrgId, creatorOrgName: m.creatorOrgName,
+      createdAt, documentCount: docs.length, status: m.status,
+    };
+    store.consignments.push(c);
+    store.permissions[cId] = { [m.creatorOrgId]: 'owner' };
+    store.financePermissions[cId] = { [m.creatorOrgId]: 'owner' };
+    seedLog('document', 'Consignment Anchored', m.exporter,
+      `Digital twin created: ${m.ucr} — ${m.product}. Anchored on the ledger.`, createdAt);
 
-      store.consignments.push(c);
-      store.permissions[cId] = {};
-      store.orgs.forEach((org, i) => {
-        store.permissions[cId][org.id] = i === 0 ? 'owner' : 'viewer';
+    for (const d of docs) {
+      const ref = d.suffix === 'INV' ? m.invoiceRef
+                : d.suffix === 'ED'  ? m.declRef
+                : `${d.suffix}-${m.ucr.split('-').pop()}`;
+      store.documents.push({
+        id: `${cId}-${d.suffix}`, consignmentId: cId,
+        title: d.name, docType: d.docType,
+        filename: `${ref}.pdf`, fileSize: 0,
+        hash: genHash(),
+        creatorOrgId: m.creatorOrgId, creatorOrgName: m.creatorOrgName,
+        timestamp: createdAt, reference: ref,
+        format: 'PDF', issuer: d.issuer,
       });
-
-      for (const docInfo of (manifest.documents || [])) {
-        const docId = `${cId}-doc-${docInfo.file}`;
-        if (store.documents.some(d => d.id === docId)) continue;
-        const docPath = path.join(OUTPUT_DIR, ucr, docInfo.file);
-        let fileSize = 0;
-        try { fileSize = existsSync(docPath) ? statSync(docPath).size : 0; } catch {}
-
-        store.documents.push({
-          id: docId,
-          consignmentId: cId,
-          title: docInfo.name,
-          docType: docTypeFromName(docInfo.name),
-          filename: docInfo.file,
-          fileSize,
-          hash: genHash(),
-          creatorOrgId: store.orgs[0]?.id || 'system',
-          creatorOrgName: store.orgs[0]?.name || 'System',
-          timestamp: (manifest.shipDate || '2026-02-01') + 'T00:00:00.000Z',
-          reference: docInfo.reference,
-          format: docInfo.format,
-          isOutputFolder: true,
-          outputUcr: ucr,
-          outputFile: docInfo.file,
-        });
-      }
+      seedLog('document', 'Document Anchored', m.exporter,
+        `"${d.name}" anchored to ${m.ucr}. Issued by ${d.issuer}.`, createdAt);
     }
-    console.log(`[${NODE_NAME}] Seeded ${store.consignments.filter(c => c.isOutputFolder).length} consignments from output folder`);
-  } catch (e) {
-    console.error(`[${NODE_NAME}] Failed to seed output consignments:`, e.message);
   }
+  saveTangleLog();
+  console.log(`[${NODE_NAME}] Seeded ${store.consignments.length} consignments`);
 }
 
 const app = express();
@@ -223,17 +238,35 @@ app.put('/api/orgs/:id', (req, res) => {
 });
 
 // DID registration
+function getAttestingAuthority(org) {
+  if (org.role?.includes('Morocco'))  return 'Morocco Customs';
+  if (org.role?.includes('Nigeria'))  return 'Nigeria Customs';
+  if (org.role?.includes('Kenya'))    return 'Kenya Revenue Authority';
+  return 'National Registry';
+}
+
 app.post('/api/orgs/:id/register', (req, res) => {
   const v = validateCredential(req.body.regNumber);
   if (!v.valid) return res.status(400).json({ error: v.reason, failStep: v.failStep });
   const did = genDID();
-  store.orgs = store.orgs.map(o => o.id === req.params.id ? { ...o, regNumber: v.formatted, did, verified: true } : o);
+  const org0 = store.orgs.find(o => o.id === req.params.id);
+  if (!org0) return res.status(404).json({ error: 'Org not found' });
+  const attestedBy = getAttestingAuthority(org0);
+  store.orgs = store.orgs.map(o => o.id === req.params.id ? { ...o, regNumber: v.formatted, did, verified: true, attestedBy } : o);
   const org = store.orgs.find(o => o.id === req.params.id);
-  addLog('identity', 'DID Issued', org.name, `DID created for ${org.name} (${v.type}: ${v.formatted}). Anchored on IOTA Tangle.`, { did });
+  addLog('identity', 'DID Issued', org.name, `DID created for ${org.name} (${v.type}: ${v.formatted}). Attested by ${attestedBy}. Anchored on the ledger.`, { did, attestedBy });
   syncOrgsToPeer();
   res.json({ ...org, password: undefined });
 });
-app.post('/api/orgs/validate-credential', (req, res) => res.json(validateCredential(req.body.regNumber)));
+app.post('/api/orgs/validate-credential', (req, res) => {
+  const v = validateCredential(req.body.regNumber);
+  // attach attestedBy based on orgId if provided
+  if (v.valid && req.body.orgId) {
+    const org = store.orgs.find(o => o.id === req.body.orgId);
+    if (org) v.attestedBy = getAttestingAuthority(org);
+  }
+  res.json(v);
+});
 
 // Consignments
 app.get('/api/consignments', (req, res) => {
@@ -250,7 +283,7 @@ app.post('/api/consignments', (req, res) => {
   const c = { id: genId(), ucr, commercialInvoiceNo: commercialInvoiceNo || '', exportDeclarationNo: exportDeclarationNo || '', description: description || '', creatorOrgId, creatorOrgName: org.name, createdAt: now(), documentCount: 0, status: 'Draft' };
   store.consignments.push(c);
   store.permissions[c.id] = { [creatorOrgId]: 'owner' };
-  addLog('document', 'Consignment Created', org.name, `Digital twin created: ${ucr}. Anchored on Tangle.`);
+  addLog('document', 'Consignment Created', org.name, `Digital twin created: ${ucr}. Anchored on the ledger.`);
   res.json(c);
 });
 
@@ -282,21 +315,14 @@ app.post('/api/documents', upload.single('file'), (req, res) => {
   const doc = { id: genId(), consignmentId, title, docType: docType || 'General', filename, fileBase64, fileSize, hash: genHash(), creatorOrgId, creatorOrgName: org.name, timestamp: now() };
   store.documents.push(doc);
   consignment.documentCount = store.documents.filter(d => d.consignmentId === consignmentId).length;
-  addLog('document', 'Document Anchored', org.name, `"${title}" anchored to ${consignment.ucr}. Hash on Tangle.`);
+  addLog('document', 'Document Anchored', org.name, `"${title}" anchored to ${consignment.ucr}. Anchored on the ledger.`);
   res.json({ ...doc, fileBase64: undefined });
 });
 
 app.get('/api/documents/:id/download', (req, res) => {
   const doc = store.documents.find(d => d.id === req.params.id);
   if (!doc) return res.status(404).json({ error: 'Not found' });
-  if (doc.isOutputFolder && OUTPUT_DIR) {
-    const filePath = path.join(OUTPUT_DIR, doc.outputUcr, doc.outputFile);
-    if (existsSync(filePath)) {
-      res.setHeader('Content-Disposition', `inline; filename="${doc.filename}"`);
-      return res.sendFile(filePath);
-    }
-  }
-  if (!doc.fileBase64) return res.status(404).json({ error: 'File not found' });
+  if (!doc.fileBase64) return res.status(404).json({ error: 'File not stored — upload a real file to enable download' });
   res.setHeader('Content-Disposition', `attachment; filename="${doc.filename}"`);
   res.send(Buffer.from(doc.fileBase64, 'base64'));
 });
@@ -304,10 +330,6 @@ app.get('/api/documents/:id/download', (req, res) => {
 app.get('/api/documents/:id/xml', (req, res) => {
   const doc = store.documents.find(d => d.id === req.params.id);
   if (!doc) return res.status(404).json({ error: 'Not found' });
-  if (doc.isOutputFolder && OUTPUT_DIR && doc.filename?.endsWith('.xml')) {
-    const filePath = path.join(OUTPUT_DIR, doc.outputUcr, doc.outputFile);
-    if (existsSync(filePath)) return res.json({ content: readFileSync(filePath, 'utf-8'), docType: doc.docType });
-  }
   if (doc.fileBase64 && doc.filename?.endsWith('.xml')) {
     return res.json({ content: Buffer.from(doc.fileBase64, 'base64').toString('utf-8'), docType: doc.docType });
   }
@@ -347,6 +369,170 @@ app.post('/api/permissions/revoke', (req, res) => {
   res.json({ success: true });
 });
 
+// ── Finance helpers ──────────────────────────────────────────────────────────
+function hasFinanceAccess(consignmentId, orgId) {
+  const fp = store.financePermissions[consignmentId] || {};
+  return fp[orgId] === 'owner' || fp[orgId] === 'viewer';
+}
+function financeAccessibleIds(orgId) {
+  return Object.keys(store.financePermissions).filter(cId => hasFinanceAccess(cId, orgId));
+}
+
+// Finance Permissions
+app.get('/api/finance-permissions/:consignmentId', (req, res) =>
+  res.json(store.financePermissions[req.params.consignmentId] || {}));
+app.post('/api/finance-permissions/share', (req, res) => {
+  const { consignmentId, targetOrgId, role, sharerOrgName, targetOrgName } = req.body;
+  if (!store.financePermissions[consignmentId]) store.financePermissions[consignmentId] = {};
+  store.financePermissions[consignmentId][targetOrgId] = role || 'viewer';
+  const c = store.consignments.find(c => c.id === consignmentId);
+  addLog('finance', 'Finance Access Granted', sharerOrgName,
+    `Finance data for ${c?.ucr} shared with ${targetOrgName}.`);
+  res.json({ success: true });
+});
+
+// Payments
+app.get('/api/payments', (req, res) => {
+  const { orgId, consignmentId } = req.query;
+  if (consignmentId) {
+    if (!hasFinanceAccess(consignmentId, orgId)) return res.json([]);
+    return res.json(store.payments.filter(p => p.consignmentId === consignmentId));
+  }
+  const ids = financeAccessibleIds(orgId);
+  res.json(store.payments.filter(p => ids.includes(p.consignmentId)));
+});
+app.post('/api/payments', (req, res) => {
+  const { consignmentId, invoiceRef, amount, currency, dueDate, paymentMethod, payorOrgId, payeeOrgId, notes, creatorOrgId } = req.body;
+  const fp = store.financePermissions[consignmentId] || {};
+  if (fp[creatorOrgId] !== 'owner') return res.status(403).json({ error: 'Finance owner access required' });
+  const c = store.consignments.find(c => c.id === consignmentId);
+  const payment = { id: genId(), consignmentId, ucr: c?.ucr || '', invoiceRef, amount: Number(amount), currency,
+    dueDate, status: 'Unpaid', paidAmount: 0, paymentMethod: paymentMethod || 'Bank Transfer',
+    payorOrgId, payeeOrgId, creatorOrgId, notes: notes || '', createdAt: now(), updatedAt: now() };
+  store.payments.push(payment);
+  const org = store.orgs.find(o => o.id === creatorOrgId);
+  addLog('payment', 'Payment Record Created', org?.name || creatorOrgId,
+    `Payment of ${currency} ${Number(amount).toLocaleString()} created for ${c?.ucr}. Invoice: ${invoiceRef}. Due: ${dueDate}.`);
+  res.json(payment);
+});
+app.put('/api/payments/:id/status', (req, res) => {
+  const { status, paidAmount, orgId, orgName } = req.body;
+  const payment = store.payments.find(p => p.id === req.params.id);
+  if (!payment) return res.status(404).json({ error: 'Not found' });
+  const prev = payment.status;
+  payment.status = status;
+  if (paidAmount !== undefined) payment.paidAmount = Number(paidAmount);
+  payment.updatedAt = now();
+  addLog('payment', `Payment ${status}`, orgName || orgId,
+    `${payment.ucr} (${payment.invoiceRef}): ${prev} → ${status}. Confirmed: ${payment.currency} ${payment.paidAmount.toLocaleString()}.`);
+  res.json(payment);
+});
+
+// Letter of Credit
+app.get('/api/lc', (req, res) => {
+  const { orgId, consignmentId } = req.query;
+  if (consignmentId) {
+    if (!hasFinanceAccess(consignmentId, orgId)) return res.json([]);
+    return res.json(store.letterOfCredits.filter(l => l.consignmentId === consignmentId));
+  }
+  const ids = financeAccessibleIds(orgId);
+  res.json(store.letterOfCredits.filter(l => ids.includes(l.consignmentId)));
+});
+app.post('/api/lc', (req, res) => {
+  const { consignmentId, issuingBank, advisingBank, applicant, amount, currency, expiryDate, creatorOrgId } = req.body;
+  const fp = store.financePermissions[consignmentId] || {};
+  if (fp[creatorOrgId] !== 'owner') return res.status(403).json({ error: 'Finance owner access required' });
+  const c = store.consignments.find(c => c.id === consignmentId);
+  const docs = store.documents.filter(d => d.consignmentId === consignmentId);
+  const lcNumber = `LC-${new Date().getFullYear()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+  const lc = { id: genId(), consignmentId, ucr: c?.ucr || '', lcNumber, issuingBank, advisingBank,
+    beneficiary: c?.exporter || '', applicant: applicant || c?.importer || '',
+    amount: Number(amount), currency, expiryDate, status: 'Draft',
+    documentCompliance: docs.map(d => ({ docType: d.title, required: true, submitted: true, compliant: null })),
+    creatorOrgId, createdAt: now() };
+  store.letterOfCredits.push(lc);
+  const org = store.orgs.find(o => o.id === creatorOrgId);
+  addLog('finance', 'LC Created', org?.name || creatorOrgId,
+    `LC ${lcNumber} created for ${c?.ucr}. Amount: ${currency} ${Number(amount).toLocaleString()}. Bank: ${issuingBank}.`);
+  res.json(lc);
+});
+app.put('/api/lc/:id/status', (req, res) => {
+  const { status, orgId, orgName, docType, compliant } = req.body;
+  const lc = store.letterOfCredits.find(l => l.id === req.params.id);
+  if (!lc) return res.status(404).json({ error: 'Not found' });
+  if (docType !== undefined) {
+    const doc = lc.documentCompliance.find(d => d.docType === docType);
+    if (doc) doc.compliant = compliant;
+    return res.json(lc);
+  }
+  const prev = lc.status;
+  lc.status = status;
+  addLog('finance', `LC ${status}`, orgName || orgId,
+    `LC ${lc.lcNumber} for ${lc.ucr}: ${prev} → ${status}.`);
+  res.json(lc);
+});
+
+// Smart Contracts
+app.get('/api/contracts', (req, res) => {
+  const { orgId, consignmentId } = req.query;
+  if (consignmentId) {
+    if (!hasFinanceAccess(consignmentId, orgId)) return res.json([]);
+    return res.json(store.smartContracts.filter(c => c.consignmentId === consignmentId));
+  }
+  const ids = financeAccessibleIds(orgId);
+  res.json(store.smartContracts.filter(c => ids.includes(c.consignmentId)));
+});
+app.post('/api/contracts', (req, res) => {
+  const { consignmentId, amount, currency, conditions, autoRelease, payorOrgId, payeeOrgId, creatorOrgId } = req.body;
+  const fp = store.financePermissions[consignmentId] || {};
+  if (fp[creatorOrgId] !== 'owner') return res.status(403).json({ error: 'Finance owner access required' });
+  const c = store.consignments.find(c => c.id === consignmentId);
+  const contractHash = genHash();
+  const contractRef = `SC-${new Date().getFullYear()}-${crypto.randomBytes(3).toString('hex').toUpperCase()}`;
+  const contract = { id: genId(), consignmentId, ucr: c?.ucr || '', contractRef, contractHash,
+    payorOrgId, payeeOrgId, amount: Number(amount), currency,
+    conditions: (conditions || []).map((cond, i) => ({ id: `cond-${i}`, description: cond.description, docType: cond.docType || null, met: false, metAt: null })),
+    status: 'Active', autoRelease: autoRelease !== false, creatorOrgId, createdAt: now(), settledAt: null };
+  store.smartContracts.push(contract);
+  const org = store.orgs.find(o => o.id === creatorOrgId);
+  addLog('finance', 'Smart Contract Deployed', org?.name || creatorOrgId,
+    `Contract ${contractRef} deployed for ${c?.ucr}. ${contract.conditions.length} release conditions. Hash: ${contractHash}.`);
+  res.json(contract);
+});
+app.put('/api/contracts/:id/condition/:condId', (req, res) => {
+  const { orgId, orgName } = req.body;
+  const contract = store.smartContracts.find(c => c.id === req.params.id);
+  if (!contract) return res.status(404).json({ error: 'Not found' });
+  const cond = contract.conditions.find(c => c.id === req.params.condId);
+  if (!cond) return res.status(404).json({ error: 'Condition not found' });
+  cond.met = true; cond.metAt = now();
+  addLog('finance', 'Condition Verified', orgName || orgId,
+    `"${cond.description}" verified on contract ${contract.contractRef} (${contract.ucr}).`);
+  const allMet = contract.conditions.every(c => c.met);
+  if (allMet && contract.status === 'Active') {
+    contract.status = 'Conditions Met';
+    addLog('finance', 'All Conditions Met', orgName || orgId,
+      `All ${contract.conditions.length} conditions satisfied on ${contract.contractRef}. ${contract.autoRelease ? 'Auto-releasing...' : 'Awaiting release.'}`);
+    if (contract.autoRelease) {
+      contract.status = 'Released'; contract.settledAt = now();
+      addLog('finance', 'Payment Auto-Released', orgName || orgId,
+        `Contract ${contract.contractRef} executed. ${contract.currency} ${contract.amount.toLocaleString()} released. Hash: ${contract.contractHash}.`);
+    }
+  }
+  res.json(contract);
+});
+app.put('/api/contracts/:id/status', (req, res) => {
+  const { status, orgId, orgName } = req.body;
+  const contract = store.smartContracts.find(c => c.id === req.params.id);
+  if (!contract) return res.status(404).json({ error: 'Not found' });
+  const prev = contract.status;
+  contract.status = status;
+  if (status === 'Settled' || status === 'Released') contract.settledAt = now();
+  addLog('finance', `Contract ${status}`, orgName || orgId,
+    `Contract ${contract.contractRef} (${contract.ucr}): ${prev} → ${status}. Hash: ${contract.contractHash}.`);
+  res.json(contract);
+});
+
 // Tangle
 app.get('/api/tangle', (req, res) => res.json(store.tangleLog));
 app.get('/api/peer/orgs', (req, res) => {
@@ -357,11 +543,12 @@ app.get('/api/peer/orgs', (req, res) => {
 });
 app.get('*', (req, res) => { const f = path.join(publicDir, 'index.html'); existsSync(f) ? res.sendFile(f) : res.status(404).json({ error: 'Build first' }); });
 
-// ── WebSocket ──
-const wss = new WebSocketServer({ port: WS_PORT });
+// ── WebSocket (attached to HTTP server — single port, works on Railway) ──
+const httpServer = http.createServer(app);
+const wss = new WebSocketServer({ server: httpServer });
 const clients = new Set();
 wss.on('connection', (ws, req) => {
-  const url = new URL(req.url, `http://localhost:${WS_PORT}`);
+  const url = new URL(req.url, `http://localhost:${PORT}`);
   if (url.pathname === '/peer') { handlePeerIn(ws); } else { clients.add(ws); ws.on('close', () => clients.delete(ws)); ws.send(JSON.stringify({ type: 'NODE_INFO', nodeId: NODE_ID, nodeName: NODE_NAME })); }
 });
 function broadcastToClients(msg) { const d = JSON.stringify(msg); clients.forEach(c => { if (c.readyState === WebSocket.OPEN) c.send(d); }); }
@@ -404,6 +591,116 @@ function handlePeerMsg(m) {
 }
 function syncOrgsToPeer() { if (peerWs?.readyState === WebSocket.OPEN) peerWs.send(JSON.stringify({ type: 'ORG_UPDATE', orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) })); }
 
-// Seed output folder data then start
-seedOutputConsignments();
-app.listen(PORT, () => { console.log(`[${NODE_NAME}] HTTP on http://localhost:${PORT} | WS on ws://localhost:${WS_PORT}`); });
+function seedFinanceData() {
+  if (NODE_ID !== 'alpha') return;
+  // Only seed once
+  if (store.payments.length > 0 || store.letterOfCredits.length > 0 || store.smartContracts.length > 0) return;
+
+  // Pick two MA-NG consignments to showcase finance
+  const c1 = store.consignments.find(c => c.ucr === 'UCR-2026-MA-NG-00101');
+  const c2 = store.consignments.find(c => c.ucr === 'UCR-2026-MA-NG-00102');
+  if (!c1 || !c2) return;
+
+  const atlas = 'org1';
+  const attijari = 'org7';
+  const accessBank = 'org8';
+  const ts1 = '2026-02-18T09:00:00.000Z';
+  const ts2 = '2026-02-20T11:30:00.000Z';
+
+  // ── Finance permissions: grant banks viewer access ──
+  store.financePermissions[c1.id][attijari]  = 'viewer';
+  store.financePermissions[c1.id][accessBank] = 'viewer';
+  store.financePermissions[c2.id][attijari]  = 'viewer';
+  store.financePermissions[c2.id][accessBank] = 'viewer';
+
+  // ── Payments ──
+  const pay1 = {
+    id: genId(), consignmentId: c1.id, ucr: c1.ucr,
+    invoiceRef: 'INV-APM-2026-0101', amount: 340000, currency: 'USD',
+    dueDate: '2026-04-30', status: 'Partially Paid', paidAmount: 120000,
+    paymentMethod: 'Letter of Credit',
+    payorOrgId: 'org5', payeeOrgId: atlas, creatorOrgId: atlas,
+    notes: 'First instalment received. Balance due on BL presentation.', createdAt: ts1, updatedAt: ts1,
+  };
+  const pay2 = {
+    id: genId(), consignmentId: c2.id, ucr: c2.ucr,
+    invoiceRef: 'INV-APM-2026-0102', amount: 288000, currency: 'EUR',
+    dueDate: '2026-03-28', status: 'Overdue', paidAmount: 0,
+    paymentMethod: 'Open Account',
+    payorOrgId: 'org6', payeeOrgId: atlas, creatorOrgId: atlas,
+    notes: 'Payment overdue — buyer requested 15-day extension pending vessel arrival.', createdAt: ts2, updatedAt: ts2,
+  };
+  store.payments.push(pay1, pay2);
+
+  // ── Letters of Credit ──
+  const docs1 = store.documents.filter(d => d.consignmentId === c1.id);
+  const docs2 = store.documents.filter(d => d.consignmentId === c2.id);
+  const lc1 = {
+    id: genId(), consignmentId: c1.id, ucr: c1.ucr,
+    lcNumber: 'LC-2026-ATW-00101',
+    issuingBank: 'Bank 1', advisingBank: 'Bank 2',
+    beneficiary: 'AtlasPhosphate S.A.', applicant: 'PrimeFert Nigeria Ltd',
+    amount: 340000, currency: 'USD', expiryDate: '2026-07-31',
+    status: 'Confirmed',
+    documentCompliance: docs1.map((d, i) => ({ docType: d.title, required: true, submitted: true, compliant: i < 4 ? true : null })),
+    creatorOrgId: atlas, createdAt: ts1,
+  };
+  const lc2 = {
+    id: genId(), consignmentId: c2.id, ucr: c2.ucr,
+    lcNumber: 'LC-2026-ATW-00102',
+    issuingBank: 'Bank 1', advisingBank: 'Bank 2',
+    beneficiary: 'AtlasPhosphate S.A.', applicant: 'TradeLink International Ltd',
+    amount: 288000, currency: 'EUR', expiryDate: '2026-06-30',
+    status: 'Issued',
+    documentCompliance: docs2.map(d => ({ docType: d.title, required: true, submitted: false, compliant: null })),
+    creatorOrgId: atlas, createdAt: ts2,
+  };
+  store.letterOfCredits.push(lc1, lc2);
+
+  // ── Smart Contracts ──
+  const hash1 = genHash();
+  const hash2 = genHash();
+  const sc1 = {
+    id: genId(), consignmentId: c1.id, ucr: c1.ucr,
+    contractRef: 'SC-2026-ATW-0101', contractHash: hash1,
+    payorOrgId: 'org5', payeeOrgId: atlas,
+    amount: 340000, currency: 'USD',
+    conditions: [
+      { id: 'cond-0', description: 'Bill of Lading (eBL) verified and presented', docType: 'Bill of Lading (eBL)', met: true,  metAt: '2026-03-01T08:00:00.000Z' },
+      { id: 'cond-1', description: 'Certificate of Origin (AfCFTA) confirmed',    docType: 'Certificate of Origin (AfCFTA)', met: true,  metAt: '2026-03-01T09:15:00.000Z' },
+      { id: 'cond-2', description: 'Commercial Invoice approved by advising bank', docType: 'Commercial Invoice', met: false, metAt: null },
+    ],
+    status: 'Active', autoRelease: true, creatorOrgId: atlas,
+    createdAt: ts1, settledAt: null,
+  };
+  const sc2 = {
+    id: genId(), consignmentId: c2.id, ucr: c2.ucr,
+    contractRef: 'SC-2026-ATW-0102', contractHash: hash2,
+    payorOrgId: 'org6', payeeOrgId: atlas,
+    amount: 288000, currency: 'EUR',
+    conditions: [
+      { id: 'cond-0', description: 'Goods delivered to Apapa Port — vessel confirmed', docType: 'Bill of Lading (eBL)', met: false, metAt: null },
+      { id: 'cond-1', description: 'Export Declaration cleared by Nigeria Customs',     docType: 'Export Declaration',          met: false, metAt: null },
+    ],
+    status: 'Active', autoRelease: true, creatorOrgId: atlas,
+    createdAt: ts2, settledAt: null,
+  };
+  store.smartContracts.push(sc1, sc2);
+
+  // Seed tangle entries for all seeded finance records
+  const seedTs = (t, ts) => { if (!store.tangleLog.some(e => e.details && e.details.includes(t))) store.tangleLog.push({ id: genId(), timestamp: ts, hash: genHash(), type: 'finance', action: 'Finance Seeded', actor: 'AtlasPhosphate S.A.', details: t }); };
+  seedTs(`Payment INV-APM-2026-0101 created for ${c1.ucr}. USD 340,000. Partially Paid.`, ts1);
+  seedTs(`Payment INV-APM-2026-0102 created for ${c2.ucr}. EUR 288,000. Overdue.`, ts2);
+  seedTs(`LC LC-2026-ATW-00101 created for ${c1.ucr}. Amount: USD 340,000. Status: Confirmed.`, ts1);
+  seedTs(`LC LC-2026-ATW-00102 created for ${c2.ucr}. Amount: EUR 288,000. Status: Issued.`, ts2);
+  seedTs(`Contract SC-2026-ATW-0101 deployed for ${c1.ucr}. 3 release conditions. Hash: ${hash1}.`, ts1);
+  seedTs(`Contract SC-2026-ATW-0102 deployed for ${c2.ucr}. 2 release conditions. Hash: ${hash2}.`, ts2);
+  saveTangleLog();
+
+  console.log(`[${NODE_NAME}] Seeded finance data: 2 payments, 2 LCs, 2 smart contracts`);
+}
+
+// Seed demo data then start
+seedConsignments();
+seedFinanceData();
+httpServer.listen(PORT, () => { console.log(`[${NODE_NAME}] Listening on port ${PORT} (HTTP + WS on same port)`); });

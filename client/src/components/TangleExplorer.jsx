@@ -35,7 +35,7 @@ export default function TangleExplorer() {
     <div className="stack">
       <div>
         <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>Analytics</h2>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Immutable IOTA Tangle ledger — all events are cryptographically anchored</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Immutable ledger ledger — all events are cryptographically anchored</div>
       </div>
 
       {/* Stat cards */}

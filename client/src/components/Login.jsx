@@ -1,6 +1,19 @@
 import React, { useState } from 'react';
 import { useNode } from '../context/NodeContext';
-import { Globe } from 'lucide-react';
+
+const ALPHA_CREDS = [
+  { role: 'Exporter · Morocco',          username: 'atlas',      label: 'AtlasPhosphate S.A.' },
+  { role: 'Customs Authority · Morocco', username: 'macustoms',  label: 'Morocco Customs' },
+  { role: 'Customs Authority · Nigeria', username: 'ngcustoms',  label: 'Nigeria Customs' },
+  { role: 'Customs Authority · Kenya',   username: 'kra',        label: 'Kenya Revenue Authority' },
+  { role: 'Financier',                   username: 'financier1', label: 'Financier 1' },
+  { role: 'Financier',                   username: 'financier2', label: 'Financier 2' },
+];
+
+const BETA_CREDS = [
+  { role: 'Importer · Nigeria',       username: 'primefert',  label: 'PrimeFert Nigeria Ltd' },
+  { role: 'Importer · Nigeria',       username: 'tradelink',  label: 'TradeLink International Ltd' },
+];
 
 export default function Login() {
   const { login } = useNode();
@@ -9,6 +22,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const port = window.location.port;
+  const isBeta = port === '4001';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -22,19 +36,27 @@ export default function Login() {
     setLoading(false);
   };
 
-  const handleQuick = (u) => { setUsername(u); setPassword('demo'); };
+  const handleQuick = (u) => {
+    setUsername(u);
+    setPassword('demo');
+  };
+
+  const creds = isBeta ? BETA_CREDS : ALPHA_CREDS;
 
   return (
     <div className="login-pg">
       <div className="login-box">
-        <div className="login-brand">
-          <div className="login-logo"><Globe /></div>
-          <h1>ADAPT</h1>
+        <div className="login-brand" style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center' }}>
+          <img src="/adapt-logo.png" alt="ADAPT" className="login-logo-img" style={{ height: 36, width: 36, objectFit: 'contain' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25, textAlign: 'left' }}>
+            <span style={{ fontWeight: 700, fontSize: 20, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>ADAPT</span>
+            
+          </div>
         </div>
-        <p className="sub">Global Trade Operations — Sign in to your organisation</p>
+        <p className="sub" style={{ marginTop: 10 }}>Trade & Logistics Platform — Sign in to your organisation</p>
 
         <div className="node-badge">
-          Connected to: <strong>{port === '4001' ? 'Node Beta (Importer)' : 'Node Alpha (Exporter / Customs)'}</strong>
+          Node: <strong>{isBeta ? 'Beta — Importers / Nigeria' : 'Alpha — Exporters & Customs'}</strong>
         </div>
 
         {error && <div className="err">{error}</div>}
@@ -55,23 +77,13 @@ export default function Login() {
 
         <div className="demo-creds">
           <div className="dc-title">Quick Sign-In</div>
-          {port === '4001' ? (
-            <div className="cred-row" style={{ cursor: 'pointer' }} onClick={() => handleQuick('importer')}>
-              <span className="role">Importer</span>
-              <span>importer / demo</span>
+          {creds.map(c => (
+            <div key={c.username} className="cred-row" style={{ cursor: 'pointer', padding: '5px 0' }} onClick={() => handleQuick(c.username)}>
+              <span className="role">{c.role}</span>
+              <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 11.5 }}>{c.label}</span>
+              <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 10.5 }}>{c.username} / demo</span>
             </div>
-          ) : (
-            <>
-              <div className="cred-row" style={{ cursor: 'pointer' }} onClick={() => handleQuick('exporter')}>
-                <span className="role">Exporter</span>
-                <span>exporter / demo</span>
-              </div>
-              <div className="cred-row" style={{ cursor: 'pointer' }} onClick={() => handleQuick('customs')}>
-                <span className="role">Customs</span>
-                <span>customs / demo</span>
-              </div>
-            </>
-          )}
+          ))}
         </div>
       </div>
     </div>

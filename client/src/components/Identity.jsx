@@ -20,7 +20,7 @@ export default function Identity() {
     'Checking registration number format...',
     'Querying national business registry...',
     'Verifying licence status (active / expired / suspended)...',
-    'Generating DID on IOTA Tangle...',
+    'Generating DID on the ledger...',
     'Issuing Verifiable Credential & anchoring hash...',
   ];
 
@@ -70,7 +70,7 @@ export default function Identity() {
     <div className="stack">
       <div>
         <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>Digital Identity</h2>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>W3C DIDs anchored on the IOTA Tangle — verifiable credentials for each organisation</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>W3C DIDs anchored on ledger — verifiable credentials for each organisation</div>
       </div>
 
       {/* Org cards */}
@@ -217,7 +217,7 @@ export default function Identity() {
                 </div>
                 {stage === 'passed' && (
                   <div style={{ padding: 12, background: '#f0fdf4', borderRadius: 10, border: '1px solid #bbf7d0', fontSize: 12.5, color: '#166534', display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <CheckCircle style={{ width: 16, height: 16, flexShrink: 0 }} /> Identity verified. DID issued and anchored on IOTA Tangle.
+                    <CheckCircle style={{ width: 16, height: 16, flexShrink: 0 }} /> Identity verified. DID issued and anchored on ledger.
                   </div>
                 )}
                 {stage === 'failed' && (

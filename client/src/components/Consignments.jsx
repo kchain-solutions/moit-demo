@@ -5,22 +5,27 @@ import XmlViewer from './XmlViewer';
 import { Plus, Upload, Send, Download, FileText, Lock, X, AlertTriangle, ChevronLeft, Eye, Code2 } from 'lucide-react';
 
 function fmtValue(val, currency = 'USD') {
-  if (!val) return '—';
+  if (!val || isNaN(Number(val))) return '—';
   const n = Number(val);
+  if (currency === 'KES') {
+    if (n >= 1_000_000) return `KES ${(n / 1_000_000).toFixed(2)}M`;
+    if (n >= 1_000)     return `KES ${(n / 1_000).toFixed(1)}K`;
+    return `KES ${n.toLocaleString()}`;
+  }
   const sym = currency === 'EUR' ? '€' : '$';
-  if (n >= 1000000) return `${sym}${(n / 1000000).toFixed(2)}M`;
-  if (n >= 1000) return `${sym}${(n / 1000).toFixed(0)}K`;
+  if (n >= 1_000_000) return `${sym}${(n / 1_000_000).toFixed(2)}M`;
+  if (n >= 1_000)     return `${sym}${(n / 1_000).toFixed(0)}K`;
   return `${sym}${n.toLocaleString()}`;
 }
 
 function StatusPill({ status }) {
   const map = {
-    'In Transit': 'pill pill-dot pill-transit',
-    'Customs': 'pill pill-dot pill-customs',
-    'Delivered': 'pill pill-dot pill-delivered',
-    'Submitted': 'pill pill-dot pill-submitted',
-    'Draft': 'pill pill-dot pill-draft',
-    'Released': 'pill pill-dot pill-released',
+    'In Transit':   'pill pill-dot pill-active',
+    'Customs':      'pill pill-dot pill-active',
+    'Submitted':    'pill pill-dot pill-active',
+    'Released':     'pill pill-dot pill-active',
+    'Delivered':    'pill pill-dot pill-delivered',
+    'Draft':        'pill pill-dot pill-draft',
     'Under Review': 'pill pill-dot pill-review',
   };
   return <span className={map[status] || 'pill pill-dot pill-draft'}>{status || 'Draft'}</span>;
@@ -31,26 +36,29 @@ function DocsPill({ count, total }) {
   return <span className={cls}>{count}/{total}</span>;
 }
 
+const DOC_COLORS = {
+  'Bill of Lading':        { bg: '#fff4eb', color: '#FF7200' },
+  'Insurance Certificate': { bg: '#fff4eb', color: '#FF7200' },
+  'Certificate of Origin': { bg: '#f0fdf4', color: '#16a34a' },
+  'Commercial Invoice':    { bg: '#e8ecf4', color: '#11224E' },
+  'Packing List':          { bg: '#e8ecf4', color: '#11224E' },
+  'Export Declaration':    { bg: '#e8ecf4', color: '#11224E' },
+};
+
 function DocTypeIcon({ docType }) {
-  const colors = {
-    'Commercial Invoice': '#3b82f6',
-    'Packing List': '#8b5cf6',
-    'Certificate of Origin': '#22c55e',
-    'Insurance Certificate': '#f59e0b',
-    'Bill of Lading': '#0ea5e9',
-    'Export Declaration': '#ef4444',
-  };
+  const c = DOC_COLORS[docType] || { bg: '#f1f5f9', color: '#64748b' };
   return (
-    <div style={{ width: 30, height: 30, borderRadius: 7, background: `${colors[docType] || '#94a3b8'}15`, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <FileText style={{ width: 14, height: 14, color: colors[docType] || '#94a3b8' }} />
+    <div style={{ width: 30, height: 30, borderRadius: 7, background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+      <FileText style={{ width: 14, height: 14, color: c.color }} />
     </div>
   );
 }
 
-export default function Consignments({ searchQ = '' }) {
+export default function Consignments({ searchQ = '', targetConsignment = null, onClearTarget }) {
   const { user, peerOrgs, refresh, refreshKey, peerConnected } = useNode();
   const [consignments, setConsignments] = useState([]);
   const [selectedC, setSelectedC] = useState(null);
+  const detailRef = React.useRef(null);
   const [docs, setDocs] = useState([]);
   const [allOrgs, setAllOrgs] = useState([]);
   const [showCreate, setShowCreate] = useState(false);
@@ -63,6 +71,15 @@ export default function Consignments({ searchQ = '' }) {
     api.getConsignments(user.id).then(setConsignments).catch(() => {});
     api.getAllOrgs().then(setAllOrgs).catch(() => {});
   }, [user.id, refreshKey]);
+
+  // Auto-select when navigated from Dashboard
+  useEffect(() => {
+    if (targetConsignment) {
+      setSelectedC(targetConsignment);
+      onClearTarget?.();
+      setTimeout(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+    }
+  }, [targetConsignment]);
 
   useEffect(() => {
     if (selectedC) api.getDocuments(user.id, selectedC.id).then(setDocs).catch(() => {});
@@ -124,7 +141,7 @@ export default function Consignments({ searchQ = '' }) {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>Consignments</h2>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Digital twins of trade shipments on the IOTA Tangle</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>ADAPT trade documents anchored on ledger</div>
         </div>
         <button className="btn btn-p" onClick={() => setShowCreate(true)}><Plus style={{ width: 14, height: 14 }} /> New Consignment</button>
       </div>
@@ -163,9 +180,9 @@ export default function Consignments({ searchQ = '' }) {
             </thead>
             <tbody>
               {filtered.map(c => (
-                <tr key={c.id} onClick={() => setSelectedC(selectedC?.id === c.id ? null : c)} style={{ background: selectedC?.id === c.id ? '#f0fdf4' : undefined }}>
+                <tr key={c.id} onClick={() => setSelectedC(selectedC?.id === c.id ? null : c)} style={{ background: selectedC?.id === c.id ? 'var(--accent-light)' : undefined }}>
                   <td>
-                    <div className="ucr-ref">{c.ucr}</div>
+                    <button className="ucr-link" onClick={e => { e.stopPropagation(); setSelectedC(selectedC?.id === c.id ? null : c); setTimeout(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80); }}>{c.ucr}</button>
                     <div className="ucr-date">{c.shipDate || new Date(c.createdAt || Date.now()).toLocaleDateString()}</div>
                   </td>
                   <td>
@@ -205,7 +222,7 @@ export default function Consignments({ searchQ = '' }) {
 
       {/* Selected consignment detail */}
       {selectedC && (
-        <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
+        <div ref={detailRef} className="card" style={{ padding: 0, overflow: 'hidden' }}>
           {/* Header */}
           <div className="csg-detail-header">
             <div>
@@ -269,11 +286,15 @@ export default function Consignments({ searchQ = '' }) {
                     <DocTypeIcon docType={d.docType} />
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--text-primary)' }}>{d.title}</div>
-                      <div style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', gap: 8, marginTop: 2, flexWrap: 'wrap' }}>
-                        <span className="pill pill-b pill-no-dot" style={{ fontSize: 10, padding: '1px 7px' }}>{d.docType}</span>
+                      {d.issuer && (
+                        <div style={{ fontSize: 11.5, color: 'var(--text-secondary)', marginTop: 2, fontWeight: 500 }}>
+                          Issued by {d.issuer}
+                        </div>
+                      )}
+                      <div style={{ fontSize: 11, color: 'var(--text-muted)', display: 'flex', gap: 8, marginTop: 3, flexWrap: 'wrap' }}>
                         {d.reference && <span>{d.reference}</span>}
-                        {d.format && <span>{d.format}</span>}
-                        {d.fileSize > 0 && <span>{Math.round(d.fileSize / 1024)}KB</span>}
+                        {d.format && <span>· {d.format}</span>}
+                        {d.fileSize > 0 && <span>· {Math.round(d.fileSize / 1024)}KB</span>}
                       </div>
                     </div>
                     <div style={{ display: 'flex', gap: 6, fontFamily: 'var(--mono)', fontSize: 10, color: '#16a34a', flexShrink: 0 }}>

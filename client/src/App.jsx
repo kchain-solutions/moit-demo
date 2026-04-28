@@ -4,45 +4,45 @@ import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Identity from './components/Identity';
 import Consignments from './components/Consignments';
+import Payments from './components/Payments';
+import TradeFinance from './components/TradeFinance';
 import Permissions from './components/Permissions';
 import TangleExplorer from './components/TangleExplorer';
-import { LayoutDashboard, FileStack, Fingerprint, Shield, Activity, LogOut, Wifi, WifiOff, HelpCircle, Settings, Globe } from 'lucide-react';
+import { LayoutDashboard, FileStack, Fingerprint, Shield, Activity, LogOut, Wifi, WifiOff, CreditCard, Landmark } from 'lucide-react';
 
 const PAGES = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'consignments', label: 'Consignments', icon: FileStack },
-  { id: 'identity', label: 'Identity', icon: Fingerprint },
-  { id: 'permissions', label: 'Access Control', icon: Shield },
-  { id: 'tangle', label: 'Analytics', icon: Activity },
+  { id: 'dashboard',     label: 'Dashboard',      icon: LayoutDashboard },
+  { id: 'consignments',  label: 'Consignments',    icon: FileStack },
+  { id: 'payments',      label: 'Payments',        icon: CreditCard },
+  { id: 'trade-finance', label: 'Trade Finance',   icon: Landmark },
+  { id: 'identity',      label: 'Identity',        icon: Fingerprint },
+  { id: 'permissions',   label: 'Access Control',  icon: Shield },
+  { id: 'tangle',        label: 'Analytics',       icon: Activity },
 ];
 
 export default function App() {
   const { user, nodeInfo, peerConnected, logout } = useNode();
   const [page, setPage] = useState('dashboard');
   const [searchQ, setSearchQ] = useState('');
+  const [targetConsignment, setTargetConsignment] = useState(null);
 
   if (!user) return <Login />;
 
   const initials = user.name.split(' ').map(w => w[0]).join('').slice(0, 2).toUpperCase();
 
-  const PAGE_TITLES = {
-    dashboard: nodeInfo?.nodeName || 'Dashboard',
-    consignments: 'Consignments',
-    identity: 'Digital Identity',
-    permissions: 'Access Control',
-    tangle: 'Analytics',
+  const handleViewDocs = (consignment) => {
+    setTargetConsignment(consignment);
+    setPage('consignments');
   };
 
   return (
     <div className="layout">
       <aside className="sidebar">
         <div className="sb-brand">
-          <div className="sb-logo-icon">
-            <Globe />
-          </div>
-          <div className="sb-brand-text">
-            <h1>ADAPT</h1>
-            <p>Global Trade Ops</p>
+          <img src="/adapt-logo.png" alt="ADAPT" style={{ height: 22, width: 22, objectFit: 'contain', flexShrink: 0 }} />
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25, minWidth: 0 }}>
+            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>ADAPT</span>
+            
           </div>
         </div>
 
@@ -61,14 +61,14 @@ export default function App() {
               <div className={`dot ${peerConnected ? 'dot-on' : 'dot-off'}`} />
               <span>{user.name}</span>
             </div>
-            <div style={{ fontSize: 10.5, color: '#475569', marginTop: 3, paddingLeft: 13 }}>
+            <div style={{ fontSize: 10.5, color: 'var(--text-muted)', marginTop: 3, paddingLeft: 13 }}>
               {peerConnected ? 'Peer synced' : 'Local only'} — {nodeInfo?.nodeName || 'Node'}
             </div>
           </div>
           <div className="sb-links">
             <button>
               {peerConnected
-                ? <><Wifi style={{ width: 13, height: 13, color: '#22c55e' }} /> <span style={{ color: '#94a3b8' }}>Node Online</span></>
+                ? <><Wifi style={{ width: 13, height: 13, color: '#22c55e' }} /> <span>Node Online</span></>
                 : <><WifiOff style={{ width: 13, height: 13 }} /> <span>No Peer</span></>}
             </button>
             <button onClick={logout}>
@@ -110,11 +110,13 @@ export default function App() {
         </header>
 
         <div className="cnt">
-          {page === 'dashboard' && <Dashboard searchQ={searchQ} />}
-          {page === 'consignments' && <Consignments searchQ={searchQ} />}
-          {page === 'identity' && <Identity />}
-          {page === 'permissions' && <Permissions />}
-          {page === 'tangle' && <TangleExplorer />}
+          {page === 'dashboard'     && <Dashboard searchQ={searchQ} onViewDocs={handleViewDocs} />}
+          {page === 'consignments'  && <Consignments searchQ={searchQ} targetConsignment={targetConsignment} onClearTarget={() => setTargetConsignment(null)} />}
+          {page === 'payments'      && <Payments />}
+          {page === 'trade-finance' && <TradeFinance />}
+          {page === 'identity'      && <Identity />}
+          {page === 'permissions'   && <Permissions />}
+          {page === 'tangle'        && <TangleExplorer />}
         </div>
       </main>
     </div>
