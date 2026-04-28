@@ -6,24 +6,22 @@
   "scripts": {
     "build": "vite build --outDir ../server/public",
     "dev:client": "vite",
-    "node:alpha": "node server/index.js --port=4000 --id=alpha --name='Node Alpha' --peer=ws://localhost:4001",
-    "node:beta":  "node server/index.js --port=4001 --id=beta  --name='Node Beta'  --peer=ws://localhost:4000",
-    "dev":        "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\"",
-    "start:alpha": "node server/index.js",
-    "start:beta":  "node server/index.js"
-  },
-  "engines": {
-    "node": ">=18"
+    "node:alpha": "node server/index.js --port=4000 --ws=4010 --id=alpha --name='Node Alpha' --peer=ws://localhost:4011",
+    "node:beta": "node server/index.js --port=4001 --ws=4011 --id=beta --name='Node Beta' --peer=ws://localhost:4010",
+    "start": "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\"",
+    "dev": "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\"",
+    "proxy": "node server/proxy.js",
+    "demo": "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\" \"npm run proxy\""
   },
   "dependencies": {
-    "concurrently": "^8.2.2",
     "cors": "^2.8.5",
     "express": "^4.19.2",
-    "lucide-react": "^0.383.0",
     "multer": "^1.4.5-lts.1",
+    "ws": "^8.17.0",
+    "concurrently": "^8.2.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "ws": "^8.17.0"
+    "lucide-react": "^0.383.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
