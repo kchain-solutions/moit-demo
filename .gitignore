@@ -1,5 +1,4 @@
 node_modules/
-server/public/
 client/dist/
 data/
 .DS_Store
