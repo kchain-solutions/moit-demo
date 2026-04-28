@@ -93,96 +93,71 @@ function seedLog(type, action, actor, details, timestamp) {
 }
 
 // ── Hardcoded demo consignments ──
-const DEMO_CONSIGNMENTS = [
-  {
-    ucr: 'UCR-2026-MA-NG-00101', product: 'Triple Super Phosphate (TSP)', hsCode: '3103.10',
-    quantity: '2,400 MT', totalValue: 340000, currency: 'USD',
-    exporter: 'AtlasPhosphate S.A.', importer: 'PrimeFert Nigeria Ltd',
-    fromCountry: 'Morocco', toCountry: 'Nigeria',
-    originPort: 'Port of Casablanca', destinationPort: 'Apapa Port, Lagos',
-    vessel: 'MV Atlas Pioneer', shipDate: '2026-02-18', incoterms: 'CFR',
-    invoiceRef: 'INV-2026-APM-0101', declRef: 'MA-EXP-2026-0101',
-    status: 'Delivered', creatorOrgId: 'org1',
-  },
-  {
-    ucr: 'UCR-2026-MA-NG-00102', product: 'Di-Ammonium Phosphate (DAP)', hsCode: '3105.30',
-    quantity: '1,800 MT', totalValue: 290000, currency: 'USD',
-    exporter: 'AtlasPhosphate S.A.', importer: 'TradeLink International Ltd',
-    fromCountry: 'Morocco', toCountry: 'Nigeria',
-    originPort: 'Port of Casablanca', destinationPort: 'Tin Can Island Port',
-    vessel: 'MV Maroc Express', shipDate: '2026-02-20', incoterms: 'FOB',
-    invoiceRef: 'INV-2026-APM-0102', declRef: 'MA-EXP-2026-0102',
-    status: 'In Transit', creatorOrgId: 'org1',
-  },
-  {
-    ucr: 'UCR-2026-MA-NG-00103', product: 'Granular Urea (46% N)', hsCode: '3102.10',
-    quantity: '3,000 MT', totalValue: 510000, currency: 'USD',
-    exporter: 'AtlasPhosphate S.A.', importer: 'PrimeFert Nigeria Ltd',
-    fromCountry: 'Morocco', toCountry: 'Nigeria',
-    originPort: 'Port of Agadir', destinationPort: 'Apapa Port, Lagos',
-    vessel: 'MV Sahara Star', shipDate: '2026-03-01', incoterms: 'CIF',
-    invoiceRef: 'INV-2026-APM-0103', declRef: 'MA-EXP-2026-0103',
-    status: 'Customs', creatorOrgId: 'org1',
-  },
-  {
-    ucr: 'UCR-2026-MA-NG-00104', product: 'Phosphoric Acid (75% P₂O₅)', hsCode: '2809.20',
-    quantity: '950 MT', totalValue: 178000, currency: 'USD',
-    exporter: 'AtlasPhosphate S.A.', importer: 'TradeLink International Ltd',
-    fromCountry: 'Morocco', toCountry: 'Nigeria',
-    originPort: 'Port of Jorf Lasfar', destinationPort: 'Onne Port',
-    vessel: 'MV Chemtrans Atlas', shipDate: '2026-03-05', incoterms: 'CFR',
-    invoiceRef: 'INV-2026-APM-0104', declRef: 'MA-EXP-2026-0104',
-    status: 'Submitted', creatorOrgId: 'org1',
-  },
-  {
-    ucr: 'UCR-2026-MA-NG-00105', product: 'Mono-Ammonium Phosphate (MAP)', hsCode: '3105.40',
-    quantity: '2,100 MT', totalValue: 375000, currency: 'USD',
-    exporter: 'AtlasPhosphate S.A.', importer: 'PrimeFert Nigeria Ltd',
-    fromCountry: 'Morocco', toCountry: 'Nigeria',
-    originPort: 'Port of Casablanca', destinationPort: 'Apapa Port, Lagos',
-    vessel: 'MV Northern Cape', shipDate: '2026-03-12', incoterms: 'FOB',
-    invoiceRef: 'INV-2026-APM-0105', declRef: 'MA-EXP-2026-0105',
-    status: 'Released', creatorOrgId: 'org1',
-  },
-  {
-    ucr: 'UCR-2026-MA-NG-00106', product: 'Sulphate of Potash (SOP)', hsCode: '3104.20',
-    quantity: '1,200 MT', totalValue: 264000, currency: 'USD',
-    exporter: 'AtlasPhosphate S.A.', importer: 'TradeLink International Ltd',
-    fromCountry: 'Morocco', toCountry: 'Nigeria',
-    originPort: 'Port of Casablanca', destinationPort: 'Tin Can Island Port',
-    vessel: 'MV Atlas Pioneer', shipDate: '2026-03-18', incoterms: 'CIF',
-    invoiceRef: 'INV-2026-APM-0106', declRef: 'MA-EXP-2026-0106',
-    status: 'In Transit', creatorOrgId: 'org1',
-  },
+const ALPHA_CONSIGNMENTS = [
+  // Morocco → Nigeria (AtlasPhosphate, org1)
+  { ucr:'UCR-2026-MA-NG-00101', product:'Triple Super Phosphate (TSP)',    hsCode:'3103.10', quantity:'2,400 MT', totalValue:340000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Apapa Port, Lagos',      vessel:'MV Atlas Pioneer',    shipDate:'2026-02-18', incoterms:'CFR', invoiceRef:'INV-2026-APM-0101', declRef:'MA-EXP-2026-0101', status:'Delivered',   creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00102', product:'Di-Ammonium Phosphate (DAP)',     hsCode:'3105.30', quantity:'1,800 MT', totalValue:290000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Tin Can Island Port',    vessel:'MV Maroc Express',    shipDate:'2026-02-20', incoterms:'FOB', invoiceRef:'INV-2026-APM-0102', declRef:'MA-EXP-2026-0102', status:'In Transit',  creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00103', product:'Granular Urea (46% N)',           hsCode:'3102.10', quantity:'3,000 MT', totalValue:510000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Agadir',      destinationPort:'Apapa Port, Lagos',      vessel:'MV Sahara Star',      shipDate:'2026-03-01', incoterms:'CIF', invoiceRef:'INV-2026-APM-0103', declRef:'MA-EXP-2026-0103', status:'Customs',     creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00104', product:'Phosphoric Acid (75% P₂O₅)',     hsCode:'2809.20', quantity:'950 MT',   totalValue:178000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Jorf Lasfar', destinationPort:'Onne Port',              vessel:'MV Chemtrans Atlas',  shipDate:'2026-03-05', incoterms:'CFR', invoiceRef:'INV-2026-APM-0104', declRef:'MA-EXP-2026-0104', status:'Submitted',   creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00105', product:'Mono-Ammonium Phosphate (MAP)',   hsCode:'3105.40', quantity:'2,100 MT', totalValue:375000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Apapa Port, Lagos',      vessel:'MV Northern Cape',    shipDate:'2026-03-12', incoterms:'FOB', invoiceRef:'INV-2026-APM-0105', declRef:'MA-EXP-2026-0105', status:'Released',    creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-00106', product:'Sulphate of Potash (SOP)',        hsCode:'3104.20', quantity:'1,200 MT', totalValue:264000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Tin Can Island Port',    vessel:'MV Atlas Pioneer',    shipDate:'2026-03-18', incoterms:'CIF', invoiceRef:'INV-2026-APM-0106', declRef:'MA-EXP-2026-0106', status:'In Transit',  creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
+  { ucr:'UCR-2026-MA-NG-E001',  product:'Rock Phosphate (35% P₂O₅)',      hsCode:'2510.20', quantity:'4,500 MT', totalValue:148500, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Jorf Lasfar', destinationPort:'Apapa Port, Lagos',      vessel:'MV Desert Wind',      shipDate:'2026-01-24', incoterms:'CFR', invoiceRef:'INV-2026-APM-E001', declRef:'MA-EXP-2026-E001', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.', errorType:'Document Discrepancy', errorDescription:'Certificate of Origin issuer code does not match Morocco Customs registry. Awaiting reissue from MAEX.' },
+  { ucr:'UCR-2026-MA-NG-E003',  product:'Ammonium Sulphate (21% N)',      hsCode:'3102.21', quantity:'1,600 MT', totalValue:214400, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Tin Can Island Port',    vessel:'MV Maroc Express',    shipDate:'2026-02-10', incoterms:'FOB', invoiceRef:'INV-2026-APM-E003', declRef:'MA-EXP-2026-E003', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.', errorType:'HS Code Mismatch', errorDescription:'HS code declared on Export Declaration (3102.29) does not match Commercial Invoice (3102.21). Nigeria Customs has flagged for reconciliation.' },
+  // Kenya exports (KRA, org4)
+  { ucr:'KE-2026-EXP-00101', product:'Fresh Cut Flowers (Mixed)',          hsCode:'0603.19', quantity:'18,400 kg',totalValue: 92000, currency:'USD', exporter:'Kenya Flower Council',   importer:'Aalsmeer Flower Auction',   fromCountry:'Kenya',   toCountry:'Netherlands', originPort:'JKIA Cargo, Nairobi',  destinationPort:'Amsterdam Schiphol',     vessel:'KQ Cargo 101',        shipDate:'2026-02-15', incoterms:'CPT', invoiceRef:'INV-2026-KFC-0101', declRef:'KE-EXP-2026-0101', status:'Delivered',   creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00102', product:'Green Tea — Orthodox (PEKOE)',       hsCode:'0902.10', quantity:'42,000 kg',totalValue:168000, currency:'USD', exporter:'Kenya Tea Development Agency',importer:'British Tea Holdings Ltd', fromCountry:'Kenya',  toCountry:'United Kingdom', originPort:'Port of Mombasa',     destinationPort:'Port of Felixstowe',     vessel:'MV Kwanza Bridge',    shipDate:'2026-02-22', incoterms:'CIF', invoiceRef:'INV-2026-KTDA-0102',declRef:'KE-EXP-2026-0102', status:'In Transit',  creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00103', product:'Washed Arabica Coffee (AA Grade)',   hsCode:'0901.11', quantity:'21,600 kg',totalValue:324000, currency:'USD', exporter:'Nairobi Coffee Exchange', importer:'Volcafe Speciality Coffee', fromCountry:'Kenya',  toCountry:'Germany',         originPort:'Port of Mombasa',     destinationPort:'Port of Hamburg',        vessel:'MV MSC Zanzibar',     shipDate:'2026-03-03', incoterms:'FOB', invoiceRef:'INV-2026-NCE-0103', declRef:'KE-EXP-2026-0103', status:'Customs',     creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00104', product:'Fresh Avocados — Hass',              hsCode:'0804.40', quantity:'38,000 kg',totalValue:114000, currency:'USD', exporter:'Kakuzi PLC',              importer:'EuroFresh Distributors B.V.',fromCountry:'Kenya', toCountry:'Netherlands',  originPort:'Port of Mombasa',     destinationPort:'Port of Rotterdam',      vessel:'MV African Spirit',   shipDate:'2026-03-08', incoterms:'CFR', invoiceRef:'INV-2026-KAK-0104', declRef:'KE-EXP-2026-0104', status:'Released',    creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00105', product:'Macadamia Nuts — Raw (In-Shell)',    hsCode:'0802.60', quantity:'14,500 kg',totalValue: 87000, currency:'USD', exporter:'Kenya Nut Company Ltd',   importer:'Olam International Ltd',    fromCountry:'Kenya',  toCountry:'South Africa',    originPort:'Port of Mombasa',     destinationPort:'Port of Durban',         vessel:'MV Safmarine Mafadi', shipDate:'2026-03-14', incoterms:'CIF', invoiceRef:'INV-2026-KNC-0105', declRef:'KE-EXP-2026-0105', status:'Submitted',   creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'KE-2026-EXP-00106', product:'French Green Beans (Fine)',          hsCode:'0708.20', quantity:'22,000 kg',totalValue: 66000, currency:'USD', exporter:'Vegpro Group Ltd',        importer:'M&S Food Suppliers UK',     fromCountry:'Kenya',  toCountry:'United Kingdom',  originPort:'JKIA Cargo, Nairobi',  destinationPort:'Heathrow Air Cargo',     vessel:'KQ Cargo 107',        shipDate:'2026-03-19', incoterms:'DAP', invoiceRef:'INV-2026-VPG-0106', declRef:'KE-EXP-2026-0106', status:'In Transit',  creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
 ];
 
-const DEMO_DOCS = [
-  { name: 'Commercial Invoice',     docType: 'Commercial Invoice',   issuer: 'AtlasPhosphate S.A.',              suffix: 'INV' },
-  { name: 'Packing List',           docType: 'Packing List',          issuer: 'AtlasPhosphate S.A.',              suffix: 'PL'  },
-  { name: 'Bill of Lading',         docType: 'Bill of Lading',        issuer: 'NordShip Line S.A.',               suffix: 'BL'  },
-  { name: 'Certificate of Origin',  docType: 'Certificate of Origin', issuer: 'MAEX — Morocco Agri-Export Bureau',suffix: 'CO'  },
-  { name: 'Export Declaration',     docType: 'Export Declaration',    issuer: 'Morocco Customs',                  suffix: 'ED'  },
+const BETA_CONSIGNMENTS = [
+  // Nigeria → Morocco (PrimeFert/TradeLink, org5/org6)
+  { ucr:'UCR-2026-NG-MA-00201', product:'Sesame Seeds (White Hulled)',     hsCode:'1207.40', quantity:'1,200 MT', totalValue:156000, currency:'USD', exporter:'PrimeFert Nigeria Ltd',       importer:'Oleagineux du Maghreb S.A.',  fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Apapa Port, Lagos',      destinationPort:'Port of Casablanca', vessel:'MV Bight of Benin',   shipDate:'2026-02-25', incoterms:'FOB', invoiceRef:'INV-2026-PFN-0201', declRef:'NG-EXP-2026-0201', status:'Delivered',   creatorOrgId:'org5', creatorOrgName:'PrimeFert Nigeria Ltd' },
+  { ucr:'UCR-2026-NG-MA-00202', product:'Raw Cocoa Beans (Grade 1)',       hsCode:'1801.00', quantity:'850 MT',   totalValue:272000, currency:'USD', exporter:'TradeLink International Ltd', importer:'Barry Callebaut Maroc S.A.',  fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Tin Can Island Port',     destinationPort:'Port of Casablanca', vessel:'MV Ebony Star',       shipDate:'2026-03-04', incoterms:'CIF', invoiceRef:'INV-2026-TLI-0202', declRef:'NG-EXP-2026-0202', status:'In Transit',  creatorOrgId:'org6', creatorOrgName:'TradeLink International Ltd' },
+  { ucr:'UCR-2026-NG-MA-00203', product:'Palm Kernel Oil (PKO)',           hsCode:'1513.21', quantity:'600 MT',   totalValue: 78000, currency:'USD', exporter:'PrimeFert Nigeria Ltd',       importer:'Lesieur Cristal S.A.',        fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Onne Port',               destinationPort:'Port of Agadir',     vessel:'MV Atlantic Trader', shipDate:'2026-03-10', incoterms:'CFR', invoiceRef:'INV-2026-PFN-0203', declRef:'NG-EXP-2026-0203', status:'Customs',     creatorOrgId:'org5', creatorOrgName:'PrimeFert Nigeria Ltd' },
+  { ucr:'UCR-2026-NG-MA-00204', product:'Cashew Nuts RCN (W240 Grade)',    hsCode:'0801.31', quantity:'420 MT',   totalValue:189000, currency:'USD', exporter:'TradeLink International Ltd', importer:'Olam Maroc S.A.',             fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Apapa Port, Lagos',      destinationPort:'Port of Casablanca', vessel:'MV Bight of Benin',   shipDate:'2026-03-17', incoterms:'FOB', invoiceRef:'INV-2026-TLI-0204', declRef:'NG-EXP-2026-0204', status:'Submitted',   creatorOrgId:'org6', creatorOrgName:'TradeLink International Ltd' },
+  { ucr:'UCR-2026-NG-MA-E002',  product:'Soybean Meal (47% Protein)',      hsCode:'2304.00', quantity:'2,000 MT', totalValue:160000, currency:'USD', exporter:'PrimeFert Nigeria Ltd',       importer:'Coopagri Maroc',              fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Apapa Port, Lagos',      destinationPort:'Port of Casablanca', vessel:'MV African Spirit',  shipDate:'2026-02-12', incoterms:'CIF', invoiceRef:'INV-2026-PFN-E002', declRef:'NG-EXP-2026-E002', status:'Under Review', creatorOrgId:'org5', creatorOrgName:'PrimeFert Nigeria Ltd', errorType:'Phytosanitary Failure', errorDescription:'NAQS phytosanitary certificate expired 14 days before shipment date. Morocco Plant Protection Directorate has placed shipment on hold pending resubmission.' },
 ];
+
+function docsForConsignment(m) {
+  const coIssuer = m.fromCountry === 'Kenya'   ? 'Kenya Export Promotion & Branding Agency'
+                 : m.fromCountry === 'Morocco'  ? 'MAEX — Morocco Agri-Export Bureau'
+                 : 'NEPC — Nigeria Export Promotion Council';
+  const edIssuer = m.fromCountry === 'Kenya'   ? 'Kenya Revenue Authority'
+                 : m.fromCountry === 'Morocco'  ? 'Morocco Customs'
+                 : 'Nigeria Customs';
+  return [
+    { name:'Commercial Invoice',    docType:'Commercial Invoice',   issuer:m.creatorOrgName, suffix:'INV' },
+    { name:'Packing List',          docType:'Packing List',          issuer:m.creatorOrgName, suffix:'PL'  },
+    { name:'Bill of Lading',        docType:'Bill of Lading',        issuer:'NordShip Line S.A.', suffix:'BL' },
+    { name:'Certificate of Origin', docType:'Certificate of Origin', issuer:coIssuer,         suffix:'CO'  },
+    { name:'Export Declaration',    docType:'Export Declaration',    issuer:edIssuer,          suffix:'ED'  },
+  ];
+}
 
 function seedConsignments() {
-  if (NODE_ID !== 'alpha') return;
   if (store.consignments.length > 0) return;
+  const list = NODE_ID === 'alpha' ? ALPHA_CONSIGNMENTS : BETA_CONSIGNMENTS;
 
-  for (const m of DEMO_CONSIGNMENTS) {
+  for (const m of list) {
     const cId = `seed-${m.ucr}`;
     const createdAt = m.shipDate + 'T08:00:00.000Z';
+    const docs = docsForConsignment(m);
     const c = {
       id: cId, ucr: m.ucr,
       commercialInvoiceNo: m.invoiceRef, exportDeclarationNo: m.declRef,
       description: m.product, product: m.product,
-      hsCode: m.hsCode, quantity: m.quantity, unit: 'MT',
+      hsCode: m.hsCode, quantity: m.quantity, unit: '',
       totalValue: m.totalValue, currency: m.currency,
       exporter: m.exporter, importer: m.importer,
       fromCountry: m.fromCountry, toCountry: m.toCountry,
       originPort: m.originPort, destinationPort: m.destinationPort,
       vessel: m.vessel, shipDate: m.shipDate, incoterms: m.incoterms,
-      creatorOrgId: m.creatorOrgId, creatorOrgName: 'AtlasPhosphate S.A.',
-      createdAt, documentCount: DEMO_DOCS.length, status: m.status,
+      errorType: m.errorType || null, errorDescription: m.errorDescription || null,
+      creatorOrgId: m.creatorOrgId, creatorOrgName: m.creatorOrgName,
+      createdAt, documentCount: docs.length, status: m.status,
     };
     store.consignments.push(c);
     store.permissions[cId] = { [m.creatorOrgId]: 'owner' };
@@ -190,17 +165,16 @@ function seedConsignments() {
     seedLog('document', 'Consignment Anchored', m.exporter,
       `Digital twin created: ${m.ucr} — ${m.product}. Anchored on the ledger.`, createdAt);
 
-    for (const d of DEMO_DOCS) {
-      const docId = `${cId}-${d.suffix}`;
+    for (const d of docs) {
       const ref = d.suffix === 'INV' ? m.invoiceRef
                 : d.suffix === 'ED'  ? m.declRef
-                : `${d.suffix}-${m.ucr.split('-').slice(-1)[0]}`;
+                : `${d.suffix}-${m.ucr.split('-').pop()}`;
       store.documents.push({
-        id: docId, consignmentId: cId,
+        id: `${cId}-${d.suffix}`, consignmentId: cId,
         title: d.name, docType: d.docType,
         filename: `${ref}.pdf`, fileSize: 0,
         hash: genHash(),
-        creatorOrgId: m.creatorOrgId, creatorOrgName: 'AtlasPhosphate S.A.',
+        creatorOrgId: m.creatorOrgId, creatorOrgName: m.creatorOrgName,
         timestamp: createdAt, reference: ref,
         format: 'PDF', issuer: d.issuer,
       });

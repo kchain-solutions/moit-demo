@@ -209,7 +209,7 @@ export default function Payments() {
               ].map(([l, v]) => (
                 <div key={l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                   <span style={{ fontSize: 11.5, color: 'var(--text-muted)', flexShrink: 0 }}>{l}</span>
-                  <span style={{ fontSize: l === 'UCR' || l === 'Invoice' ? 11 : 12, fontWeight: 500, color: 'var(--text-primary)', textAlign: 'right', fontFamily: l === 'UCR' || l === 'Invoice' ? 'var(--mono)' : 'inherit' }}>{v}</span>
+                  <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', textAlign: 'right', fontFamily: l === 'UCR' || l === 'Invoice' ? 'var(--mono)' : 'inherit', fontSize: l === 'UCR' || l === 'Invoice' ? 11 : 12 }}>{v}</span>
                 </div>
               ))}
 

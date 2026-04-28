@@ -182,122 +182,6 @@ function parseCUSDEC(doc) {
   ];
 }
 
-// ── Kenya Export Declaration (KRA SAD form) ───────────────────────────────
-function parseKEExportDecl(doc) {
-  const root = doc.documentElement;
-  const get  = tag => getText(root, tag);
-  const kes  = parseFloat(get('CustomsValue'));
-  return [
-    {
-      title: 'Declaration Header',
-      fields: [
-        { label: 'Document Reference',  value: get('DocumentReference') },
-        { label: 'System UCR',           value: get('SystemUCR') },
-        { label: 'Export Date',          value: get('ExportDate'), mono: false },
-        { label: 'Issuing Authority',    value: get('IssuingAuthority'), mono: false },
-        { label: 'Declaration Agent',    value: get('DeclarationAgent'), mono: false },
-      ],
-    },
-    {
-      title: 'Exporter',
-      fields: [
-        { label: 'Name',    value: get('Exporter Name'),    full: true, mono: false },
-        { label: 'Country', value: get('Exporter Country'), mono: false },
-      ],
-    },
-    {
-      title: 'Consignee',
-      fields: [
-        { label: 'Name',                value: get('Consignee Name'),                full: true, mono: false },
-        { label: 'Destination Country', value: get('Consignee DestinationCountry'), mono: false },
-      ],
-    },
-    {
-      title: 'Commodity',
-      fields: [
-        { label: 'Description',      value: get('Commodity Description'),       mono: false },
-        { label: 'HS Code',          value: get('Commodity HSCode') },
-        { label: 'Gross Mass',       value: get('Commodity GrossMass') },
-        { label: 'No. of Packages',  value: get('Commodity NumberOfPackages') },
-      ],
-    },
-    {
-      title: 'Transport',
-      fields: [
-        { label: 'Mode',                   value: get('Transport Mode'),                   mono: false },
-        { label: 'Airport of Departure',   value: get('Transport AirportOfDeparture'),   mono: false },
-        { label: 'Airport of Destination', value: get('Transport AirportOfDestination'), mono: false },
-      ],
-    },
-    {
-      title: 'Customs Valuation',
-      fields: [
-        { label: 'Customs Value (KES)', value: !isNaN(kes) ? `KES ${kes.toLocaleString()}` : get('CustomsValue') },
-      ],
-    },
-  ];
-}
-
-// ── Kenya Phytosanitary Certificate (KEPHIS) ──────────────────────────────
-function parseKEPhyto(doc) {
-  const root = doc.documentElement;
-  const get  = tag => getText(root, tag);
-  return [
-    {
-      title: 'Certificate',
-      fields: [
-        { label: 'Certificate Number', value: get('CertificateNumber') },
-        { label: 'System UCR',          value: get('SystemUCR') },
-        { label: 'Issuing Authority',   value: get('IssuingAuthority'), mono: false },
-        { label: 'Ministry',            value: get('Ministry'),          mono: false },
-      ],
-    },
-    {
-      title: 'Exporter',
-      fields: [
-        { label: 'Name',    value: get('Exporter Name'),    full: true, mono: false },
-        { label: 'Country', value: get('Exporter Country'), mono: false },
-      ],
-    },
-    {
-      title: 'Consignee',
-      fields: [
-        { label: 'Name',                value: get('Consignee Name'),                full: true, mono: false },
-        { label: 'Destination Country', value: get('Consignee DestinationCountry'), mono: false },
-      ],
-    },
-    {
-      title: 'Commodity',
-      fields: [
-        { label: 'Botanical Name',   value: get('Commodity Botanical'),        mono: false },
-        { label: 'Common Name',      value: get('Commodity CommonName'),        mono: false },
-        { label: 'Description',      value: get('Commodity Description'),       mono: false },
-        { label: 'Quantity (Stems)', value: get('Commodity QuantityStems') },
-        { label: 'Gross Mass (kg)',   value: get('Commodity GrossMassKg') },
-        { label: 'No. of Packages',  value: get('Commodity NumberOfPackages') },
-        { label: 'Place of Origin',  value: get('Commodity PlaceOfOrigin'),    mono: false },
-      ],
-    },
-    {
-      title: 'Inspection & Certification',
-      fields: [
-        { label: 'Inspection Date',    value: get('Phytosanitary InspectionDate'),   mono: false },
-        { label: 'Inspector',          value: get('Phytosanitary Inspector'),         mono: false },
-        { label: 'Authorized Officer', value: get('Phytosanitary AuthorizedOfficer'), mono: false },
-        { label: 'Place of Issue',     value: get('Phytosanitary PlaceOfIssue'),      mono: false },
-        { label: 'Declaration',        value: get('Phytosanitary Declaration'),        full: true, mono: false },
-      ],
-    },
-    {
-      title: 'Transport',
-      fields: [
-        { label: 'Means of Transport', value: get('Transport MeansOfTransport'), mono: false },
-        { label: 'Port of Entry',      value: get('Transport PortOfEntry'),      mono: false },
-      ],
-    },
-  ];
-}
-
 export default function XmlViewer({ docId, docType, errorType, errorDescription }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -314,10 +198,8 @@ export default function XmlViewer({ docId, docType, errorType, errorDescription 
         const parseErr = xmlDoc.querySelector('parsererror');
         if (parseErr) throw new Error('Invalid XML');
         const rootTag = xmlDoc.documentElement.tagName;
-        if (rootTag === 'TransportDocument')          setSections(parseBOL(xmlDoc));
-        else if (rootTag === 'CustomsDeclaration')    setSections(parseCUSDEC(xmlDoc));
-        else if (rootTag === 'ExportDeclaration')     setSections(parseKEExportDecl(xmlDoc));
-        else if (rootTag === 'PhytosanitaryCertificate') setSections(parseKEPhyto(xmlDoc));
+        if (rootTag === 'TransportDocument') setSections(parseBOL(xmlDoc));
+        else if (rootTag === 'CustomsDeclaration') setSections(parseCUSDEC(xmlDoc));
         else setSections([{ title: 'Raw Document', fields: [{ label: 'Content', value: content, full: true }] }]);
         setLoading(false);
       })
