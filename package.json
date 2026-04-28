@@ -6,8 +6,8 @@
   "scripts": {
     "build": "vite build --outDir ../server/public",
     "dev:client": "vite",
-    "node:alpha": "node server/index.js --port=4000 --ws=4010 --id=alpha --name='Node Alpha' --peer=ws://localhost:4011",
-    "node:beta":  "node server/index.js --port=4001 --ws=4011 --id=beta  --name='Node Beta'  --peer=ws://localhost:4010",
+    "node:alpha": "node server/index.js --port=4000 --id=alpha --name='Node Alpha' --peer=ws://localhost:4001",
+    "node:beta":  "node server/index.js --port=4001 --id=beta  --name='Node Beta'  --peer=ws://localhost:4000",
     "dev":        "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\"",
     "start:alpha": "node server/index.js",
     "start:beta":  "node server/index.js"

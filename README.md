@@ -131,8 +131,6 @@ Each node is a standalone Express server with:
 ```
 NODE_ID=alpha
 NODE_NAME=Node Alpha
-PORT=4000
-WS_PORT=4010
 PEER_URL=wss://<adapt-beta-railway-url>
 ```
 
@@ -140,10 +138,10 @@ PEER_URL=wss://<adapt-beta-railway-url>
 ```
 NODE_ID=beta
 NODE_NAME=Node Beta
-PORT=4001
-WS_PORT=4011
 PEER_URL=wss://<adapt-alpha-railway-url>
 ```
+
+> `PORT` is set automatically by Railway. WebSocket runs on the same port as HTTP — no separate WS port needed.
 
 4. Set the start command for each service:
    - Alpha: `node server/index.js`

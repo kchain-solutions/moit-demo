@@ -1,3 +1,4 @@
+import http from 'http';
 import express from 'express';
 import cors from 'cors';
 import { WebSocketServer, WebSocket } from 'ws';
@@ -630,11 +631,12 @@ app.get('/api/peer/orgs', (req, res) => {
 });
 app.get('*', (req, res) => { const f = path.join(publicDir, 'index.html'); existsSync(f) ? res.sendFile(f) : res.status(404).json({ error: 'Build first' }); });
 
-// ── WebSocket ──
-const wss = new WebSocketServer({ port: WS_PORT });
+// ── WebSocket (attached to HTTP server — single port, works on Railway) ──
+const httpServer = http.createServer(app);
+const wss = new WebSocketServer({ server: httpServer });
 const clients = new Set();
 wss.on('connection', (ws, req) => {
-  const url = new URL(req.url, `http://localhost:${WS_PORT}`);
+  const url = new URL(req.url, `http://localhost:${PORT}`);
   if (url.pathname === '/peer') { handlePeerIn(ws); } else { clients.add(ws); ws.on('close', () => clients.delete(ws)); ws.send(JSON.stringify({ type: 'NODE_INFO', nodeId: NODE_ID, nodeName: NODE_NAME })); }
 });
 function broadcastToClients(msg) { const d = JSON.stringify(msg); clients.forEach(c => { if (c.readyState === WebSocket.OPEN) c.send(d); }); }
@@ -789,4 +791,4 @@ function seedFinanceData() {
 // Seed output folder data then start
 seedOutputConsignments();
 seedFinanceData();
-app.listen(PORT, () => { console.log(`[${NODE_NAME}] HTTP on http://localhost:${PORT} | WS on ws://localhost:${WS_PORT}`); });
+httpServer.listen(PORT, () => { console.log(`[${NODE_NAME}] Listening on port ${PORT} (HTTP + WS on same port)`); });
