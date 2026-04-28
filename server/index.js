@@ -92,6 +92,84 @@ function seedLog(type, action, actor, details, timestamp) {
   store.tangleLog.push({ id: genId(), timestamp, hash: genHash(), type, action, actor, details });
 }
 
+// ── PDF generator for seeded documents ──
+function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fromCountry, toCountry) {
+  const lines = {
+    'Commercial Invoice': [
+      `COMMERCIAL INVOICE`, ``,
+      `Invoice No : ${ref}`,
+      `Date       : ${shipDate}`,
+      `Exporter   : ${exporter}`,
+      `Importer   : ${importer}`,
+      `UCR        : ${ucr}`,
+      `Route      : ${fromCountry} to ${toCountry}`,
+      ``, `This document serves as the commercial invoice for the above shipment.`,
+      `All details are as agreed under the relevant sales contract.`,
+    ],
+    'Packing List': [
+      `PACKING LIST`, ``,
+      `Reference  : ${ref}`,
+      `Date       : ${shipDate}`,
+      `Exporter   : ${exporter}`,
+      `UCR        : ${ucr}`,
+      ``, `Package details are as per the accompanying commercial invoice.`,
+      `All goods have been inspected and packed in accordance with export requirements.`,
+    ],
+    'Bill of Lading': [
+      `BILL OF LADING`, ``,
+      `B/L No     : ${ref}`,
+      `Date       : ${shipDate}`,
+      `Shipper    : ${exporter}`,
+      `Consignee  : ${importer}`,
+      `UCR        : ${ucr}`,
+      `Port of Loading    : ${fromCountry}`,
+      `Port of Discharge  : ${toCountry}`,
+      ``, `Received in apparent good order and condition the goods described herein.`,
+    ],
+    'Certificate of Origin': [
+      `CERTIFICATE OF ORIGIN`, ``,
+      `Certificate No : ${ref}`,
+      `Date           : ${shipDate}`,
+      `Issued by      : ${issuer}`,
+      `Exporter       : ${exporter}`,
+      `UCR            : ${ucr}`,
+      `Country of Origin : ${fromCountry}`,
+      ``, `We hereby certify that the goods described in this document`,
+      `originate in ${fromCountry} and comply with all applicable regulations.`,
+    ],
+    'Export Declaration': [
+      `EXPORT DECLARATION`, ``,
+      `Declaration No : ${ref}`,
+      `Date           : ${shipDate}`,
+      `Declarant      : ${issuer}`,
+      `Exporter       : ${exporter}`,
+      `UCR            : ${ucr}`,
+      `Country of Export : ${fromCountry}`,
+      `Country of Destination : ${toCountry}`,
+      ``, `This export declaration is submitted in accordance with applicable customs regulations.`,
+    ],
+  };
+  const body = (lines[docType] || [`${docType}`, ``, `Reference: ${ref}`, `Issuer: ${issuer}`, `UCR: ${ucr}`])
+    .map(l => `(${l.replace(/[()\\]/g, '\\$&')}) Tj T*`)
+    .join('\n');
+
+  const stream =
+    `BT\n/F1 11 Tf\n72 720 Td\n14 TL\n` + body + `\nET`;
+  const streamLen = Buffer.byteLength(stream, 'utf8');
+
+  const pdf =
+    `%PDF-1.4\n` +
+    `1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n` +
+    `2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n` +
+    `3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<</Font<</F1 4 0 R>>>>/Contents 5 0 R>>endobj\n` +
+    `4 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj\n` +
+    `5 0 obj<</Length ${streamLen}>>\nstream\n${stream}\nendstream\nendobj\n` +
+    `xref\n0 6\n0000000000 65535 f \n` +
+    `trailer<</Size 6/Root 1 0 R>>\nstartxref\n0\n%%EOF\n`;
+
+  return Buffer.from(pdf, 'utf8').toString('base64');
+}
+
 // ── Hardcoded demo consignments ──
 const ALPHA_CONSIGNMENTS = [
   // Morocco → Nigeria (AtlasPhosphate, org1)
@@ -169,10 +247,13 @@ function seedConsignments() {
       const ref = d.suffix === 'INV' ? m.invoiceRef
                 : d.suffix === 'ED'  ? m.declRef
                 : `${d.suffix}-${m.ucr.split('-').pop()}`;
+      const fileBase64 = makeSeedPdf(d.docType, ref, d.issuer, m.ucr, m.shipDate, m.exporter, m.importer, m.fromCountry, m.toCountry);
+      const fileSize = Buffer.from(fileBase64, 'base64').length;
       store.documents.push({
         id: `${cId}-${d.suffix}`, consignmentId: cId,
         title: d.name, docType: d.docType,
-        filename: `${ref}.pdf`, fileSize: 0,
+        filename: `${ref}.pdf`, fileSize,
+        fileBase64,
         hash: genHash(),
         creatorOrgId: m.creatorOrgId, creatorOrgName: m.creatorOrgName,
         timestamp: createdAt, reference: ref,
