@@ -1,6 +1,20 @@
 import React, { useState } from 'react';
 import { useNode } from '../context/NodeContext';
 
+const ALPHA_CREDS = [
+  { role: 'Exporter · Morocco',          username: 'atlas',      label: 'AtlasPhosphate S.A.' },
+  { role: 'Customs Authority · Morocco', username: 'macustoms',  label: 'Morocco Customs' },
+  { role: 'Customs Authority · Nigeria', username: 'ngcustoms',  label: 'Nigeria Customs' },
+  { role: 'Customs Authority · Kenya',   username: 'kra',        label: 'Kenya Revenue Authority' },
+  { role: 'Financier',                   username: 'financier1', label: 'Financier 1' },
+  { role: 'Financier',                   username: 'financier2', label: 'Financier 2' },
+];
+
+const BETA_CREDS = [
+  { role: 'Importer · Nigeria',       username: 'primefert',  label: 'PrimeFert Nigeria Ltd' },
+  { role: 'Importer · Nigeria',       username: 'tradelink',  label: 'TradeLink International Ltd' },
+];
+
 export default function Login() {
   const { login } = useNode();
   const [username, setUsername] = useState('');
@@ -8,6 +22,7 @@ export default function Login() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const port = window.location.port;
+  const isBeta = port === '4001';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,15 +36,31 @@ export default function Login() {
     setLoading(false);
   };
 
+  const handleQuick = (u) => {
+    setUsername(u);
+    setPassword('demo');
+  };
+
+  const creds = isBeta ? BETA_CREDS : ALPHA_CREDS;
+
   return (
     <div className="login-pg">
       <div className="login-box">
-        <h1>ADAPT</h1>
-        <p className="sub">Distributed Trade Platform — Sign in to your organisation</p>
-        <div style={{ padding: '8px 12px', background: 'var(--gr50)', borderRadius: 6, marginBottom: 16, fontSize: 11, color: 'var(--gr500)' }}>
-          Node: <strong style={{ color: 'var(--g700)' }}>{port === '4001' ? 'Node Beta' : 'Node Alpha'}</strong> — Port {port}
+        <div className="login-brand" style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center' }}>
+          <img src="/adapt-logo.png" alt="ADAPT" className="login-logo-img" style={{ height: 36, width: 36, objectFit: 'contain' }} />
+          <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25, textAlign: 'left' }}>
+            <span style={{ fontWeight: 700, fontSize: 20, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>ADAPT</span>
+            
+          </div>
         </div>
+        <p className="sub" style={{ marginTop: 10 }}>Trade & Logistics Platform — Sign in to your organisation</p>
+
+        <div className="node-badge">
+          Node: <strong>{isBeta ? 'Beta — Importers / Nigeria' : 'Alpha — Exporters & Customs'}</strong>
+        </div>
+
         {error && <div className="err">{error}</div>}
+
         <form onSubmit={handleSubmit}>
           <div className="fg">
             <label>Username</label>
@@ -39,17 +70,20 @@ export default function Login() {
             <label>Password</label>
             <input type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter password" />
           </div>
-          <button type="submit" className="btn btn-p" style={{ width: '100%', justifyContent: 'center', padding: '10px' }} disabled={loading}>
+          <button type="submit" className="btn btn-p" style={{ width: '100%', justifyContent: 'center', padding: '10px 16px' }} disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
         </form>
-        <div style={{ marginTop: 20, padding: 12, background: 'var(--g50)', borderRadius: 8, fontSize: 11, color: 'var(--gr600)' }}>
-          <div style={{ fontWeight: 600, marginBottom: 4, color: 'var(--g800)' }}>Demo Credentials</div>
-          {port === '4001' ? (
-            <div>importer / demo</div>
-          ) : (
-            <><div>exporter / demo</div><div>customs / demo</div></>
-          )}
+
+        <div className="demo-creds">
+          <div className="dc-title">Quick Sign-In</div>
+          {creds.map(c => (
+            <div key={c.username} className="cred-row" style={{ cursor: 'pointer', padding: '5px 0' }} onClick={() => handleQuick(c.username)}>
+              <span className="role">{c.role}</span>
+              <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 11.5 }}>{c.label}</span>
+              <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 10.5 }}>{c.username} / demo</span>
+            </div>
+          ))}
         </div>
       </div>
     </div>
