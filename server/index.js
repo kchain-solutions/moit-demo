@@ -751,33 +751,48 @@ app.get('/api/peer/orgs', (req, res) => {
 });
 app.get('*', (req, res) => { const f = path.join(publicDir, 'index.html'); existsSync(f) ? res.sendFile(f) : res.status(404).json({ error: 'Build first' }); });
 
-// ── WebSocket (attached to HTTP server — single port, works on Railway) ──
+// ── WebSocket + P2P (disabled on Vercel — serverless can't hold sockets) ──
+const IS_VERCEL = !!process.env.VERCEL;
 const httpServer = http.createServer(app);
-const wss = new WebSocketServer({ server: httpServer });
 const clients = new Set();
-wss.on('connection', (ws, req) => {
-  const url = new URL(req.url, `http://localhost:${PORT}`);
-  if (url.pathname === '/peer') { handlePeerIn(ws); } else { clients.add(ws); ws.on('close', () => clients.delete(ws)); ws.send(JSON.stringify({ type: 'NODE_INFO', nodeId: NODE_ID, nodeName: NODE_NAME })); }
-});
-function broadcastToClients(msg) { const d = JSON.stringify(msg); clients.forEach(c => { if (c.readyState === WebSocket.OPEN) c.send(d); }); }
 
-// ── P2P ──
-let peerWs = null;
-function connectToPeer() {
-  if (!PEER_URL || peerWs?.readyState === WebSocket.OPEN) return;
-  try {
-    peerWs = new WebSocket(PEER_URL + '/peer');
-    peerWs.on('open', () => {
-      store.peerConnected = true;
-      peerWs.send(JSON.stringify({ type: 'HANDSHAKE', nodeId: NODE_ID, nodeName: NODE_NAME, nodeIp: NODE_IP, orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) }));
-      addLog('network', 'Peer Connected', 'System', `P2P handshake completed with peer at ${PEER_URL}. Organisations now discoverable.`);
-      broadcastToClients({ type: 'PEER_STATUS', connected: true });
-    });
-    peerWs.on('message', d => handlePeerMsg(JSON.parse(d.toString())));
-    peerWs.on('close', () => { store.peerConnected = false; store.peerOrgs = []; broadcastToClients({ type: 'PEER_STATUS', connected: false, peerOrgs: [] }); });
-    peerWs.on('error', () => {});
-  } catch (e) {}
+function broadcastToClients(msg) {
+  if (IS_VERCEL) return; // no persistent connections on serverless
+  const d = JSON.stringify(msg);
+  clients.forEach(c => { if (c.readyState === WebSocket.OPEN) c.send(d); });
 }
+
+let peerWs = null;
+function connectToPeer() {}   // no-op stub (filled below if not Vercel)
+function syncOrgsToPeer() {}  // no-op stub
+
+if (!IS_VERCEL) {
+  const wss = new WebSocketServer({ server: httpServer });
+  wss.on('connection', (ws, req) => {
+    const url = new URL(req.url, `http://localhost:${PORT}`);
+    if (url.pathname === '/peer') { handlePeerIn(ws); } else { clients.add(ws); ws.on('close', () => clients.delete(ws)); ws.send(JSON.stringify({ type: 'NODE_INFO', nodeId: NODE_ID, nodeName: NODE_NAME })); }
+  });
+
+  // ── P2P ──
+  connectToPeer = function() {
+    if (!PEER_URL || peerWs?.readyState === WebSocket.OPEN) return;
+    try {
+      peerWs = new WebSocket(PEER_URL + '/peer');
+      peerWs.on('open', () => {
+        store.peerConnected = true;
+        peerWs.send(JSON.stringify({ type: 'HANDSHAKE', nodeId: NODE_ID, nodeName: NODE_NAME, nodeIp: NODE_IP, orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) }));
+        addLog('network', 'Peer Connected', 'System', `P2P handshake completed with peer at ${PEER_URL}. Organisations now discoverable.`);
+        broadcastToClients({ type: 'PEER_STATUS', connected: true });
+      });
+      peerWs.on('message', d => handlePeerMsg(JSON.parse(d.toString())));
+      peerWs.on('close', () => { store.peerConnected = false; store.peerOrgs = []; broadcastToClients({ type: 'PEER_STATUS', connected: false, peerOrgs: [] }); });
+      peerWs.on('error', () => {});
+    } catch (e) {}
+  };
+
+  syncOrgsToPeer = function() { if (peerWs?.readyState === WebSocket.OPEN) peerWs.send(JSON.stringify({ type: 'ORG_UPDATE', orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) })); };
+}
+
 function handlePeerIn(ws) {
   ws.on('message', d => { const m = JSON.parse(d.toString()); if (m.type === 'HANDSHAKE') { store.peerOrgs = m.orgs || []; store.peerConnected = true; broadcastToClients({ type: 'PEER_STATUS', connected: true, peerOrgs: store.peerOrgs }); ws.send(JSON.stringify({ type: 'ORG_DIRECTORY', orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) })); addLog('network', 'Peer Connected', 'System', 'Inbound P2P connection accepted. Peer orgs now discoverable.'); } else handlePeerMsg(m); });
   ws.on('close', () => { store.peerConnected = false; store.peerOrgs = []; broadcastToClients({ type: 'PEER_STATUS', connected: false, peerOrgs: [] }); });
@@ -797,7 +812,6 @@ function handlePeerMsg(m) {
     }
   }
 }
-function syncOrgsToPeer() { if (peerWs?.readyState === WebSocket.OPEN) peerWs.send(JSON.stringify({ type: 'ORG_UPDATE', orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) })); }
 
 function seedFinanceData() {
   if (NODE_ID !== 'alpha') return;
@@ -908,7 +922,14 @@ function seedFinanceData() {
   console.log(`[${NODE_NAME}] Seeded finance data: 2 payments, 2 LCs, 2 smart contracts`);
 }
 
-// Seed demo data then start
+// Seed demo data
 seedConsignments();
 seedFinanceData();
-httpServer.listen(PORT, () => { console.log(`[${NODE_NAME}] Listening on port ${PORT} (HTTP + WS on same port)`); });
+
+// Start server — skipped on Vercel (serverless handles the lifecycle)
+if (!IS_VERCEL) {
+  httpServer.listen(PORT, () => { console.log(`[${NODE_NAME}] Listening on port ${PORT} (HTTP + WS on same port)`); });
+}
+
+// Export for Vercel's @vercel/node runner
+export default app;
