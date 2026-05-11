@@ -2,16 +2,18 @@ import React, { useState } from 'react';
 import { useNode } from './context/NodeContext';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
+import Network from './components/Network';
 import Identity from './components/Identity';
 import Consignments from './components/Consignments';
 import Payments from './components/Payments';
 import TradeFinance from './components/TradeFinance';
 import Permissions from './components/Permissions';
 import TangleExplorer from './components/TangleExplorer';
-import { LayoutDashboard, FileStack, Fingerprint, Shield, Activity, LogOut, Wifi, WifiOff, CreditCard, Landmark } from 'lucide-react';
+import { LayoutDashboard, FileStack, Fingerprint, Shield, Activity, LogOut, Wifi, WifiOff, CreditCard, Landmark, Globe } from 'lucide-react';
 
 const PAGES = [
   { id: 'dashboard',     label: 'Dashboard',      icon: LayoutDashboard },
+  { id: 'network',       label: 'Network',         icon: Globe },
   { id: 'consignments',  label: 'Consignments',    icon: FileStack },
   { id: 'payments',      label: 'Payments',        icon: CreditCard },
   { id: 'trade-finance', label: 'Trade Finance',   icon: Landmark },
@@ -110,7 +112,8 @@ export default function App() {
         </header>
 
         <div className="cnt">
-          {page === 'dashboard'     && <Dashboard searchQ={searchQ} onViewDocs={handleViewDocs} />}
+          {page === 'dashboard'     && <Dashboard searchQ={searchQ} onViewDocs={handleViewDocs} onNavigate={setPage} />}
+          {page === 'network'       && <Network />}
           {page === 'consignments'  && <Consignments searchQ={searchQ} targetConsignment={targetConsignment} onClearTarget={() => setTargetConsignment(null)} />}
           {page === 'payments'      && <Payments />}
           {page === 'trade-finance' && <TradeFinance />}

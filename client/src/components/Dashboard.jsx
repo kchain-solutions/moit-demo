@@ -4,7 +4,7 @@ import { api } from '../utils/api';
 import XmlViewer from './XmlViewer';
 import {
   FileStack, TrendingUp, Activity, Wifi, WifiOff, Radio, Link2, Unlink, Server,
-  AlertTriangle, FileText, Download, Eye, Code2, X, ChevronLeft
+  AlertTriangle, FileText, Download, Eye, Code2, X, ChevronLeft, Globe, ArrowRight
 } from 'lucide-react';
 
 function fmtValue(val, currency = 'USD') {
@@ -57,7 +57,7 @@ function DocTypeIcon({ docType }) {
   );
 }
 
-export default function Dashboard({ searchQ = '', onViewDocs }) {
+export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
   const { nodeInfo, peerConnected, peerOrgs, tangleLog, user, refreshKey, refresh } = useNode();
   const [orgs, setOrgs] = useState([]);
   const [consignments, setConsignments] = useState([]);
@@ -239,62 +239,33 @@ export default function Dashboard({ searchQ = '', onViewDocs }) {
         {/* Right panel */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
 
-          {/* Node network */}
-          <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
-            <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--card-border)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: 7 }}>
-                <Wifi style={{ width: 15, height: 15, color: peerConnected ? '#22c55e' : '#94a3b8' }} />
-                Node Network
-              </h3>
+          {/* Node status (compact) */}
+          <div className="card node-status">
+            <div className="node-status-row">
+              <div className="node-status-title">
+                <Wifi style={{ width: 14, height: 14, color: peerConnected ? '#16a34a' : '#94a3b8' }} />
+                <span>Node Status</span>
+              </div>
+              <span className={`tn-status ${peerConnected ? 'tn-status-on' : 'tn-status-off'}`}>
+                {peerConnected ? 'Connected' : 'Local only'}
+              </span>
+            </div>
+            <div className="node-status-meta">
+              <div><span className="ns-k">This node</span><span className="ns-v">{nodeInfo?.nodeName || '—'}</span></div>
+              <div><span className="ns-k">Local orgs</span><span className="ns-v">{orgs.length}</span></div>
+              <div><span className="ns-k">Peer orgs</span><span className="ns-v">{peerConnected ? peerOrgs.length : '—'}</span></div>
+              <div><span className="ns-k">Ledger records</span><span className="ns-v">{tangleLog.length}</span></div>
+            </div>
+            <div className="node-status-actions">
               {peerConnected
                 ? <button className="btn btn-sm btn-d" onClick={handleDisconnect}><Unlink style={{ width: 11, height: 11 }} /> Disconnect</button>
                 : <button className="btn btn-sm btn-p" onClick={() => setShowDiscover(true)}><Radio style={{ width: 11, height: 11 }} /> Connect</button>}
-            </div>
-            <div className="nv" style={{ height: peerConnected ? 190 : 150, borderRadius: 0, border: 'none' }}>
-              <div className="nb" style={{ left: 12, top: 16 }}>
-                <h4>{nodeInfo?.nodeName || 'This Node'}</h4>
-                <p>{nodeInfo?.nodeIp}</p>
-                {orgs.map(o => (
-                  <div key={o.id} style={{ fontSize: 9.5, color: '#6b7280', marginTop: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
-                    <span style={{ width: 5, height: 5, borderRadius: '50%', background: o.verified ? '#22c55e' : '#d1d5db', display: 'inline-block', flexShrink: 0 }} />
-                    {o.name}
-                  </div>
-                ))}
-              </div>
-              <div className="nb tgl" style={{ left: '50%', top: peerConnected ? 70 : 50, transform: 'translateX(-50%)' }}>
-                <h4>ledger</h4>
-                <p>{tangleLog.length} records</p>
-              </div>
-              {peerConnected ? (
-                <div className="nb" style={{ right: 12, top: 16 }}>
-                  <h4>{discoverable[0]?.name || 'Peer Node'}</h4>
-                  <p>{discoverable[0]?.ip || '...'}</p>
-                  {peerOrgs.map(o => (
-                    <div key={o.id} style={{ fontSize: 9.5, color: '#6b7280', marginTop: 3, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
-                      <span style={{ width: 5, height: 5, borderRadius: '50%', background: o.verified ? '#22c55e' : '#d1d5db', display: 'inline-block', flexShrink: 0 }} />
-                      {o.name}
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div style={{ position: 'absolute', right: 12, top: 16, width: 120, padding: '14px 12px', background: '#f9fafb', border: '2px dashed #d1d5db', borderRadius: 8, textAlign: 'center' }}>
-                  <Server style={{ width: 18, height: 18, color: '#d1d5db', margin: '0 auto 5px' }} />
-                  <div style={{ fontSize: 10, color: '#9ca3af' }}>No peer</div>
-                </div>
-              )}
-              <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none' }}>
-                <line x1="142" y1="44" x2="200" y2={peerConnected ? 82 : 62} stroke={peerConnected ? '#22c55e' : '#d1d5db'} strokeWidth="1.5" strokeDasharray={peerConnected ? '' : '5 4'} />
-                {peerConnected && <>
-                  <line x1="260" y1="82" x2="318" y2="44" stroke="#22c55e" strokeWidth="1.5" />
-                  <line x1="142" y1="34" x2="318" y2="34" stroke="#16a34a" strokeWidth="1" strokeDasharray="4 3">
-                    <animate attributeName="stroke-dashoffset" from="0" to="-14" dur="1s" repeatCount="indefinite" />
-                  </line>
-                  <text x="230" y="26" textAnchor="middle" fontSize="8" fill="#16a34a" fontFamily="var(--mono)">P2P ACTIVE</text>
-                </>}
-              </svg>
+              <button className="btn btn-sm btn-s" onClick={() => onNavigate?.('network')}>
+                <Globe style={{ width: 11, height: 11 }} /> View Network <ArrowRight style={{ width: 11, height: 11 }} />
+              </button>
             </div>
             {errorCount > 0 && (
-              <div style={{ padding: '8px 16px', background: '#fef2f2', borderTop: '1px solid #fecaca', display: 'flex', gap: 6, alignItems: 'center', fontSize: 11.5, color: '#b91c1c' }}>
+              <div className="node-status-alert">
                 <AlertTriangle style={{ width: 13, height: 13, flexShrink: 0 }} />
                 <span><strong>{errorCount} consignment{errorCount > 1 ? 's' : ''}</strong> flagged for reconciliation</span>
               </div>
