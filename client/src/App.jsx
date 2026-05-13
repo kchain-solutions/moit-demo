@@ -41,9 +41,9 @@ export default function App() {
     <div className="layout">
       <aside className="sidebar">
         <div className="sb-brand">
-          <img src="/adapt-logo.png" alt="ADAPT" style={{ height: 22, width: 22, objectFit: 'contain', flexShrink: 0 }} />
+          <img src="/twin-logo.svg" alt="TWIN" style={{ height: 22, width: 22, objectFit: 'contain', flexShrink: 0 }} />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25, minWidth: 0 }}>
-            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>ADAPT</span>
+            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>TWIN Vietnam</span>
             
           </div>
         </div>

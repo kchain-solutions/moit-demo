@@ -335,7 +335,7 @@ export default function Identity() {
               {[
                 ['Organisation', credentialOrg.name],
                 ['DID', credentialOrg.did],
-                ['Issued by', credentialOrg.attestedBy || 'ADAPT participant'],
+                ['Issued by', credentialOrg.attestedBy || 'TWIN participant'],
                 ['Reg. number', credentialOrg.regNumber || '—'],
                 ['Node', credentialOrg.nodeName],
                 ['Ledger hash', credentialOrg.did ? '0x' + credentialOrg.did.split('0x')[1]?.slice(0, 16) + '...' : '—'],
@@ -349,7 +349,7 @@ export default function Identity() {
 
             <div style={{ marginTop: 16, padding: 12, background: '#fffbeb', border: '1px solid #fde68a', borderRadius: 10, fontSize: 11.5, color: '#92400e', display: 'flex', gap: 8 }}>
               <Shield style={{ width: 14, height: 14, flexShrink: 0, marginTop: 1 }} />
-              <span>This credential was verified by <strong>{credentialOrg.attestedBy || 'an ADAPT participant'}</strong> and anchored on the distributed ledger. Any party can confirm this identity without contacting the issuing authority directly.</span>
+              <span>This credential was verified by <strong>{credentialOrg.attestedBy || 'a TWIN participant'}</strong> and anchored on the distributed ledger. Any party can confirm this identity without contacting the issuing authority directly.</span>
             </div>
 
             <div className="modal-act" style={{ marginTop: 16 }}>

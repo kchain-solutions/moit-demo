@@ -141,7 +141,7 @@ export default function Consignments({ searchQ = '', targetConsignment = null, o
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <div>
           <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>Consignments</h2>
-          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>ADAPT trade documents anchored on ledger</div>
+          <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>TWIN trade documents anchored on ledger</div>
         </div>
         <button className="btn btn-p" onClick={() => setShowCreate(true)}><Plus style={{ width: 14, height: 14 }} /> New Consignment</button>
       </div>
