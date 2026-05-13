@@ -288,7 +288,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Advising Bank</label>
-                <input className="input" placeholder="e.g. Access Bank Nigeria" value={form.advisingBank} onChange={e => setForm(f => ({ ...f, advisingBank: e.target.value }))} />
+                <input className="input" placeholder="e.g. Vietcombank" value={form.advisingBank} onChange={e => setForm(f => ({ ...f, advisingBank: e.target.value }))} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Beneficiary</label>

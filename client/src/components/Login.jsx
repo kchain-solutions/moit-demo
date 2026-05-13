@@ -2,17 +2,23 @@ import React, { useState } from 'react';
 import { useNode } from '../context/NodeContext';
 
 const ALPHA_CREDS = [
-  { role: 'Exporter · Morocco',          username: 'atlas',      label: 'AtlasPhosphate S.A.' },
-  { role: 'Customs Authority · Morocco', username: 'macustoms',  label: 'Morocco Customs' },
-  { role: 'Customs Authority · Nigeria', username: 'ngcustoms',  label: 'Nigeria Customs' },
-  { role: 'Customs Authority · Kenya',   username: 'kra',        label: 'Kenya Revenue Authority' },
-  { role: 'Financier',                   username: 'financier1', label: 'Financier 1' },
-  { role: 'Financier',                   username: 'financier2', label: 'Financier 2' },
+  { role: 'Manufacturer - Vietnam',                    username: 'tng',         label: 'TNG Investment & Trading JSC' },
+  { role: 'Customs Authority - Vietnam',               username: 'vncustoms',   label: 'General Department of Vietnam Customs' },
+  { role: 'Certificate of Origin Authority - Vietnam', username: 'moit',        label: 'Ministry of Industry and Trade (MOIT)' },
+  { role: 'Input Supplier - South Korea',              username: 'hyosung',     label: 'Hyosung TNS Co., Ltd' },
+  { role: 'Quality Inspector - Vietnam',               username: 'bvinspector', label: 'Bureau Veritas Vietnam' },
+  { role: 'Port Authority - Ho Chi Minh City',         username: 'catlaiport',  label: 'Cat Lai Port Authority' },
+  { role: 'Freight Forwarder - Vietnam',               username: 'gemadept',    label: 'Gemadept Logistics' },
+  { role: 'Carrier - Vietnam',                         username: 'maersk',      label: 'Maersk Vietnam' },
+  { role: 'Financier - Vietnam',                       username: 'financier1',  label: 'Vietcombank' },
+  { role: 'Financier - International',                 username: 'financier2',  label: 'HSBC Vietnam' },
 ];
 
 const BETA_CREDS = [
-  { role: 'Importer · Nigeria',       username: 'primefert',  label: 'PrimeFert Nigeria Ltd' },
-  { role: 'Importer · Nigeria',       username: 'tradelink',  label: 'TradeLink International Ltd' },
+  { role: 'Importing Buyer - United States',   username: 'nike',      label: 'Nike Inc.' },
+  { role: 'Importing Buyer - EU',              username: 'nikeeu',    label: 'Nike Europe B.V.' },
+  { role: 'Customs Authority - United States', username: 'uscbp',     label: 'US Customs and Border Protection' },
+  { role: 'Customs Authority - EU',            username: 'eucustoms', label: 'EU Customs (Netherlands)' },
 ];
 
 export default function Login() {
@@ -59,7 +65,7 @@ export default function Login() {
         <p className="sub" style={{ marginTop: 10 }}>Trade & Logistics Platform — Sign in to your organisation</p>
 
         <div className="node-badge">
-          Node: <strong>{isBeta ? 'Beta — Importers / Nigeria' : 'Alpha — Exporters & Customs'}</strong>
+          Node: <strong>{isBeta ? 'Beta — Importers / Destination Markets' : 'Alpha — Vietnam Export Corridor'}</strong>
         </div>
 
         {error && <div className="err">{error}</div>}

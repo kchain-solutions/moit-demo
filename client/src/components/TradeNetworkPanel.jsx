@@ -91,9 +91,9 @@ const COMPASS_ORDER = ['S', 'E', 'N', 'W', 'SE', 'NE', 'NW', 'SW'];
 
 // Per-org compass overrides (by org id). Falls back to COMPASS_ORDER index.
 const ORG_COMPASS_OVERRIDE = {
-  org1: 'SW', // AtlasPhosphate S.A. → south-west of Morocco
-  org2: 'N',  // Morocco Customs → top of Morocco
-  org3: 'NW', // Nigeria Customs → north-west of Nigeria
+  org1: 'S',  // TNG Investment & Trading JSC → south of Vietnam
+  org2: 'N',  // Vietnam Customs → north of Vietnam
+  org3: 'NW', // MOIT → north-west of Vietnam
 };
 
 function orgPositions(entry) {
@@ -611,7 +611,7 @@ export default function TradeNetworkPanel({
   const localAnchor = useMemo(() => dominantCountry(countryEntries, 'local'), [countryEntries]);
   const peerAnchor  = useMemo(() => dominantCountry(countryEntries, 'peer'),  [countryEntries]);
 
-  const DEFAULT_CENTER = [10, 8];
+  const DEFAULT_CENTER = [80, 25];
   const [zoom, setZoom] = useState(1);
   const [center, setCenter] = useState(DEFAULT_CENTER);
   const zoomIn  = () => setZoom(z => Math.min(z * 1.5, 8));
