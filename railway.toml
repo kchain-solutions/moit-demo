@@ -1,5 +1,5 @@
 [build]
-buildCommand = "npm install --omit=dev"
+buildCommand = "npm install && npx vite build --outDir server/public"
 
 [build.env]
 RAILPACK_NO_SPA = "1"
