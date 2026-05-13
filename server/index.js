@@ -42,9 +42,9 @@ const now = () => new Date().toISOString();
 
 
 // ── Credential validation ──
-const BLACKLISTED = ['BRN-000000','TIN-000000','LEI-000000','DUNS-000000','BRN-999999'];
-const EXPIRED = ['BRN-111111','TIN-111111'];
-const SUSPENDED = ['BRN-222222','TIN-222222'];
+const BLACKLISTED = ['MST-000000','BRN-000000','TIN-000000','KBN-000000','EIN-000000'];
+const EXPIRED = ['MST-111111','BRN-111111'];
+const SUSPENDED = ['MST-222222','BRN-222222'];
 
 function validateCredential(regNumber) {
   const n = (regNumber || '').toUpperCase().trim();
@@ -54,22 +54,28 @@ function validateCredential(regNumber) {
   if (EXPIRED.includes(n)) return { valid: false, reason: 'Registration has EXPIRED — licence is no longer active. Organisation must renew before DID issuance.', failStep: 2 };
   if (SUSPENDED.includes(n)) return { valid: false, reason: 'Registration is SUSPENDED — organisation is under regulatory review. DID issuance blocked.', failStep: 2 };
   const prefix = n.split('-')[0];
-  const typeMap = { BRN: 'Business Registration Number', TIN: 'Tax Identification Number', LEI: 'Legal Entity Identifier', DUNS: 'DUNS Number' };
+  const typeMap = { MST: 'Vietnam Tax Code (Ma So Thue)', BRN: 'Business Registration Number', TIN: 'Tax Identification Number', LEI: 'Legal Entity Identifier', KBN: 'Korean Business Number', EIN: 'US Employer Identification Number', EORI: 'EU Economic Operator ID', DUNS: 'DUNS Number' };
   return { valid: true, type: typeMap[prefix] || 'National Registration Number', formatted: n };
 }
 
 // ── Store ──
 const store = {
   orgs: NODE_ID === 'alpha' ? [
-    { id: 'org1', name: 'AtlasPhosphate S.A.',     role: 'Exporter · Morocco',          username: 'atlas',      password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org2', name: 'Morocco Customs',          role: 'Customs Authority · Morocco', username: 'macustoms',  password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
-    { id: 'org3', name: 'Nigeria Customs',          role: 'Customs Authority · Nigeria', username: 'ngcustoms',  password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
-    { id: 'org4', name: 'Kenya Revenue Authority',  role: 'Customs Authority · Kenya',   username: 'kra',        password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
-    { id: 'org7', name: 'Financier 1',              role: 'Financier',                   username: 'financier1', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org8', name: 'Financier 2',              role: 'Financier',                   username: 'financier2', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org1', name: 'TNG Investment & Trading JSC',          role: 'Manufacturer - Vietnam',                    username: 'tng',         password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org2', name: 'General Department of Vietnam Customs',  role: 'Customs Authority - Vietnam',               username: 'vncustoms',   password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
+    { id: 'org3', name: 'Ministry of Industry and Trade (MOIT)',  role: 'Certificate of Origin Authority - Vietnam', username: 'moit',        password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
+    { id: 'org4', name: 'Hyosung TNS Co., Ltd',                  role: 'Input Supplier - South Korea',              username: 'hyosung',     password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org7', name: 'Vietcombank',                            role: 'Financier - Vietnam',                       username: 'financier1',  password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org8', name: 'HSBC Vietnam',                           role: 'Financier - International',                 username: 'financier2',  password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org9', name: 'Bureau Veritas Vietnam',                 role: 'Quality Inspector - Vietnam',               username: 'bvinspector', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org10', name: 'Cat Lai Port Authority',                role: 'Port Authority - Ho Chi Minh City',         username: 'catlaiport',  password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
+    { id: 'org11', name: 'Gemadept Logistics',                    role: 'Freight Forwarder - Vietnam',               username: 'gemadept',    password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org12', name: 'Maersk Vietnam',                        role: 'Carrier - Vietnam',                         username: 'maersk',      password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
   ] : [
-    { id: 'org5', name: 'PrimeFert Nigeria Ltd',        role: 'Importer · Nigeria', username: 'primefert', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org6', name: 'TradeLink International Ltd',  role: 'Importer · Nigeria', username: 'tradelink', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org5', name: 'Nike Inc.',                              role: 'Importing Buyer - United States',           username: 'nike',        password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org6', name: 'Nike Europe B.V.',                       role: 'Importing Buyer - EU',                      username: 'nikeeu',      password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
+    { id: 'org13', name: 'US Customs and Border Protection',      role: 'Customs Authority - United States',         username: 'uscbp',       password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
+    { id: 'org14', name: 'EU Customs (Netherlands)',               role: 'Customs Authority - EU',                    username: 'eucustoms',   password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
   ],
   consignments: [], documents: [], permissions: {}, docPermissions: {},
   payments: [], letterOfCredits: [], smartContracts: [], financePermissions: {},
@@ -106,6 +112,17 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
       ``, `This document serves as the commercial invoice for the above shipment.`,
       `All details are as agreed under the relevant sales contract.`,
     ],
+    'Commercial Invoice (Inputs)': [
+      `COMMERCIAL INVOICE (INPUT MATERIALS)`, ``,
+      `Invoice No : ${ref}`,
+      `Date       : ${shipDate}`,
+      `Supplier   : Hyosung TNS Co., Ltd (South Korea)`,
+      `Buyer      : ${exporter}`,
+      `UCR        : ${ucr}`,
+      ``, `Description: Spandex yarn (Creora 40D/70D) and nylon fabric`,
+      `Origin: South Korea (CPTPP member)`,
+      `Terms: CIF Cat Lai Terminal, Ho Chi Minh City`,
+    ],
     'Packing List': [
       `PACKING LIST`, ``,
       `Reference  : ${ref}`,
@@ -124,7 +141,20 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
       `UCR        : ${ucr}`,
       `Port of Loading    : ${fromCountry}`,
       `Port of Discharge  : ${toCountry}`,
+      `Carrier    : Maersk Line`,
       ``, `Received in apparent good order and condition the goods described herein.`,
+    ],
+    'Input Certificate of Origin': [
+      `CERTIFICATE OF ORIGIN (INPUT MATERIALS)`, ``,
+      `Certificate No : ${ref}`,
+      `Date           : ${shipDate}`,
+      `Issued by      : Korea Customs Service`,
+      `Supplier       : Hyosung TNS Co., Ltd`,
+      `UCR            : ${ucr}`,
+      `Country of Origin : South Korea`,
+      ``, `CPTPP cumulation eligible.`,
+      `We certify that the materials described originate in the Republic of Korea`,
+      `and qualify as non-third-country content under CPTPP cumulation rules.`,
     ],
     'Certificate of Origin': [
       `CERTIFICATE OF ORIGIN`, ``,
@@ -137,16 +167,77 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
       ``, `We hereby certify that the goods described in this document`,
       `originate in ${fromCountry} and comply with all applicable regulations.`,
     ],
+    'MOIT Certificate of Origin': [
+      `CERTIFICATE OF ORIGIN`, `(MOIT Electronic Certificate via eCoSys)`, ``,
+      `Certificate No : ${ref}`,
+      `Form Type      : EUR.1 (EVFTA) / CPTPP`,
+      `Date           : ${shipDate}`,
+      `Issued by      : Ministry of Industry and Trade, Vietnam`,
+      `                 Multilateral Trade Policy Department`,
+      ``,
+      `Exporter       : ${exporter}`,
+      `Consignee      : ${importer}`,
+      `Country of Origin : Vietnam`,
+      `Destination    : ${toCountry}`,
+      `UCR            : ${ucr}`,
+      ``,
+      `Origin Criterion: RVC (Regional Value Content)`,
+      `CPTPP cumulation applied. Korean fabric counts as non-third-country.`,
+      `Vietnam content exceeds 55% threshold.`,
+      ``,
+      `Digital Signature: MOIT-eCoSys-2026`,
+    ],
+    'Bill of Material': [
+      `BILL OF MATERIAL`, ``,
+      `Reference    : ${ref}`,
+      `Date         : ${shipDate}`,
+      `Manufacturer : ${exporter}`,
+      `UCR          : ${ucr}`,
+      ``,
+      `INPUT MATERIALS:`,
+      `1. Cotton/synthetic fabric  - Hyosung Corp., South Korea`,
+      `2. Thread and yarn          - Vietnam Thread Co., Vietnam`,
+      `3. Zippers and buttons      - YKK Vietnam, Vietnam`,
+      `4. Woven labels             - Saigon Labels, Vietnam`,
+      `5. Elastic bands            - Zhejiang Elastic Co., China`,
+      ``,
+      `ORIGIN COMPOSITION:`,
+      `Vietnam content: 65.5%`,
+      `CPTPP member content (Korea): 30.0%`,
+      `Third-country content (China): 4.5%`,
+      ``,
+      `This BOM certifies the input composition for the above production lot.`,
+    ],
+    'Inspection Report': [
+      `QUALITY INSPECTION REPORT`, ``,
+      `Report No    : ${ref}`,
+      `Date         : ${shipDate}`,
+      `Inspector    : Bureau Veritas Vietnam`,
+      `Manufacturer : ${exporter}`,
+      `UCR          : ${ucr}`,
+      ``,
+      `RESULT: PASS`,
+      ``,
+      `Tests performed:`,
+      `- Fabric tensile strength: PASS`,
+      `- Color fastness (washing): PASS`,
+      `- Dimensional stability: PASS`,
+      `- Fiber composition analysis: PASS (matches BOM)`,
+      `- AZO dye test: PASS (EU REACH compliant)`,
+      ``,
+      `Inspector ID: BV-VN-2026-0847`,
+    ],
     'Export Declaration': [
       `EXPORT DECLARATION`, ``,
       `Declaration No : ${ref}`,
       `Date           : ${shipDate}`,
-      `Declarant      : ${issuer}`,
+      `Declarant      : General Department of Vietnam Customs`,
+      `System         : VNACCS`,
       `Exporter       : ${exporter}`,
       `UCR            : ${ucr}`,
       `Country of Export : ${fromCountry}`,
       `Country of Destination : ${toCountry}`,
-      ``, `This export declaration is submitted in accordance with applicable customs regulations.`,
+      ``, `This export declaration is filed via VNACCS in accordance with Vietnamese customs regulations.`,
     ],
   };
   const body = (lines[docType] || [`${docType}`, ``, `Reference: ${ref}`, `Issuer: ${issuer}`, `UCR: ${ucr}`])
@@ -182,15 +273,16 @@ function makeSeedXml(docType, m, ref) {
   const grossMass   = m.quantity.match(/[\d,]+/)?.[0]?.replace(',','') || '1000';
   const netMass     = Math.round(parseInt(grossMass) * 0.97);
   const arrival     = new Date(new Date(m.shipDate).getTime() + 14 * 86400000).toISOString().slice(0,10);
-  const carrier     = m.vessel.startsWith('KQ') ? 'Kenya Airways Cargo' : 'NordShip Line S.A.';
-  const exporterAddr = m.fromCountry === 'Morocco'  ? '12 Rue Al Borj, Casablanca 20000, Morocco'
-                     : m.fromCountry === 'Kenya'    ? 'Westlands Business Park, Nairobi, Kenya'
-                     : '14 Creek Road, Apapa, Lagos, Nigeria';
-  const importerAddr = m.toCountry === 'Netherlands' ? 'Prins Bernhardplein 200, Amsterdam, Netherlands'
-                     : m.toCountry === 'Germany'      ? 'Speicherstadt 1, Hamburg, Germany'
-                     : m.toCountry === 'United Kingdom' ? '1 Dock Road, Felixstowe, Suffolk, UK'
-                     : m.toCountry === 'South Africa'   ? 'Island View, Durban, South Africa'
-                     : '24 Marina Street, Victoria Island, Lagos, Nigeria';
+  const carrier     = 'Maersk Line';
+  const exporterAddr = m.fromCountry === 'Vietnam' ? 'Lien Chieu Industrial Zone, Thai Nguyen, Vietnam'
+                     : m.fromCountry === 'South Korea' ? '235 Banpo-daero, Seocho-gu, Seoul, South Korea'
+                     : 'Unknown';
+  const importerAddr = m.toCountry === 'United States' ? 'One Bowerman Drive, Beaverton, OR 97005, USA'
+                     : m.toCountry === 'Netherlands'    ? 'Colosseum 1, 1213 NL Hilversum, Netherlands'
+                     : m.toCountry === 'Germany'         ? 'Tamara-Danz-Strasse 1, 10243 Berlin, Germany'
+                     : m.toCountry === 'Japan'           ? '4-1 Nihonbashi-Muromachi, Chuo-ku, Tokyo, Japan'
+                     : m.toCountry === 'Vietnam'         ? 'Lien Chieu Industrial Zone, Thai Nguyen, Vietnam'
+                     : 'Unknown';
 
   if (docType === 'Bill of Lading') {
     return `<?xml version="1.0" encoding="UTF-8"?>
@@ -284,10 +376,63 @@ function makeSeedXml(docType, m, ref) {
   <BillOfLadingRef>BL-${ref.replace(/[A-Z]+-\d+-/,'')}</BillOfLadingRef>
   <CertificateOfOriginRef>CO-${ref.replace(/[A-Z]+-\d+-/,'')}</CertificateOfOriginRef>
   <InsuranceCertificateRef>INS-${seed}</InsuranceCertificateRef>
-  <DeclarantName>${m.fromCountry === 'Morocco' ? 'Morocco Customs' : m.fromCountry === 'Kenya' ? 'Kenya Revenue Authority' : 'Nigeria Customs'}</DeclarantName>
+  <DeclarantName>General Department of Vietnam Customs (VNACCS)</DeclarantName>
   <DeclarationLocation>${m.originPort}</DeclarationLocation>
   <Status>ACCEPTED</Status>
 </CustomsDeclaration>`;
+  }
+
+  if (docType === 'Bill of Material') {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<BillOfMaterial>
+  <Reference>${ref}</Reference>
+  <UCR>${m.ucr}</UCR>
+  <Date>${m.shipDate}</Date>
+  <Manufacturer>${m.exporter}</Manufacturer>
+  <Product>${m.product}</Product>
+  <HSCode>${m.hsCode}</HSCode>
+  <OriginComposition>
+    <VietnamContentPercent>65.5</VietnamContentPercent>
+    <CPTPPCumulationApplied>true</CPTPPCumulationApplied>
+    <ThirdCountryContentPercent>4.5</ThirdCountryContentPercent>
+    <InputMaterials>
+      <Material><Name>Cotton/synthetic fabric</Name><Supplier>Hyosung Corp.</Supplier><Country>KR</Country><Percent>30.0</Percent><CPTPPMember>true</CPTPPMember></Material>
+      <Material><Name>Thread and yarn</Name><Supplier>Vietnam Thread Co.</Supplier><Country>VN</Country><Percent>15.5</Percent><CPTPPMember>true</CPTPPMember></Material>
+      <Material><Name>Zippers and buttons</Name><Supplier>YKK Vietnam</Supplier><Country>VN</Country><Percent>10.0</Percent><CPTPPMember>true</CPTPPMember></Material>
+      <Material><Name>Cutting and sewing labor</Name><Supplier>${m.exporter}</Supplier><Country>VN</Country><Percent>40.0</Percent><CPTPPMember>true</CPTPPMember></Material>
+      <Material><Name>Elastic bands</Name><Supplier>Zhejiang Elastic Co.</Supplier><Country>CN</Country><Percent>4.5</Percent><CPTPPMember>false</CPTPPMember></Material>
+    </InputMaterials>
+  </OriginComposition>
+</BillOfMaterial>`;
+  }
+
+  if (docType === 'MOIT Certificate of Origin') {
+    return `<?xml version="1.0" encoding="UTF-8"?>
+<CertificateOfOrigin>
+  <CertificateNumber>${ref}</CertificateNumber>
+  <FormType>EUR.1</FormType>
+  <IssueDate>${m.shipDate}</IssueDate>
+  <IssuingAuthority>Ministry of Industry and Trade, Vietnam</IssuingAuthority>
+  <IssuingSystem>eCoSys</IssuingSystem>
+  <Exporter><PartyName>${m.exporter}</PartyName><Country>VN</Country></Exporter>
+  <Consignee><PartyName>${m.importer}</PartyName><Country>${m.toCountry.slice(0,2).toUpperCase()}</Country></Consignee>
+  <Goods>
+    <HSCode>${m.hsCode}</HSCode>
+    <Description>${m.product}</Description>
+    <OriginCriterion>RVC</OriginCriterion>
+    <OriginCountry>VN</OriginCountry>
+  </Goods>
+  <CumulationDeclaration>
+    <CPTPPCumulation>true</CPTPPCumulation>
+    <CumulationPartnerCountry>KR</CumulationPartnerCountry>
+    <CumulationMaterialType>Fabric and yarn</CumulationMaterialType>
+  </CumulationDeclaration>
+  <DigitalSignature>
+    <SignerIdentity>MOIT-eCoSys</SignerIdentity>
+    <Timestamp>${m.shipDate}T10:00:00.000Z</Timestamp>
+    <Algorithm>Ed25519</Algorithm>
+  </DigitalSignature>
+</CertificateOfOrigin>`;
   }
 
   return null;
@@ -295,46 +440,40 @@ function makeSeedXml(docType, m, ref) {
 
 // ── Hardcoded demo consignments ──
 const ALPHA_CONSIGNMENTS = [
-  // Morocco → Nigeria (AtlasPhosphate, org1)
-  { ucr:'UCR-2026-MA-NG-00101', product:'Triple Super Phosphate (TSP)',    hsCode:'3103.10', quantity:'2,400 MT', totalValue:340000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Apapa Port, Lagos',      vessel:'MV Atlas Pioneer',    shipDate:'2026-02-18', incoterms:'CFR', invoiceRef:'INV-2026-APM-0101', declRef:'MA-EXP-2026-0101', status:'Delivered',   creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
-  { ucr:'UCR-2026-MA-NG-00102', product:'Di-Ammonium Phosphate (DAP)',     hsCode:'3105.30', quantity:'1,800 MT', totalValue:290000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Tin Can Island Port',    vessel:'MV Maroc Express',    shipDate:'2026-02-20', incoterms:'FOB', invoiceRef:'INV-2026-APM-0102', declRef:'MA-EXP-2026-0102', status:'In Transit',  creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
-  { ucr:'UCR-2026-MA-NG-00103', product:'Granular Urea (46% N)',           hsCode:'3102.10', quantity:'3,000 MT', totalValue:510000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Agadir',      destinationPort:'Apapa Port, Lagos',      vessel:'MV Sahara Star',      shipDate:'2026-03-01', incoterms:'CIF', invoiceRef:'INV-2026-APM-0103', declRef:'MA-EXP-2026-0103', status:'Customs',     creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
-  { ucr:'UCR-2026-MA-NG-00104', product:'Phosphoric Acid (75% P₂O₅)',     hsCode:'2809.20', quantity:'950 MT',   totalValue:178000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Jorf Lasfar', destinationPort:'Onne Port',              vessel:'MV Chemtrans Atlas',  shipDate:'2026-03-05', incoterms:'CFR', invoiceRef:'INV-2026-APM-0104', declRef:'MA-EXP-2026-0104', status:'Submitted',   creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
-  { ucr:'UCR-2026-MA-NG-00105', product:'Mono-Ammonium Phosphate (MAP)',   hsCode:'3105.40', quantity:'2,100 MT', totalValue:375000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Apapa Port, Lagos',      vessel:'MV Northern Cape',    shipDate:'2026-03-12', incoterms:'FOB', invoiceRef:'INV-2026-APM-0105', declRef:'MA-EXP-2026-0105', status:'Released',    creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
-  { ucr:'UCR-2026-MA-NG-00106', product:'Sulphate of Potash (SOP)',        hsCode:'3104.20', quantity:'1,200 MT', totalValue:264000, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Tin Can Island Port',    vessel:'MV Atlas Pioneer',    shipDate:'2026-03-18', incoterms:'CIF', invoiceRef:'INV-2026-APM-0106', declRef:'MA-EXP-2026-0106', status:'In Transit',  creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.' },
-  { ucr:'UCR-2026-MA-NG-E001',  product:'Rock Phosphate (35% P₂O₅)',      hsCode:'2510.20', quantity:'4,500 MT', totalValue:148500, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'PrimeFert Nigeria Ltd',       fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Jorf Lasfar', destinationPort:'Apapa Port, Lagos',      vessel:'MV Desert Wind',      shipDate:'2026-01-24', incoterms:'CFR', invoiceRef:'INV-2026-APM-E001', declRef:'MA-EXP-2026-E001', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.', errorType:'Document Discrepancy', errorDescription:'Certificate of Origin issuer code does not match Morocco Customs registry. Awaiting reissue from MAEX.' },
-  { ucr:'UCR-2026-MA-NG-E003',  product:'Ammonium Sulphate (21% N)',      hsCode:'3102.21', quantity:'1,600 MT', totalValue:214400, currency:'USD', exporter:'AtlasPhosphate S.A.', importer:'TradeLink International Ltd', fromCountry:'Morocco', toCountry:'Nigeria', originPort:'Port of Casablanca',  destinationPort:'Tin Can Island Port',    vessel:'MV Maroc Express',    shipDate:'2026-02-10', incoterms:'FOB', invoiceRef:'INV-2026-APM-E003', declRef:'MA-EXP-2026-E003', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'AtlasPhosphate S.A.', errorType:'HS Code Mismatch', errorDescription:'HS code declared on Export Declaration (3102.29) does not match Commercial Invoice (3102.21). Nigeria Customs has flagged for reconciliation.' },
-  // Kenya exports (KRA, org4)
-  { ucr:'KE-2026-EXP-00101', product:'Fresh Cut Flowers (Mixed)',          hsCode:'0603.19', quantity:'18,400 kg',totalValue: 92000, currency:'USD', exporter:'Kenya Flower Council',   importer:'Aalsmeer Flower Auction',   fromCountry:'Kenya',   toCountry:'Netherlands', originPort:'JKIA Cargo, Nairobi',  destinationPort:'Amsterdam Schiphol',     vessel:'KQ Cargo 101',        shipDate:'2026-02-15', incoterms:'CPT', invoiceRef:'INV-2026-KFC-0101', declRef:'KE-EXP-2026-0101', status:'Delivered',   creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
-  { ucr:'KE-2026-EXP-00102', product:'Green Tea — Orthodox (PEKOE)',       hsCode:'0902.10', quantity:'42,000 kg',totalValue:168000, currency:'USD', exporter:'Kenya Tea Development Agency',importer:'British Tea Holdings Ltd', fromCountry:'Kenya',  toCountry:'United Kingdom', originPort:'Port of Mombasa',     destinationPort:'Port of Felixstowe',     vessel:'MV Kwanza Bridge',    shipDate:'2026-02-22', incoterms:'CIF', invoiceRef:'INV-2026-KTDA-0102',declRef:'KE-EXP-2026-0102', status:'In Transit',  creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
-  { ucr:'KE-2026-EXP-00103', product:'Washed Arabica Coffee (AA Grade)',   hsCode:'0901.11', quantity:'21,600 kg',totalValue:324000, currency:'USD', exporter:'Nairobi Coffee Exchange', importer:'Volcafe Speciality Coffee', fromCountry:'Kenya',  toCountry:'Germany',         originPort:'Port of Mombasa',     destinationPort:'Port of Hamburg',        vessel:'MV MSC Zanzibar',     shipDate:'2026-03-03', incoterms:'FOB', invoiceRef:'INV-2026-NCE-0103', declRef:'KE-EXP-2026-0103', status:'Customs',     creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
-  { ucr:'KE-2026-EXP-00104', product:'Fresh Avocados — Hass',              hsCode:'0804.40', quantity:'38,000 kg',totalValue:114000, currency:'USD', exporter:'Kakuzi PLC',              importer:'EuroFresh Distributors B.V.',fromCountry:'Kenya', toCountry:'Netherlands',  originPort:'Port of Mombasa',     destinationPort:'Port of Rotterdam',      vessel:'MV African Spirit',   shipDate:'2026-03-08', incoterms:'CFR', invoiceRef:'INV-2026-KAK-0104', declRef:'KE-EXP-2026-0104', status:'Released',    creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
-  { ucr:'KE-2026-EXP-00105', product:'Macadamia Nuts — Raw (In-Shell)',    hsCode:'0802.60', quantity:'14,500 kg',totalValue: 87000, currency:'USD', exporter:'Kenya Nut Company Ltd',   importer:'Olam International Ltd',    fromCountry:'Kenya',  toCountry:'South Africa',    originPort:'Port of Mombasa',     destinationPort:'Port of Durban',         vessel:'MV Safmarine Mafadi', shipDate:'2026-03-14', incoterms:'CIF', invoiceRef:'INV-2026-KNC-0105', declRef:'KE-EXP-2026-0105', status:'Submitted',   creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
-  { ucr:'KE-2026-EXP-00106', product:'French Green Beans (Fine)',          hsCode:'0708.20', quantity:'22,000 kg',totalValue: 66000, currency:'USD', exporter:'Vegpro Group Ltd',        importer:'M&S Food Suppliers UK',     fromCountry:'Kenya',  toCountry:'United Kingdom',  originPort:'JKIA Cargo, Nairobi',  destinationPort:'Heathrow Air Cargo',     vessel:'KQ Cargo 107',        shipDate:'2026-03-19', incoterms:'DAP', invoiceRef:'INV-2026-VPG-0106', declRef:'KE-EXP-2026-0106', status:'In Transit',  creatorOrgId:'org4', creatorOrgName:'Kenya Revenue Authority' },
+  { ucr:'VN-2026-EXP-00101', product:"Men's Cotton Polo Shirts (Knitted)",          hsCode:'6105.10', quantity:'24,000 pcs', totalValue:168000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',        fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Los Angeles',  vessel:'MV Maersk Seletar',   shipDate:'2026-03-10', incoterms:'FOB', invoiceRef:'INV-2026-TNG-0101', declRef:'VN-EXP-2026-0101', status:'Delivered',    creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
+  { ucr:'VN-2026-EXP-00102', product:"Women's Cotton T-Shirts (Knitted)",           hsCode:'6109.10', quantity:'36,000 pcs', totalValue:216000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',        fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Los Angeles',  vessel:'MV Maersk Sentosa',   shipDate:'2026-03-18', incoterms:'FOB', invoiceRef:'INV-2026-TNG-0102', declRef:'VN-EXP-2026-0102', status:'In Transit',   creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
+  { ucr:'VN-2026-EXP-00103', product:"Men's Synthetic Windbreaker Jackets (Woven)", hsCode:'6201.93', quantity:'12,000 pcs', totalValue:264000, currency:'EUR', exporter:'TNG Investment & Trading JSC', importer:'Nike Europe B.V.', fromCountry:'Vietnam', toCountry:'Netherlands',  originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Rotterdam',    vessel:'MV CMA CGM Mekong',   shipDate:'2026-03-25', incoterms:'CIF', invoiceRef:'INV-2026-TNG-0103', declRef:'VN-EXP-2026-0103', status:'Customs',      creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
+  { ucr:'VN-2026-EXP-00104', product:"Women's Knitted Sports Trousers",             hsCode:'6104.63', quantity:'18,000 pcs', totalValue:198000, currency:'EUR', exporter:'TNG Investment & Trading JSC', importer:'Nike Europe B.V.', fromCountry:'Vietnam', toCountry:'Germany',      originPort:'Hai Phong International Container Terminal', destinationPort:'Port of Hamburg',  vessel:'MV Evergreen Harmony', shipDate:'2026-04-02', incoterms:'CFR', invoiceRef:'INV-2026-TNG-0104', declRef:'VN-EXP-2026-0104', status:'Submitted',    creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
+  { ucr:'VN-2026-EXP-00105', product:"Athletic Running Shoes (Rubber/Plastic Upper)", hsCode:'6402.99', quantity:'8,400 pairs', totalValue:378000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',    fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Long Beach',   vessel:'MV Maersk Seletar',   shipDate:'2026-04-08', incoterms:'FOB', invoiceRef:'INV-2026-TNG-0105', declRef:'VN-EXP-2026-0105', status:'Released',     creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
+  { ucr:'VN-2026-EXP-00106', product:"Casual Canvas Sneakers (Textile Upper)",       hsCode:'6404.19', quantity:'6,000 pairs', totalValue:132000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'ABC-Mart Inc.', fromCountry:'Vietnam', toCountry:'Japan',         originPort:'Hai Phong International Container Terminal', destinationPort:'Port of Yokohama', vessel:'MV ONE Commitment',    shipDate:'2026-04-15', incoterms:'CIF', invoiceRef:'INV-2026-TNG-0106', declRef:'VN-EXP-2026-0106', status:'In Transit',   creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
+  { ucr:'VN-2026-EXP-E001',  product:"Men's Cotton Dress Shirts (Woven)",           hsCode:'6205.20', quantity:'15,000 pcs', totalValue:225000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',        fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Los Angeles',  vessel:'MV Maersk Sentosa',   shipDate:'2026-02-20', incoterms:'FOB', invoiceRef:'INV-2026-TNG-E001', declRef:'VN-EXP-2026-E001', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC', errorType:'HS Code Mismatch', errorDescription:'Export Declaration filed under HS 6205.30 (man-made fibres) but Commercial Invoice declares HS 6205.20 (cotton). Vietnam Customs (VNACCS) has flagged the shipment for reconciliation.' },
+  { ucr:'VN-2026-EXP-E002',  product:"Knitted Fleece Hooded Sweatshirts",           hsCode:'6110.30', quantity:'20,000 pcs', totalValue:340000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',        fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Los Angeles',  vessel:'MV Maersk Seletar',   shipDate:'2026-02-28', incoterms:'FOB', invoiceRef:'INV-2026-TNG-E002', declRef:'VN-EXP-2026-E002', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC', errorType:'Origin Verification Failed', errorDescription:'Origin composition shows 38% Vietnamese value-added content (below 40% threshold). Fleece fabric from non-CPTPP supplier (China). UFLPA screening flag: supplier region requires additional documentation.' },
 ];
 
 const BETA_CONSIGNMENTS = [
-  // Nigeria → Morocco (PrimeFert/TradeLink, org5/org6)
-  { ucr:'UCR-2026-NG-MA-00201', product:'Sesame Seeds (White Hulled)',     hsCode:'1207.40', quantity:'1,200 MT', totalValue:156000, currency:'USD', exporter:'PrimeFert Nigeria Ltd',       importer:'Oleagineux du Maghreb S.A.',  fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Apapa Port, Lagos',      destinationPort:'Port of Casablanca', vessel:'MV Bight of Benin',   shipDate:'2026-02-25', incoterms:'FOB', invoiceRef:'INV-2026-PFN-0201', declRef:'NG-EXP-2026-0201', status:'Delivered',   creatorOrgId:'org5', creatorOrgName:'PrimeFert Nigeria Ltd' },
-  { ucr:'UCR-2026-NG-MA-00202', product:'Raw Cocoa Beans (Grade 1)',       hsCode:'1801.00', quantity:'850 MT',   totalValue:272000, currency:'USD', exporter:'TradeLink International Ltd', importer:'Barry Callebaut Maroc S.A.',  fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Tin Can Island Port',     destinationPort:'Port of Casablanca', vessel:'MV Ebony Star',       shipDate:'2026-03-04', incoterms:'CIF', invoiceRef:'INV-2026-TLI-0202', declRef:'NG-EXP-2026-0202', status:'In Transit',  creatorOrgId:'org6', creatorOrgName:'TradeLink International Ltd' },
-  { ucr:'UCR-2026-NG-MA-00203', product:'Palm Kernel Oil (PKO)',           hsCode:'1513.21', quantity:'600 MT',   totalValue: 78000, currency:'USD', exporter:'PrimeFert Nigeria Ltd',       importer:'Lesieur Cristal S.A.',        fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Onne Port',               destinationPort:'Port of Agadir',     vessel:'MV Atlantic Trader', shipDate:'2026-03-10', incoterms:'CFR', invoiceRef:'INV-2026-PFN-0203', declRef:'NG-EXP-2026-0203', status:'Customs',     creatorOrgId:'org5', creatorOrgName:'PrimeFert Nigeria Ltd' },
-  { ucr:'UCR-2026-NG-MA-00204', product:'Cashew Nuts RCN (W240 Grade)',    hsCode:'0801.31', quantity:'420 MT',   totalValue:189000, currency:'USD', exporter:'TradeLink International Ltd', importer:'Olam Maroc S.A.',             fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Apapa Port, Lagos',      destinationPort:'Port of Casablanca', vessel:'MV Bight of Benin',   shipDate:'2026-03-17', incoterms:'FOB', invoiceRef:'INV-2026-TLI-0204', declRef:'NG-EXP-2026-0204', status:'Submitted',   creatorOrgId:'org6', creatorOrgName:'TradeLink International Ltd' },
-  { ucr:'UCR-2026-NG-MA-E002',  product:'Soybean Meal (47% Protein)',      hsCode:'2304.00', quantity:'2,000 MT', totalValue:160000, currency:'USD', exporter:'PrimeFert Nigeria Ltd',       importer:'Coopagri Maroc',              fromCountry:'Nigeria', toCountry:'Morocco', originPort:'Apapa Port, Lagos',      destinationPort:'Port of Casablanca', vessel:'MV African Spirit',  shipDate:'2026-02-12', incoterms:'CIF', invoiceRef:'INV-2026-PFN-E002', declRef:'NG-EXP-2026-E002', status:'Under Review', creatorOrgId:'org5', creatorOrgName:'PrimeFert Nigeria Ltd', errorType:'Phytosanitary Failure', errorDescription:'NAQS phytosanitary certificate expired 14 days before shipment date. Morocco Plant Protection Directorate has placed shipment on hold pending resubmission.' },
+  { ucr:'KR-2026-EXP-00201', product:'Spandex Yarn (Creora, 40D/70D)',      hsCode:'5402.44', quantity:'45,000 kg',  totalValue:135000, currency:'USD', exporter:'Hyosung TNS Co., Ltd',  importer:'TNG Investment & Trading JSC', fromCountry:'South Korea', toCountry:'Vietnam', originPort:'Port of Busan', destinationPort:'Cat Lai Terminal, Ho Chi Minh City',           vessel:'MV HMM Promise',    shipDate:'2026-01-20', incoterms:'CIF', invoiceRef:'INV-2026-HYO-0201', declRef:'KR-EXP-2026-0201', status:'Delivered',   creatorOrgId:'org5', creatorOrgName:'Nike Inc.' },
+  { ucr:'KR-2026-EXP-00202', product:'Nylon Woven Fabric (Ripstop, Dyed)',   hsCode:'5407.42', quantity:'32,000 kg',  totalValue:192000, currency:'USD', exporter:'Hyosung TNS Co., Ltd',  importer:'TNG Investment & Trading JSC', fromCountry:'South Korea', toCountry:'Vietnam', originPort:'Port of Busan', destinationPort:'Hai Phong International Container Terminal',  vessel:'MV HMM Algeciras',  shipDate:'2026-02-15', incoterms:'FOB', invoiceRef:'INV-2026-HYO-0202', declRef:'KR-EXP-2026-0202', status:'In Transit',  creatorOrgId:'org5', creatorOrgName:'Nike Inc.' },
+  { ucr:'KR-2026-EXP-00203', product:'YKK Metal Zippers and Snap Buttons',   hsCode:'9607.11', quantity:'500,000 pcs', totalValue:45000,  currency:'USD', exporter:'YKK Korea Co., Ltd',    importer:'TNG Investment & Trading JSC', fromCountry:'South Korea', toCountry:'Vietnam', originPort:'Port of Busan', destinationPort:'Cat Lai Terminal, Ho Chi Minh City',           vessel:'MV HMM Promise',    shipDate:'2026-02-22', incoterms:'CIF', invoiceRef:'INV-2026-YKK-0203', declRef:'KR-EXP-2026-0203', status:'Customs',     creatorOrgId:'org6', creatorOrgName:'Nike Europe B.V.' },
 ];
 
 function docsForConsignment(m) {
-  const coIssuer = m.fromCountry === 'Kenya'   ? 'Kenya Export Promotion & Branding Agency'
-                 : m.fromCountry === 'Morocco'  ? 'MAEX — Morocco Agri-Export Bureau'
-                 : 'NEPC — Nigeria Export Promotion Council';
-  const edIssuer = m.fromCountry === 'Kenya'   ? 'Kenya Revenue Authority'
-                 : m.fromCountry === 'Morocco'  ? 'Morocco Customs'
-                 : 'Nigeria Customs';
+  if (NODE_ID === 'alpha') {
+    return [
+      { name:'Input Certificate of Origin',  docType:'Input Certificate of Origin',  issuer:'Korea Customs Service',                        suffix:'ICO' },
+      { name:'Bill of Material',              docType:'Bill of Material',             issuer:m.creatorOrgName,                               suffix:'BOM' },
+      { name:'Inspection Report',             docType:'Inspection Report',            issuer:'Bureau Veritas Vietnam',                       suffix:'IR'  },
+      { name:'MOIT Certificate of Origin',    docType:'MOIT Certificate of Origin',   issuer:'Ministry of Industry and Trade (MOIT)',        suffix:'CO'  },
+      { name:'Export Declaration',            docType:'Export Declaration',            issuer:'General Department of Vietnam Customs',        suffix:'ED'  },
+      { name:'Commercial Invoice',            docType:'Commercial Invoice',           issuer:m.creatorOrgName,                               suffix:'INV' },
+      { name:'Bill of Lading',                docType:'Bill of Lading',               issuer:'Maersk Vietnam',                               suffix:'BL'  },
+    ];
+  }
   return [
-    { name:'Commercial Invoice',    docType:'Commercial Invoice',   issuer:m.creatorOrgName, suffix:'INV' },
-    { name:'Packing List',          docType:'Packing List',          issuer:m.creatorOrgName, suffix:'PL'  },
-    { name:'Bill of Lading',        docType:'Bill of Lading',        issuer:'NordShip Line S.A.', suffix:'BL' },
-    { name:'Certificate of Origin', docType:'Certificate of Origin', issuer:coIssuer,         suffix:'CO'  },
-    { name:'Export Declaration',    docType:'Export Declaration',    issuer:edIssuer,          suffix:'ED'  },
+    { name:'Commercial Invoice',    docType:'Commercial Invoice',   issuer:m.creatorOrgName,         suffix:'INV' },
+    { name:'Packing List',          docType:'Packing List',          issuer:m.creatorOrgName,         suffix:'PL'  },
+    { name:'Bill of Lading',        docType:'Bill of Lading',        issuer:'HMM Co., Ltd',           suffix:'BL'  },
+    { name:'Certificate of Origin', docType:'Certificate of Origin', issuer:'Korea Customs Service',  suffix:'CO'  },
+    { name:'Export Declaration',    docType:'Export Declaration',    issuer:'Korea Customs Service',  suffix:'ED'  },
   ];
 }
 
@@ -370,7 +509,7 @@ function seedConsignments() {
       const ref = d.suffix === 'INV' ? m.invoiceRef
                 : d.suffix === 'ED'  ? m.declRef
                 : `${d.suffix}-${m.ucr.split('-').pop()}`;
-      const xmlContent = (d.suffix === 'BL' || d.suffix === 'ED') ? makeSeedXml(d.docType, m, ref) : null;
+      const xmlContent = (d.suffix === 'BL' || d.suffix === 'ED' || d.suffix === 'BOM' || d.suffix === 'CO') ? makeSeedXml(d.docType, m, ref) : null;
       const fileBase64 = xmlContent
         ? Buffer.from(xmlContent, 'utf8').toString('base64')
         : makeSeedPdf(d.docType, ref, d.issuer, m.ucr, m.shipDate, m.exporter, m.importer, m.fromCountry, m.toCountry);
@@ -447,10 +586,11 @@ app.put('/api/orgs/:id', (req, res) => {
 
 // DID registration
 function getAttestingAuthority(org) {
-  if (org.role?.includes('Morocco'))  return 'Morocco Customs';
-  if (org.role?.includes('Nigeria'))  return 'Nigeria Customs';
-  if (org.role?.includes('Kenya'))    return 'Kenya Revenue Authority';
-  return 'National Registry';
+  if (org.role?.includes('Vietnam'))        return 'General Department of Vietnam Customs';
+  if (org.role?.includes('South Korea'))    return 'Korea Customs Service';
+  if (org.role?.includes('United States'))  return 'US Customs and Border Protection';
+  if (org.role?.includes('EU'))             return 'EU Customs Authority';
+  return 'National Business Registry';
 }
 
 app.post('/api/orgs/:id/register', (req, res) => {
@@ -815,108 +955,103 @@ function handlePeerMsg(m) {
 
 function seedFinanceData() {
   if (NODE_ID !== 'alpha') return;
-  // Only seed once
   if (store.payments.length > 0 || store.letterOfCredits.length > 0 || store.smartContracts.length > 0) return;
 
-  // Pick two MA-NG consignments to showcase finance
-  const c1 = store.consignments.find(c => c.ucr === 'UCR-2026-MA-NG-00101');
-  const c2 = store.consignments.find(c => c.ucr === 'UCR-2026-MA-NG-00102');
+  const c1 = store.consignments.find(c => c.ucr === 'VN-2026-EXP-00101');
+  const c2 = store.consignments.find(c => c.ucr === 'VN-2026-EXP-00103');
   if (!c1 || !c2) return;
 
-  const atlas = 'org1';
-  const attijari = 'org7';
-  const accessBank = 'org8';
-  const ts1 = '2026-02-18T09:00:00.000Z';
-  const ts2 = '2026-02-20T11:30:00.000Z';
+  const tng = 'org1';
+  const vietcombank = 'org7';
+  const hsbc = 'org8';
+  const ts1 = '2026-03-10T09:00:00.000Z';
+  const ts2 = '2026-03-25T11:30:00.000Z';
 
-  // ── Finance permissions: grant banks viewer access ──
-  store.financePermissions[c1.id][attijari]  = 'viewer';
-  store.financePermissions[c1.id][accessBank] = 'viewer';
-  store.financePermissions[c2.id][attijari]  = 'viewer';
-  store.financePermissions[c2.id][accessBank] = 'viewer';
+  store.financePermissions[c1.id][vietcombank] = 'viewer';
+  store.financePermissions[c1.id][hsbc]        = 'viewer';
+  store.financePermissions[c2.id][vietcombank] = 'viewer';
+  store.financePermissions[c2.id][hsbc]        = 'viewer';
 
-  // ── Payments ──
   const pay1 = {
     id: genId(), consignmentId: c1.id, ucr: c1.ucr,
-    invoiceRef: 'INV-APM-2026-0101', amount: 340000, currency: 'USD',
-    dueDate: '2026-04-30', status: 'Partially Paid', paidAmount: 120000,
+    invoiceRef: 'INV-2026-TNG-0101', amount: 168000, currency: 'USD',
+    dueDate: '2026-05-31', status: 'Partially Paid', paidAmount: 67200,
     paymentMethod: 'Letter of Credit',
-    payorOrgId: 'org5', payeeOrgId: atlas, creatorOrgId: atlas,
-    notes: 'First instalment received. Balance due on BL presentation.', createdAt: ts1, updatedAt: ts1,
+    payorOrgId: 'org5', payeeOrgId: tng, creatorOrgId: tng,
+    notes: 'First instalment (40%) received via LC. Balance due on B/L presentation and CBP clearance.', createdAt: ts1, updatedAt: ts1,
   };
   const pay2 = {
     id: genId(), consignmentId: c2.id, ucr: c2.ucr,
-    invoiceRef: 'INV-APM-2026-0102', amount: 288000, currency: 'EUR',
-    dueDate: '2026-03-28', status: 'Overdue', paidAmount: 0,
+    invoiceRef: 'INV-2026-TNG-0103', amount: 264000, currency: 'EUR',
+    dueDate: '2026-04-30', status: 'Overdue', paidAmount: 0,
     paymentMethod: 'Open Account',
-    payorOrgId: 'org6', payeeOrgId: atlas, creatorOrgId: atlas,
-    notes: 'Payment overdue — buyer requested 15-day extension pending vessel arrival.', createdAt: ts2, updatedAt: ts2,
+    payorOrgId: 'org6', payeeOrgId: tng, creatorOrgId: tng,
+    notes: 'Payment overdue. Nike Europe requested 30-day extension citing customs hold at Rotterdam. EVFTA preference verification pending.', createdAt: ts2, updatedAt: ts2,
   };
   store.payments.push(pay1, pay2);
 
-  // ── Letters of Credit ──
   const docs1 = store.documents.filter(d => d.consignmentId === c1.id);
   const docs2 = store.documents.filter(d => d.consignmentId === c2.id);
   const lc1 = {
     id: genId(), consignmentId: c1.id, ucr: c1.ucr,
-    lcNumber: 'LC-2026-ATW-00101',
-    issuingBank: 'Bank 1', advisingBank: 'Bank 2',
-    beneficiary: 'AtlasPhosphate S.A.', applicant: 'PrimeFert Nigeria Ltd',
-    amount: 340000, currency: 'USD', expiryDate: '2026-07-31',
+    lcNumber: 'LC-2026-VCB-0101',
+    issuingBank: 'HSBC Vietnam', advisingBank: 'Vietcombank',
+    beneficiary: 'TNG Investment & Trading JSC', applicant: 'Nike Inc.',
+    amount: 168000, currency: 'USD', expiryDate: '2026-08-31',
     status: 'Confirmed',
-    documentCompliance: docs1.map((d, i) => ({ docType: d.title, required: true, submitted: true, compliant: i < 4 ? true : null })),
-    creatorOrgId: atlas, createdAt: ts1,
+    documentCompliance: docs1.map((d, i) => ({ docType: d.title, required: true, submitted: true, compliant: i < 5 ? true : null })),
+    creatorOrgId: tng, createdAt: ts1,
   };
   const lc2 = {
     id: genId(), consignmentId: c2.id, ucr: c2.ucr,
-    lcNumber: 'LC-2026-ATW-00102',
-    issuingBank: 'Bank 1', advisingBank: 'Bank 2',
-    beneficiary: 'AtlasPhosphate S.A.', applicant: 'TradeLink International Ltd',
-    amount: 288000, currency: 'EUR', expiryDate: '2026-06-30',
+    lcNumber: 'LC-2026-VCB-0102',
+    issuingBank: 'HSBC Vietnam', advisingBank: 'Vietcombank',
+    beneficiary: 'TNG Investment & Trading JSC', applicant: 'Nike Europe B.V.',
+    amount: 264000, currency: 'EUR', expiryDate: '2026-07-31',
     status: 'Issued',
     documentCompliance: docs2.map(d => ({ docType: d.title, required: true, submitted: false, compliant: null })),
-    creatorOrgId: atlas, createdAt: ts2,
+    creatorOrgId: tng, createdAt: ts2,
   };
   store.letterOfCredits.push(lc1, lc2);
 
-  // ── Smart Contracts ──
   const hash1 = genHash();
   const hash2 = genHash();
   const sc1 = {
     id: genId(), consignmentId: c1.id, ucr: c1.ucr,
-    contractRef: 'SC-2026-ATW-0101', contractHash: hash1,
-    payorOrgId: 'org5', payeeOrgId: atlas,
-    amount: 340000, currency: 'USD',
+    contractRef: 'SC-2026-VN-0101', contractHash: hash1,
+    payorOrgId: 'org5', payeeOrgId: tng,
+    amount: 168000, currency: 'USD',
     conditions: [
-      { id: 'cond-0', description: 'Bill of Lading (eBL) verified and presented', docType: 'Bill of Lading (eBL)', met: true,  metAt: '2026-03-01T08:00:00.000Z' },
-      { id: 'cond-1', description: 'Certificate of Origin (AfCFTA) confirmed',    docType: 'Certificate of Origin (AfCFTA)', met: true,  metAt: '2026-03-01T09:15:00.000Z' },
-      { id: 'cond-2', description: 'Commercial Invoice approved by advising bank', docType: 'Commercial Invoice', met: false, metAt: null },
+      { id: 'cond-0', description: 'MOIT Certificate of Origin (EUR.1/CPTPP) issued and verified', docType: 'MOIT Certificate of Origin', met: true,  metAt: '2026-03-12T08:00:00.000Z' },
+      { id: 'cond-1', description: 'Origin composition verified (Vietnam content >= 55%)',          docType: 'Bill of Material',            met: true,  metAt: '2026-03-12T09:15:00.000Z' },
+      { id: 'cond-2', description: 'Bill of Lading (eBL) verified and presented',                   docType: 'Bill of Lading',              met: false, metAt: null },
+      { id: 'cond-3', description: 'US CBP pre-clearance (no UFLPA hold)',                          docType: null,                          met: false, metAt: null },
     ],
-    status: 'Active', autoRelease: true, creatorOrgId: atlas,
+    status: 'Active', autoRelease: true, creatorOrgId: tng,
     createdAt: ts1, settledAt: null,
   };
   const sc2 = {
     id: genId(), consignmentId: c2.id, ucr: c2.ucr,
-    contractRef: 'SC-2026-ATW-0102', contractHash: hash2,
-    payorOrgId: 'org6', payeeOrgId: atlas,
-    amount: 288000, currency: 'EUR',
+    contractRef: 'SC-2026-VN-0102', contractHash: hash2,
+    payorOrgId: 'org6', payeeOrgId: tng,
+    amount: 264000, currency: 'EUR',
     conditions: [
-      { id: 'cond-0', description: 'Goods delivered to Apapa Port — vessel confirmed', docType: 'Bill of Lading (eBL)', met: false, metAt: null },
-      { id: 'cond-1', description: 'Export Declaration cleared by Nigeria Customs',     docType: 'Export Declaration',          met: false, metAt: null },
+      { id: 'cond-0', description: 'MOIT Certificate of Origin issued and EVFTA-compliant', docType: 'MOIT Certificate of Origin', met: false, metAt: null },
+      { id: 'cond-1', description: 'Export Declaration cleared by Vietnam Customs (VNACCS)', docType: 'Export Declaration',          met: false, metAt: null },
+      { id: 'cond-2', description: 'Bill of Lading verified and presented',                  docType: 'Bill of Lading',              met: false, metAt: null },
     ],
-    status: 'Active', autoRelease: true, creatorOrgId: atlas,
+    status: 'Active', autoRelease: true, creatorOrgId: tng,
     createdAt: ts2, settledAt: null,
   };
   store.smartContracts.push(sc1, sc2);
 
-  // Seed tangle entries for all seeded finance records
-  const seedTs = (t, ts) => { if (!store.tangleLog.some(e => e.details && e.details.includes(t))) store.tangleLog.push({ id: genId(), timestamp: ts, hash: genHash(), type: 'finance', action: 'Finance Seeded', actor: 'AtlasPhosphate S.A.', details: t }); };
-  seedTs(`Payment INV-APM-2026-0101 created for ${c1.ucr}. USD 340,000. Partially Paid.`, ts1);
-  seedTs(`Payment INV-APM-2026-0102 created for ${c2.ucr}. EUR 288,000. Overdue.`, ts2);
-  seedTs(`LC LC-2026-ATW-00101 created for ${c1.ucr}. Amount: USD 340,000. Status: Confirmed.`, ts1);
-  seedTs(`LC LC-2026-ATW-00102 created for ${c2.ucr}. Amount: EUR 288,000. Status: Issued.`, ts2);
-  seedTs(`Contract SC-2026-ATW-0101 deployed for ${c1.ucr}. 3 release conditions. Hash: ${hash1}.`, ts1);
-  seedTs(`Contract SC-2026-ATW-0102 deployed for ${c2.ucr}. 2 release conditions. Hash: ${hash2}.`, ts2);
+  const seedTs = (t, ts) => { if (!store.tangleLog.some(e => e.details && e.details.includes(t))) store.tangleLog.push({ id: genId(), timestamp: ts, hash: genHash(), type: 'finance', action: 'Finance Seeded', actor: 'TNG Investment & Trading JSC', details: t }); };
+  seedTs(`Payment INV-2026-TNG-0101 created for ${c1.ucr}. USD 168,000. Partially Paid.`, ts1);
+  seedTs(`Payment INV-2026-TNG-0103 created for ${c2.ucr}. EUR 264,000. Overdue.`, ts2);
+  seedTs(`LC LC-2026-VCB-0101 created for ${c1.ucr}. Amount: USD 168,000. Status: Confirmed.`, ts1);
+  seedTs(`LC LC-2026-VCB-0102 created for ${c2.ucr}. Amount: EUR 264,000. Status: Issued.`, ts2);
+  seedTs(`Contract SC-2026-VN-0101 deployed for ${c1.ucr}. 4 release conditions. Hash: ${hash1}.`, ts1);
+  seedTs(`Contract SC-2026-VN-0102 deployed for ${c2.ucr}. 3 release conditions. Hash: ${hash2}.`, ts2);
   saveTangleLog();
 
   console.log(`[${NODE_NAME}] Seeded finance data: 2 payments, 2 LCs, 2 smart contracts`);

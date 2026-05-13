@@ -1,920 +1,632 @@
 [
   {
-    "id": "43896013a7b69c0d",
-    "timestamp": "2026-05-11T14:24:52.964Z",
-    "hash": "0x1f2a5046e2ba2f74fb55583b5d1fa48e",
-    "type": "network",
-    "action": "Peer Connected",
-    "actor": "System",
-    "details": "P2P handshake completed with peer at ws://localhost:4001. Organisations now discoverable."
-  },
-  {
-    "id": "645ce3d160a65a47",
-    "timestamp": "2026-05-11T11:32:19.668Z",
-    "hash": "0xfb65bfd871d646848b2b85cd44cc3d72",
-    "type": "network",
-    "action": "Peer Connected",
-    "actor": "System",
-    "details": "P2P handshake completed with peer at ws://localhost:4001. Organisations now discoverable."
-  },
-  {
-    "id": "6e47a92a4c9ea56f",
-    "timestamp": "2026-02-18T08:00:00.000Z",
-    "hash": "0xe09c0a60321d3cfec78b8c7dbc5c6ba7",
+    "id": "1a299badc8c876db",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x94e47d9900158b1275c05e3de6a80bf9",
     "type": "document",
     "action": "Consignment Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Digital twin created: UCR-2026-MA-NG-00101 — Triple Super Phosphate (TSP). Anchored on the ledger."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00101 — Men's Cotton Polo Shirts (Knitted). Anchored on the ledger."
   },
   {
-    "id": "a6faa6e1bc460b60",
-    "timestamp": "2026-02-18T08:00:00.000Z",
-    "hash": "0x72803b7946241c2d6a27b94ba1c2dc7b",
+    "id": "27d9f4098be4feb5",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x73b60a8fce6f82ddd70253813515b1f4",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Commercial Invoice\" anchored to UCR-2026-MA-NG-00101. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00101. Issued by Korea Customs Service."
   },
   {
-    "id": "54692d13530ccac0",
-    "timestamp": "2026-02-18T08:00:00.000Z",
-    "hash": "0x2bae3b7bdc92f963579eadf21fb64868",
+    "id": "5e45ef5a1f9ed51a",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x7c912ba098d06b28adaee7d78da0d5fd",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Packing List\" anchored to UCR-2026-MA-NG-00101. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00101. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "ef9d1ca261208271",
-    "timestamp": "2026-02-18T08:00:00.000Z",
-    "hash": "0x1c93aa647959d1d12f3b16500fcb3073",
+    "id": "c42bdbeb4305ce21",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x8bacf4fa3e65cc159cd7780a17f44f9b",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Bill of Lading\" anchored to UCR-2026-MA-NG-00101. Issued by NordShip Line S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00101. Issued by Bureau Veritas Vietnam."
   },
   {
-    "id": "34988d1365ee4ba4",
-    "timestamp": "2026-02-18T08:00:00.000Z",
-    "hash": "0x7818c8dc49d2d205b27c9988372824eb",
+    "id": "074a4138ead93f86",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x5f44e9accdc5816c9bc0dba533384125",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Certificate of Origin\" anchored to UCR-2026-MA-NG-00101. Issued by MAEX — Morocco Agri-Export Bureau."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00101. Issued by Ministry of Industry and Trade (MOIT)."
   },
   {
-    "id": "a181a29a4656c2cf",
-    "timestamp": "2026-02-18T08:00:00.000Z",
-    "hash": "0x3df2db529b42b61e73fd3a5473f78bbb",
+    "id": "f9843b9c59e5a0f2",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0xc8aa9b417d9d19c55e192d07cecafd5a",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Export Declaration\" anchored to UCR-2026-MA-NG-00101. Issued by Morocco Customs."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00101. Issued by General Department of Vietnam Customs."
   },
   {
-    "id": "025cc117d2436f4d",
-    "timestamp": "2026-02-20T08:00:00.000Z",
-    "hash": "0xb118a421d841a5ebcaab7881a9b589eb",
-    "type": "document",
-    "action": "Consignment Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Digital twin created: UCR-2026-MA-NG-00102 — Di-Ammonium Phosphate (DAP). Anchored on the ledger."
-  },
-  {
-    "id": "94d4560dbc55db71",
-    "timestamp": "2026-02-20T08:00:00.000Z",
-    "hash": "0x59f5f1a1d335b093af45e3f461212a98",
+    "id": "8adfa158828eea2a",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0xd449b7b7bcd095bdb58ef88adf93d9d9",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Commercial Invoice\" anchored to UCR-2026-MA-NG-00102. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00101. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "8de280f272ebf992",
-    "timestamp": "2026-02-20T08:00:00.000Z",
-    "hash": "0x6d3bd52dc9cdefd29eb0f2afe46adb19",
+    "id": "8ecbfa013863eaae",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0xc73f51e55cb3f223499c86df106ec3b2",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Packing List\" anchored to UCR-2026-MA-NG-00102. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00101. Issued by Maersk Vietnam."
   },
   {
-    "id": "1e736e400c7e5853",
-    "timestamp": "2026-02-20T08:00:00.000Z",
-    "hash": "0x025f16e058548831407ca773ecfa741a",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Bill of Lading\" anchored to UCR-2026-MA-NG-00102. Issued by NordShip Line S.A.."
-  },
-  {
-    "id": "7d4d8944a33e22ea",
-    "timestamp": "2026-02-20T08:00:00.000Z",
-    "hash": "0xde96ed3418c031cb9cdd12ed7447ced5",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Certificate of Origin\" anchored to UCR-2026-MA-NG-00102. Issued by MAEX — Morocco Agri-Export Bureau."
-  },
-  {
-    "id": "657a3fa71dc1b432",
-    "timestamp": "2026-02-20T08:00:00.000Z",
-    "hash": "0x0686814aab0001917df67269547476e8",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Export Declaration\" anchored to UCR-2026-MA-NG-00102. Issued by Morocco Customs."
-  },
-  {
-    "id": "fb3e957926afde51",
-    "timestamp": "2026-03-01T08:00:00.000Z",
-    "hash": "0x2fcb27f03688eb86c547a3236b3eb8a7",
-    "type": "document",
-    "action": "Consignment Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Digital twin created: UCR-2026-MA-NG-00103 — Granular Urea (46% N). Anchored on the ledger."
-  },
-  {
-    "id": "32f95272ef2ff829",
-    "timestamp": "2026-03-01T08:00:00.000Z",
-    "hash": "0x10774323e543b6c25b0c96da1302bf95",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Commercial Invoice\" anchored to UCR-2026-MA-NG-00103. Issued by AtlasPhosphate S.A.."
-  },
-  {
-    "id": "e7c94c3c1b8d5717",
-    "timestamp": "2026-03-01T08:00:00.000Z",
-    "hash": "0x234df8af04e76b161ce5bc58e2772874",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Packing List\" anchored to UCR-2026-MA-NG-00103. Issued by AtlasPhosphate S.A.."
-  },
-  {
-    "id": "42ca77a09404486a",
-    "timestamp": "2026-03-01T08:00:00.000Z",
-    "hash": "0x18e22957e0cd760ce20063fcfce0cb2e",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Bill of Lading\" anchored to UCR-2026-MA-NG-00103. Issued by NordShip Line S.A.."
-  },
-  {
-    "id": "15d4f2422c88df50",
-    "timestamp": "2026-03-01T08:00:00.000Z",
-    "hash": "0xbb6ba7780f3ee8c9fb45d0cde551de15",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Certificate of Origin\" anchored to UCR-2026-MA-NG-00103. Issued by MAEX — Morocco Agri-Export Bureau."
-  },
-  {
-    "id": "12ba1cb4c5ab47dd",
-    "timestamp": "2026-03-01T08:00:00.000Z",
-    "hash": "0xe9a2a7e070f8245de52596443fff3540",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Export Declaration\" anchored to UCR-2026-MA-NG-00103. Issued by Morocco Customs."
-  },
-  {
-    "id": "3a3203b2974b2f8d",
-    "timestamp": "2026-03-05T08:00:00.000Z",
-    "hash": "0x59a90fb9028a31b0f8de4ffb2628b0e2",
-    "type": "document",
-    "action": "Consignment Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Digital twin created: UCR-2026-MA-NG-00104 — Phosphoric Acid (75% P₂O₅). Anchored on the ledger."
-  },
-  {
-    "id": "d2de7996fcee1adb",
-    "timestamp": "2026-03-05T08:00:00.000Z",
-    "hash": "0x66bc0cde83a576f916f23ce5efc9b048",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Commercial Invoice\" anchored to UCR-2026-MA-NG-00104. Issued by AtlasPhosphate S.A.."
-  },
-  {
-    "id": "38be6a7cd340890e",
-    "timestamp": "2026-03-05T08:00:00.000Z",
-    "hash": "0x163a6d0e55b78c65eeb2394dd906a369",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Packing List\" anchored to UCR-2026-MA-NG-00104. Issued by AtlasPhosphate S.A.."
-  },
-  {
-    "id": "e581a4966de38fe0",
-    "timestamp": "2026-03-05T08:00:00.000Z",
-    "hash": "0x8307a5cb5bca1bee34e2827510d61736",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Bill of Lading\" anchored to UCR-2026-MA-NG-00104. Issued by NordShip Line S.A.."
-  },
-  {
-    "id": "77b8ae12f1048fdf",
-    "timestamp": "2026-03-05T08:00:00.000Z",
-    "hash": "0x1281df99091e80c89a990e1502fcc776",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Certificate of Origin\" anchored to UCR-2026-MA-NG-00104. Issued by MAEX — Morocco Agri-Export Bureau."
-  },
-  {
-    "id": "56c5b7abe6756800",
-    "timestamp": "2026-03-05T08:00:00.000Z",
-    "hash": "0x7229e3f0a32527f06c9192d1af954d31",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Export Declaration\" anchored to UCR-2026-MA-NG-00104. Issued by Morocco Customs."
-  },
-  {
-    "id": "f55a0b7c0b9db245",
-    "timestamp": "2026-03-12T08:00:00.000Z",
-    "hash": "0x3b1bcf9076a62c4ee261d47fc39178d0",
-    "type": "document",
-    "action": "Consignment Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Digital twin created: UCR-2026-MA-NG-00105 — Mono-Ammonium Phosphate (MAP). Anchored on the ledger."
-  },
-  {
-    "id": "494e4f64b2733054",
-    "timestamp": "2026-03-12T08:00:00.000Z",
-    "hash": "0x179db86eb93d7465dd346b1ae325b119",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Commercial Invoice\" anchored to UCR-2026-MA-NG-00105. Issued by AtlasPhosphate S.A.."
-  },
-  {
-    "id": "6113ae23677d2883",
-    "timestamp": "2026-03-12T08:00:00.000Z",
-    "hash": "0x33b5a291f19c6887a0c7f2951db8a349",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Packing List\" anchored to UCR-2026-MA-NG-00105. Issued by AtlasPhosphate S.A.."
-  },
-  {
-    "id": "49d832c305c14ddd",
-    "timestamp": "2026-03-12T08:00:00.000Z",
-    "hash": "0x494c8eb06383be42767fcbd6257d7e9d",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Bill of Lading\" anchored to UCR-2026-MA-NG-00105. Issued by NordShip Line S.A.."
-  },
-  {
-    "id": "c97fadb8a634597c",
-    "timestamp": "2026-03-12T08:00:00.000Z",
-    "hash": "0x7984c24e05de906aa80f0d9bb68384ee",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Certificate of Origin\" anchored to UCR-2026-MA-NG-00105. Issued by MAEX — Morocco Agri-Export Bureau."
-  },
-  {
-    "id": "b6573c79121f5df7",
-    "timestamp": "2026-03-12T08:00:00.000Z",
-    "hash": "0xb65bf4b2a6621376ab41b1fd00cc321e",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Export Declaration\" anchored to UCR-2026-MA-NG-00105. Issued by Morocco Customs."
-  },
-  {
-    "id": "07f34d341d8b66d2",
+    "id": "b48afdfe5d981faf",
     "timestamp": "2026-03-18T08:00:00.000Z",
-    "hash": "0x7e5647834568f45d589a91a1e4ee2174",
+    "hash": "0xaf84e0c39c0fe7b8f212e666e46eae3f",
     "type": "document",
     "action": "Consignment Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Digital twin created: UCR-2026-MA-NG-00106 — Sulphate of Potash (SOP). Anchored on the ledger."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00102 — Women's Cotton T-Shirts (Knitted). Anchored on the ledger."
   },
   {
-    "id": "634ae4d5ae30d873",
+    "id": "0f669f19dd78fdce",
     "timestamp": "2026-03-18T08:00:00.000Z",
-    "hash": "0x04eaaff0b7e96e4ac4d8b4bcd27adf67",
+    "hash": "0x03d2ef7b8ad40156e7a029c300e0c359",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Commercial Invoice\" anchored to UCR-2026-MA-NG-00106. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00102. Issued by Korea Customs Service."
   },
   {
-    "id": "9d922be07e8a0e21",
+    "id": "e25008b80d518abd",
     "timestamp": "2026-03-18T08:00:00.000Z",
-    "hash": "0x502b9aa28ecb70e7992c72bd9615c295",
+    "hash": "0x72993af1e5472b76982be73871079adc",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Packing List\" anchored to UCR-2026-MA-NG-00106. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00102. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "617ac8455de61c2a",
+    "id": "172b1402e527db18",
     "timestamp": "2026-03-18T08:00:00.000Z",
-    "hash": "0x129a20f903439df53a4a9ad31c5acf79",
+    "hash": "0xeb74c3f6e5047da843cce6ac7b2ac845",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Bill of Lading\" anchored to UCR-2026-MA-NG-00106. Issued by NordShip Line S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00102. Issued by Bureau Veritas Vietnam."
   },
   {
-    "id": "f2919c588d93231f",
+    "id": "166cd3607123949b",
     "timestamp": "2026-03-18T08:00:00.000Z",
-    "hash": "0xae9167cde22335016787dd3d2d1d814a",
+    "hash": "0x0a89d44f3416a4e41be217091ef950a1",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Certificate of Origin\" anchored to UCR-2026-MA-NG-00106. Issued by MAEX — Morocco Agri-Export Bureau."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00102. Issued by Ministry of Industry and Trade (MOIT)."
   },
   {
-    "id": "f14f27f8aa3a5c02",
+    "id": "747d2df086a4a58a",
     "timestamp": "2026-03-18T08:00:00.000Z",
-    "hash": "0xaf980e0df2ec77f2f517cc56fd3e592b",
+    "hash": "0x43818d45019f562d20511003e6ef5662",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Export Declaration\" anchored to UCR-2026-MA-NG-00106. Issued by Morocco Customs."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00102. Issued by General Department of Vietnam Customs."
   },
   {
-    "id": "d3057aea1b20f3b4",
-    "timestamp": "2026-01-24T08:00:00.000Z",
-    "hash": "0x82c84082df29b3be8bdaded4705d03e3",
+    "id": "ed56748e8dec5cac",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0xed8e32b88f72efad262fb82ef3653680",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00102. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "7d6e5a29c2fe527b",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0xa4bba617bc7b7fd9dca4f2d712fd1873",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00102. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "251fe363fc3fc4f9",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0x7072dc884d739656c4739a16f4f7b0b5",
     "type": "document",
     "action": "Consignment Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Digital twin created: UCR-2026-MA-NG-E001 — Rock Phosphate (35% P₂O₅). Anchored on the ledger."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00103 — Men's Synthetic Windbreaker Jackets (Woven). Anchored on the ledger."
   },
   {
-    "id": "be77165d5eb7d2f6",
-    "timestamp": "2026-01-24T08:00:00.000Z",
-    "hash": "0xb88a95daaa3cc3ecef5d883576b93ff4",
+    "id": "4cdda9b2eb79cfaa",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0x83f2ce0d89a3c72f9add038e3afe19d4",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Commercial Invoice\" anchored to UCR-2026-MA-NG-E001. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00103. Issued by Korea Customs Service."
   },
   {
-    "id": "a247a816d5165553",
-    "timestamp": "2026-01-24T08:00:00.000Z",
-    "hash": "0x4a63690d0ba1a0420c09ebdd6e30bf2a",
+    "id": "2a41aa79d836cb7c",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0x0112c9dd3379f9633fde3c55878ef8a5",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Packing List\" anchored to UCR-2026-MA-NG-E001. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00103. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "e442ce8acb3d91ed",
-    "timestamp": "2026-01-24T08:00:00.000Z",
-    "hash": "0x154b91fd1f29c7a91ec6803eddc7c563",
+    "id": "8fc56857c000bb4f",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xfc6de305eb8aa06605f1daea0577f6f9",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Bill of Lading\" anchored to UCR-2026-MA-NG-E001. Issued by NordShip Line S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00103. Issued by Bureau Veritas Vietnam."
   },
   {
-    "id": "9bba04ecd039dd0d",
-    "timestamp": "2026-01-24T08:00:00.000Z",
-    "hash": "0x5eb9c1e6e56da2dcbb68942f84ced30a",
+    "id": "dcb851310d3c0ecc",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xccc98463eac7ebdd833800f046020345",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Certificate of Origin\" anchored to UCR-2026-MA-NG-E001. Issued by MAEX — Morocco Agri-Export Bureau."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00103. Issued by Ministry of Industry and Trade (MOIT)."
   },
   {
-    "id": "670dedae2974f238",
-    "timestamp": "2026-01-24T08:00:00.000Z",
-    "hash": "0xfef4dd18fb4eadcfd06e7673a1736bd8",
+    "id": "0099c6b19e3a3d73",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xec3c60d584081a5eba7a80fee3e13b13",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Export Declaration\" anchored to UCR-2026-MA-NG-E001. Issued by Morocco Customs."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00103. Issued by General Department of Vietnam Customs."
   },
   {
-    "id": "41de1907fbc67969",
-    "timestamp": "2026-02-10T08:00:00.000Z",
-    "hash": "0x2c4592556680971baad0cd8302ae712a",
+    "id": "1c2e37e3d4da640a",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xe8534796636d9599de0ed1d3eb6e138e",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00103. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "e0b770b2d0476495",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xb2f979e98b3438b1c3d253a19239d647",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00103. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "e15fc00f9dd2aa2f",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x122aa2991799185426944f91ed16d8c1",
     "type": "document",
     "action": "Consignment Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Digital twin created: UCR-2026-MA-NG-E003 — Ammonium Sulphate (21% N). Anchored on the ledger."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00104 — Women's Knitted Sports Trousers. Anchored on the ledger."
   },
   {
-    "id": "6c7b14d9a89cedd6",
-    "timestamp": "2026-02-10T08:00:00.000Z",
-    "hash": "0x783ac9bfa06145827a3fc047f5507d87",
+    "id": "3ef50025a1d89ee3",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x606928479f4c72c8cd31b00957cba461",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Commercial Invoice\" anchored to UCR-2026-MA-NG-E003. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00104. Issued by Korea Customs Service."
   },
   {
-    "id": "61af0ce3489006de",
-    "timestamp": "2026-02-10T08:00:00.000Z",
-    "hash": "0x2ac205bb9fc619ec2a2e201be015d209",
+    "id": "e1f43b6736f62c6f",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x6683d1104f759af884a45a00476c79d2",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Packing List\" anchored to UCR-2026-MA-NG-E003. Issued by AtlasPhosphate S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00104. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "cd439347a220ef96",
-    "timestamp": "2026-02-10T08:00:00.000Z",
-    "hash": "0xec404dff62dbc672e095f22c6e2bf123",
+    "id": "7ee57af130cc89dc",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x03085fb9342c80e03ea2fa506bb24d2a",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Bill of Lading\" anchored to UCR-2026-MA-NG-E003. Issued by NordShip Line S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00104. Issued by Bureau Veritas Vietnam."
   },
   {
-    "id": "530e450b3fbfa7a1",
-    "timestamp": "2026-02-10T08:00:00.000Z",
-    "hash": "0xa9656cf915af5cc7f9d958bf33f43ca7",
+    "id": "1f3e11ecfd602a9b",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x12cf2fe1a8582e64b9d1e4279933e52e",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Certificate of Origin\" anchored to UCR-2026-MA-NG-E003. Issued by MAEX — Morocco Agri-Export Bureau."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00104. Issued by Ministry of Industry and Trade (MOIT)."
   },
   {
-    "id": "ecc8c1e68c77a8b7",
-    "timestamp": "2026-02-10T08:00:00.000Z",
-    "hash": "0x0d73ebd419aa5124c5bf21ba26ce8cf6",
+    "id": "837dab4701f16842",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0xdfc7391db8aaaf2eceeacab8143a2260",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "\"Export Declaration\" anchored to UCR-2026-MA-NG-E003. Issued by Morocco Customs."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00104. Issued by General Department of Vietnam Customs."
   },
   {
-    "id": "71d74ce6a4126dd0",
-    "timestamp": "2026-02-15T08:00:00.000Z",
-    "hash": "0x8ceab69b62d52f938232bf98ed77437c",
+    "id": "a6922a23eafd9876",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x989596803ded1dd2879628775866060c",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00104. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "9fd618ac72790c61",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0xd13009d1d0d1c4a57aa1606bd3d0998d",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00104. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "55f3f87cf2362e51",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xec26110d0cbd53e9edee97847b155ca3",
     "type": "document",
     "action": "Consignment Anchored",
-    "actor": "Kenya Flower Council",
-    "details": "Digital twin created: KE-2026-EXP-00101 — Fresh Cut Flowers (Mixed). Anchored on the ledger."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00105 — Athletic Running Shoes (Rubber/Plastic Upper). Anchored on the ledger."
   },
   {
-    "id": "d4b0e10b42b248ed",
-    "timestamp": "2026-02-15T08:00:00.000Z",
-    "hash": "0x80cf9c12c47b13a8b94cfb53d2ed7831",
+    "id": "8b7652eb107bfafb",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0x35c8b0a871f82855a619065e1dc8db69",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Flower Council",
-    "details": "\"Commercial Invoice\" anchored to KE-2026-EXP-00101. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00105. Issued by Korea Customs Service."
   },
   {
-    "id": "0805fc32ae5ca85a",
-    "timestamp": "2026-02-15T08:00:00.000Z",
-    "hash": "0x94cbd82799cb294f6817e7ba873e4eae",
+    "id": "ca58a10c9fef5145",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xbf5164057e2999f8ea805944ebba7040",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Flower Council",
-    "details": "\"Packing List\" anchored to KE-2026-EXP-00101. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00105. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "bea7a085becca16f",
-    "timestamp": "2026-02-15T08:00:00.000Z",
-    "hash": "0x86107bf27cf48549a12ff2ca050d0567",
+    "id": "a0d3c6d7ee77d9b8",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xdbf95627359834b7c45a5eb645411d60",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Flower Council",
-    "details": "\"Bill of Lading\" anchored to KE-2026-EXP-00101. Issued by NordShip Line S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00105. Issued by Bureau Veritas Vietnam."
   },
   {
-    "id": "0025842d1e3602bb",
-    "timestamp": "2026-02-15T08:00:00.000Z",
-    "hash": "0xb5bd07ff755a68c4ca192860583a292d",
+    "id": "087e713710b7d34d",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xc713b511b2cb26a02b04503256bf2aba",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Flower Council",
-    "details": "\"Certificate of Origin\" anchored to KE-2026-EXP-00101. Issued by Kenya Export Promotion & Branding Agency."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00105. Issued by Ministry of Industry and Trade (MOIT)."
   },
   {
-    "id": "a6c36ee7d375d1ff",
-    "timestamp": "2026-02-15T08:00:00.000Z",
-    "hash": "0x1944a2accc6420eb2de1efd4c52a7bc9",
+    "id": "021875b25cbd83ba",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0x6a1b8a919e690e9f5bc5677f9cafe0e5",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Flower Council",
-    "details": "\"Export Declaration\" anchored to KE-2026-EXP-00101. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00105. Issued by General Department of Vietnam Customs."
   },
   {
-    "id": "2e5bd8e23cfa9b92",
-    "timestamp": "2026-02-22T08:00:00.000Z",
-    "hash": "0x627a7dff9c0ed250d506a10b1ba34f28",
+    "id": "db9fe73652756d25",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xb72602c6dc7e3976a2b60472623c0db5",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00105. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "db3e2f250a0d239e",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0x8c1c992cbd9251ebadae60e10f7e3eac",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00105. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "1e9e52960c06f189",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x8953376df3cfcd19beb6a8635dd65e41",
     "type": "document",
     "action": "Consignment Anchored",
-    "actor": "Kenya Tea Development Agency",
-    "details": "Digital twin created: KE-2026-EXP-00102 — Green Tea — Orthodox (PEKOE). Anchored on the ledger."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00106 — Casual Canvas Sneakers (Textile Upper). Anchored on the ledger."
   },
   {
-    "id": "618644a493131b3d",
-    "timestamp": "2026-02-22T08:00:00.000Z",
-    "hash": "0xdd6e752e973137350cf492cecdfe7cda",
+    "id": "b95fe7461d3c6454",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0xd54485bc214303e8090266e8a3e6ea2e",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Tea Development Agency",
-    "details": "\"Commercial Invoice\" anchored to KE-2026-EXP-00102. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00106. Issued by Korea Customs Service."
   },
   {
-    "id": "ad8050eb483407cc",
-    "timestamp": "2026-02-22T08:00:00.000Z",
-    "hash": "0xd7b5c85ac71e639d8ccffd409c4c0d6f",
+    "id": "37e587935aa8b643",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0xfd0d3bcdd5949bb4f6bd3a2902cd4adb",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Tea Development Agency",
-    "details": "\"Packing List\" anchored to KE-2026-EXP-00102. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00106. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "417617c2c55734bc",
-    "timestamp": "2026-02-22T08:00:00.000Z",
-    "hash": "0x5dcab9b1a5e1474c5d39997cddeaebc6",
+    "id": "e2bb5cf224532eac",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0xad2c572023e4602034db07d4bcfd7706",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Tea Development Agency",
-    "details": "\"Bill of Lading\" anchored to KE-2026-EXP-00102. Issued by NordShip Line S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00106. Issued by Bureau Veritas Vietnam."
   },
   {
-    "id": "0062f077af46a063",
-    "timestamp": "2026-02-22T08:00:00.000Z",
-    "hash": "0xf13c99e3c0a629a1311e61468b4f937b",
+    "id": "53a877929504149f",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x672f1354dfc973379324c6563d572b01",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Tea Development Agency",
-    "details": "\"Certificate of Origin\" anchored to KE-2026-EXP-00102. Issued by Kenya Export Promotion & Branding Agency."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00106. Issued by Ministry of Industry and Trade (MOIT)."
   },
   {
-    "id": "d385dce6c1f3c0a7",
-    "timestamp": "2026-02-22T08:00:00.000Z",
-    "hash": "0xf16493e3755c208ce500e290fa748220",
+    "id": "ba8ae25b7a1e349a",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x6bf7418d730f8afe5db24403388a4815",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Tea Development Agency",
-    "details": "\"Export Declaration\" anchored to KE-2026-EXP-00102. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00106. Issued by General Department of Vietnam Customs."
   },
   {
-    "id": "b5c497d932721d84",
-    "timestamp": "2026-03-03T08:00:00.000Z",
-    "hash": "0xb01b63fc14c5ae7ecabd9f15f11eb8e0",
+    "id": "07e785a9a83026fd",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x930ea7d47be849b0b46045a85fcf607e",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00106. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "0fb25444cef949d2",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x991b7f5ec47d3a5260558d4103862f05",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00106. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "e1ac01177cfde6fa",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0x2873f0ebd4a60113a0eefafff8721d21",
     "type": "document",
     "action": "Consignment Anchored",
-    "actor": "Nairobi Coffee Exchange",
-    "details": "Digital twin created: KE-2026-EXP-00103 — Washed Arabica Coffee (AA Grade). Anchored on the ledger."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-E001 — Men's Cotton Dress Shirts (Woven). Anchored on the ledger."
   },
   {
-    "id": "5925578a0b1a3ee8",
-    "timestamp": "2026-03-03T08:00:00.000Z",
-    "hash": "0xad69ab32a43fc5ea39757f521e63e4a9",
+    "id": "e8668d09a81da8fe",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0x72389b81224d30e2bc9d6ff2bbdbcc33",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Nairobi Coffee Exchange",
-    "details": "\"Commercial Invoice\" anchored to KE-2026-EXP-00103. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-E001. Issued by Korea Customs Service."
   },
   {
-    "id": "7cf60440c3fe9ea4",
-    "timestamp": "2026-03-03T08:00:00.000Z",
-    "hash": "0xa51e731995e0e2812d06fba7f028590f",
+    "id": "3e3c1d6befec3134",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0xf4759a7a78e6b04804294d734335c678",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Nairobi Coffee Exchange",
-    "details": "\"Packing List\" anchored to KE-2026-EXP-00103. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-E001. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "7d130908e258f4e9",
-    "timestamp": "2026-03-03T08:00:00.000Z",
-    "hash": "0x69a2b54db908d943253cf79cd6e96a21",
+    "id": "09c1130d1365964e",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0xd73f81b5ab1c16a3b53399b056cef826",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Nairobi Coffee Exchange",
-    "details": "\"Bill of Lading\" anchored to KE-2026-EXP-00103. Issued by NordShip Line S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-E001. Issued by Bureau Veritas Vietnam."
   },
   {
-    "id": "3eefa0e8ada009b9",
-    "timestamp": "2026-03-03T08:00:00.000Z",
-    "hash": "0x20d332aaee1ab79fff0614a642d9661b",
+    "id": "5065d3b645d6d438",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0x3ea91ba3499d9f61406019fc2cca2421",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Nairobi Coffee Exchange",
-    "details": "\"Certificate of Origin\" anchored to KE-2026-EXP-00103. Issued by Kenya Export Promotion & Branding Agency."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-E001. Issued by Ministry of Industry and Trade (MOIT)."
   },
   {
-    "id": "03771934bcad26a4",
-    "timestamp": "2026-03-03T08:00:00.000Z",
-    "hash": "0x8aeb955d6efbee9fb80caf854c096522",
+    "id": "f3945a69cda8e500",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0xc8710d1d8c691d8fb079bbb84deee6d6",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Nairobi Coffee Exchange",
-    "details": "\"Export Declaration\" anchored to KE-2026-EXP-00103. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-E001. Issued by General Department of Vietnam Customs."
   },
   {
-    "id": "7353b17fde0de3db",
-    "timestamp": "2026-03-08T08:00:00.000Z",
-    "hash": "0x762d54b9d392f2c8dc84e7e5b369c995",
+    "id": "422595432da89782",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0x843e0d192dbd1faf5c9ac34b5d38c7e1",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-E001. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "68ccc358794c0d7d",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0xdfee5494e93207b63d76b1812311c494",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-E001. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "22c9b82e97d48247",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x3d4dbbef7cb16d78e53447de9c1e0e9f",
     "type": "document",
     "action": "Consignment Anchored",
-    "actor": "Kakuzi PLC",
-    "details": "Digital twin created: KE-2026-EXP-00104 — Fresh Avocados — Hass. Anchored on the ledger."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-E002 — Knitted Fleece Hooded Sweatshirts. Anchored on the ledger."
   },
   {
-    "id": "35f1e0d3bf523268",
-    "timestamp": "2026-03-08T08:00:00.000Z",
-    "hash": "0x00c6ef7f2d1d0ee8bcdd6294dccbb715",
+    "id": "33f720cc135960c8",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x920069590cc23712dfe0fe781f0fdb4e",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kakuzi PLC",
-    "details": "\"Commercial Invoice\" anchored to KE-2026-EXP-00104. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-E002. Issued by Korea Customs Service."
   },
   {
-    "id": "168e7a50010597b9",
-    "timestamp": "2026-03-08T08:00:00.000Z",
-    "hash": "0x1b32764f3c003b166ee38b10d53256ba",
+    "id": "53da633c6fca54c4",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0xaf192730538a59817a3404dcac20be03",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kakuzi PLC",
-    "details": "\"Packing List\" anchored to KE-2026-EXP-00104. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-E002. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "190966c599ddcddc",
-    "timestamp": "2026-03-08T08:00:00.000Z",
-    "hash": "0xc3846f3484d790c1feaa5864309ed7ed",
+    "id": "ecd46481bf244148",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0xfd0ce9fc381b6e0c84423f1bd14b40ce",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kakuzi PLC",
-    "details": "\"Bill of Lading\" anchored to KE-2026-EXP-00104. Issued by NordShip Line S.A.."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-E002. Issued by Bureau Veritas Vietnam."
   },
   {
-    "id": "e60538c799499a12",
-    "timestamp": "2026-03-08T08:00:00.000Z",
-    "hash": "0xc8932f03f12fe6718985f6de4a745058",
+    "id": "ab68d2cf5b88a596",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x5e77bc8651b938f697200a9be3975866",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kakuzi PLC",
-    "details": "\"Certificate of Origin\" anchored to KE-2026-EXP-00104. Issued by Kenya Export Promotion & Branding Agency."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-E002. Issued by Ministry of Industry and Trade (MOIT)."
   },
   {
-    "id": "f87045933d45d52f",
-    "timestamp": "2026-03-08T08:00:00.000Z",
-    "hash": "0xa9db196761323b038b6af183c6a3be36",
+    "id": "0737d41f043ea4d4",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x24ab814ed01891432d66079639a046ca",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kakuzi PLC",
-    "details": "\"Export Declaration\" anchored to KE-2026-EXP-00104. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-E002. Issued by General Department of Vietnam Customs."
   },
   {
-    "id": "d4d0938bdc7ff85d",
-    "timestamp": "2026-03-14T08:00:00.000Z",
-    "hash": "0x4df001d444242bb45a8e5b723ccbe66a",
-    "type": "document",
-    "action": "Consignment Anchored",
-    "actor": "Kenya Nut Company Ltd",
-    "details": "Digital twin created: KE-2026-EXP-00105 — Macadamia Nuts — Raw (In-Shell). Anchored on the ledger."
-  },
-  {
-    "id": "236167396a5951d1",
-    "timestamp": "2026-03-14T08:00:00.000Z",
-    "hash": "0x1d5c9062aca8a4957aa7fa9a12d884a7",
+    "id": "7dd2304540f399c8",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x7f84020b34bb589a3e5021652081748f",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Nut Company Ltd",
-    "details": "\"Commercial Invoice\" anchored to KE-2026-EXP-00105. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-E002. Issued by TNG Investment & Trading JSC."
   },
   {
-    "id": "836d7a2cd535f258",
-    "timestamp": "2026-03-14T08:00:00.000Z",
-    "hash": "0xbd678846fd1e7777189c8ee80c2c5544",
+    "id": "dbaed4b0306672c6",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x51ca0a35cbd37a4824749baa7f66e07d",
     "type": "document",
     "action": "Document Anchored",
-    "actor": "Kenya Nut Company Ltd",
-    "details": "\"Packing List\" anchored to KE-2026-EXP-00105. Issued by Kenya Revenue Authority."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-E002. Issued by Maersk Vietnam."
   },
   {
-    "id": "8e23010e42ed2de2",
-    "timestamp": "2026-03-14T08:00:00.000Z",
-    "hash": "0x09a38d589a2f34e7dcdf90fe4ce5b3ff",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "Kenya Nut Company Ltd",
-    "details": "\"Bill of Lading\" anchored to KE-2026-EXP-00105. Issued by NordShip Line S.A.."
-  },
-  {
-    "id": "2527effe35453449",
-    "timestamp": "2026-03-14T08:00:00.000Z",
-    "hash": "0xacbe2b539b3cc4ae149ed7834a6ea219",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "Kenya Nut Company Ltd",
-    "details": "\"Certificate of Origin\" anchored to KE-2026-EXP-00105. Issued by Kenya Export Promotion & Branding Agency."
-  },
-  {
-    "id": "bd7f0d3a48ff35d9",
-    "timestamp": "2026-03-14T08:00:00.000Z",
-    "hash": "0x5050ab20bb0b4b7554d501b1efc32ea2",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "Kenya Nut Company Ltd",
-    "details": "\"Export Declaration\" anchored to KE-2026-EXP-00105. Issued by Kenya Revenue Authority."
-  },
-  {
-    "id": "692890b0fc95614e",
-    "timestamp": "2026-03-19T08:00:00.000Z",
-    "hash": "0x1758299767b70ccd6d360d9adf7f95e4",
-    "type": "document",
-    "action": "Consignment Anchored",
-    "actor": "Vegpro Group Ltd",
-    "details": "Digital twin created: KE-2026-EXP-00106 — French Green Beans (Fine). Anchored on the ledger."
-  },
-  {
-    "id": "73e3aabd0e758ab1",
-    "timestamp": "2026-03-19T08:00:00.000Z",
-    "hash": "0x5db57dbf055adc11aa4b496b261e7896",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "Vegpro Group Ltd",
-    "details": "\"Commercial Invoice\" anchored to KE-2026-EXP-00106. Issued by Kenya Revenue Authority."
-  },
-  {
-    "id": "c122bf17c693b8b4",
-    "timestamp": "2026-03-19T08:00:00.000Z",
-    "hash": "0x498924bd6708d6a6f832c50ab53213ea",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "Vegpro Group Ltd",
-    "details": "\"Packing List\" anchored to KE-2026-EXP-00106. Issued by Kenya Revenue Authority."
-  },
-  {
-    "id": "f039f537481a803b",
-    "timestamp": "2026-03-19T08:00:00.000Z",
-    "hash": "0x6ac3cad6bc48faf3d60437e64d084933",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "Vegpro Group Ltd",
-    "details": "\"Bill of Lading\" anchored to KE-2026-EXP-00106. Issued by NordShip Line S.A.."
-  },
-  {
-    "id": "1bf23f57d61be3cc",
-    "timestamp": "2026-03-19T08:00:00.000Z",
-    "hash": "0x503cdb8d625503841ea37b40bddb5368",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "Vegpro Group Ltd",
-    "details": "\"Certificate of Origin\" anchored to KE-2026-EXP-00106. Issued by Kenya Export Promotion & Branding Agency."
-  },
-  {
-    "id": "2c1871f47248230c",
-    "timestamp": "2026-03-19T08:00:00.000Z",
-    "hash": "0x0f04e512004e9b4716ab4d6fe592df8a",
-    "type": "document",
-    "action": "Document Anchored",
-    "actor": "Vegpro Group Ltd",
-    "details": "\"Export Declaration\" anchored to KE-2026-EXP-00106. Issued by Kenya Revenue Authority."
-  },
-  {
-    "id": "7d5cb793b961e827",
-    "timestamp": "2026-02-18T09:00:00.000Z",
-    "hash": "0x1d6b2704dd10b5f5db136a09b038c814",
+    "id": "38ca70ad09c0b369",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0x56a452804f3d5b99ef25759f5fdbe9f6",
     "type": "finance",
     "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Payment INV-APM-2026-0101 created for UCR-2026-MA-NG-00101. USD 340,000. Partially Paid."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Payment INV-2026-TNG-0101 created for VN-2026-EXP-00101. USD 168,000. Partially Paid."
   },
   {
-    "id": "24dc2a353a927f54",
-    "timestamp": "2026-02-20T11:30:00.000Z",
-    "hash": "0x9896c504fa04f6821612e5b8656d2e14",
+    "id": "5dfe1e8996c61267",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0x827e788c566176df59b7b3b5b47e9f23",
     "type": "finance",
     "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Payment INV-APM-2026-0102 created for UCR-2026-MA-NG-00102. EUR 288,000. Overdue."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Payment INV-2026-TNG-0103 created for VN-2026-EXP-00103. EUR 264,000. Overdue."
   },
   {
-    "id": "9902358d72f8090c",
-    "timestamp": "2026-02-18T09:00:00.000Z",
-    "hash": "0x1cfa3107da4bc5d8ab88174c16d1be46",
+    "id": "2f2421c2a09d5fae",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0xb9a2619664e4835599093667356c78b8",
     "type": "finance",
     "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "LC LC-2026-ATW-00101 created for UCR-2026-MA-NG-00101. Amount: USD 340,000. Status: Confirmed."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "LC LC-2026-VCB-0101 created for VN-2026-EXP-00101. Amount: USD 168,000. Status: Confirmed."
   },
   {
-    "id": "dfd1957168fa5be2",
-    "timestamp": "2026-02-20T11:30:00.000Z",
-    "hash": "0x9ec55e76df9bbd86cca2cd04ae15b859",
+    "id": "6044dba78b70a180",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0xd1ff2b66f98ab76ec70087e11c0316fa",
     "type": "finance",
     "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "LC LC-2026-ATW-00102 created for UCR-2026-MA-NG-00102. Amount: EUR 288,000. Status: Issued."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "LC LC-2026-VCB-0102 created for VN-2026-EXP-00103. Amount: EUR 264,000. Status: Issued."
   },
   {
-    "id": "4ced337fa363ecd5",
-    "timestamp": "2026-02-18T09:00:00.000Z",
-    "hash": "0x7db1e0d265a7f8db205fbf840ad764d6",
+    "id": "705ba6865931fd2f",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0x5a676e395a6a41efb25c4fb12761279c",
     "type": "finance",
     "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0101 deployed for UCR-2026-MA-NG-00101. 3 release conditions. Hash: 0x4074908d0c4d1b19debf011ffb3f734d."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0101 deployed for VN-2026-EXP-00101. 4 release conditions. Hash: 0xb041e750148f546385e62cebe96e4ebe."
   },
   {
-    "id": "31e353a026dc890e",
-    "timestamp": "2026-02-20T11:30:00.000Z",
-    "hash": "0xe3674cbb9a1c6acdd79e3946c9063d8a",
+    "id": "ec3ac7b27cfd04bf",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0x394e0773ccd794a1b1ca5b976ad8ac39",
     "type": "finance",
     "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0102 deployed for UCR-2026-MA-NG-00102. 2 release conditions. Hash: 0xf72ecf454b86017d0897358eff8efb1a."
-  },
-  {
-    "id": "aef08720dc43269c",
-    "timestamp": "2026-02-18T09:00:00.000Z",
-    "hash": "0x274aa9e7a2d973dc7007b8d5a1107c84",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0101 deployed for UCR-2026-MA-NG-00101. 3 release conditions. Hash: 0xa44c2058dbd68350c73cb217b7e2c8c2."
-  },
-  {
-    "id": "b7323ff7969a8a9b",
-    "timestamp": "2026-02-20T11:30:00.000Z",
-    "hash": "0xaf387097b43d7016f6c315bff08f3166",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0102 deployed for UCR-2026-MA-NG-00102. 2 release conditions. Hash: 0x11f81a7ac7fe136e03cb62f33bce9532."
-  },
-  {
-    "id": "400290c5ff1fe312",
-    "timestamp": "2026-02-18T09:00:00.000Z",
-    "hash": "0x59da79194a77ba0504f4f2da8c2b1ee9",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0101 deployed for UCR-2026-MA-NG-00101. 3 release conditions. Hash: 0x0dc226b57ddeb0e8add7aa2d2e8c9552."
-  },
-  {
-    "id": "0ee08de70f3761d2",
-    "timestamp": "2026-02-20T11:30:00.000Z",
-    "hash": "0x46f8749625294aa6d5dd5ec3ce86f189",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0102 deployed for UCR-2026-MA-NG-00102. 2 release conditions. Hash: 0x4c53e3aa2c201c44b77fa0ebd85ead64."
-  },
-  {
-    "id": "6e09e2353ff4053f",
-    "timestamp": "2026-02-18T09:00:00.000Z",
-    "hash": "0xc6b3c1a89e5f6a0e1f48803db2d59e17",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0101 deployed for UCR-2026-MA-NG-00101. 3 release conditions. Hash: 0xf4ad9c39a8c467b8eb30b61340057132."
-  },
-  {
-    "id": "e85caf7543d5df3d",
-    "timestamp": "2026-02-20T11:30:00.000Z",
-    "hash": "0xb3ace3ae6eb404325cce2242cc2d5814",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0102 deployed for UCR-2026-MA-NG-00102. 2 release conditions. Hash: 0xc3b908d200f4c1e8262207bbe752db77."
-  },
-  {
-    "id": "87352b4cff49b165",
-    "timestamp": "2026-02-18T09:00:00.000Z",
-    "hash": "0x24d71ca933ad675b568968662ca043ab",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0101 deployed for UCR-2026-MA-NG-00101. 3 release conditions. Hash: 0x637925b65bb17fe7d8417783efa77daa."
-  },
-  {
-    "id": "f5c801a92862b442",
-    "timestamp": "2026-02-20T11:30:00.000Z",
-    "hash": "0x05151e28a5d262a7a9d96f2f15971c87",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0102 deployed for UCR-2026-MA-NG-00102. 2 release conditions. Hash: 0x4bcb8e219219499521f3ea91dfe9c9bf."
-  },
-  {
-    "id": "8bb18bda9d783eaa",
-    "timestamp": "2026-02-18T09:00:00.000Z",
-    "hash": "0x68927bf85c5b986c794aba5e3938ed15",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0101 deployed for UCR-2026-MA-NG-00101. 3 release conditions. Hash: 0x9f4cb09d1d4489e895fc10c5235514fa."
-  },
-  {
-    "id": "3ca65cb9a1938df5",
-    "timestamp": "2026-02-20T11:30:00.000Z",
-    "hash": "0xca0f677d90bed2515bd84d208e54e151",
-    "type": "finance",
-    "action": "Finance Seeded",
-    "actor": "AtlasPhosphate S.A.",
-    "details": "Contract SC-2026-ATW-0102 deployed for UCR-2026-MA-NG-00102. 2 release conditions. Hash: 0x64775dfb863edb3ff7b09c8084a9c907."
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0102 deployed for VN-2026-EXP-00103. 3 release conditions. Hash: 0x742a05a99032a570e3d230db0a03fe85."
   }
 ]
