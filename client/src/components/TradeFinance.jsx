@@ -42,21 +42,21 @@ const Pill = ({ label, styles }) => (
 const LCStepper = ({ status }) => {
   const idx = LC_STATUSES.indexOf(status);
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 0, marginBottom: 16, overflow: 'hidden' }}>
+    <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 16, width: '100%' }}>
       {LC_STATUSES.map((s, i) => (
-        <div key={s} style={{ display: 'flex', alignItems: 'center', minWidth: 0 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3 }}>
+        <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, flex: '0 0 auto' }}>
             <div style={{
-              width: 22, height: 22, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+              width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: i < idx ? '#16a34a' : i === idx ? '#3b82f6' : '#e2e8f0',
-              color: i <= idx ? '#fff' : '#94a3b8', fontSize: 10, fontWeight: 700
+              color: i <= idx ? '#fff' : '#94a3b8', fontSize: 9, fontWeight: 700
             }}>
               {i < idx ? '✓' : i + 1}
             </div>
-            <span style={{ fontSize: 9, color: i === idx ? '#3b82f6' : '#94a3b8', fontWeight: i === idx ? 700 : 400, whiteSpace: 'nowrap' }}>{s}</span>
+            <span style={{ fontSize: 8, color: i === idx ? '#3b82f6' : '#94a3b8', fontWeight: i === idx ? 700 : 400, whiteSpace: 'nowrap' }}>{s}</span>
           </div>
           {i < LC_STATUSES.length - 1 && (
-            <div style={{ width: 20, height: 2, background: i < idx ? '#16a34a' : '#e2e8f0', marginBottom: 16, flexShrink: 0 }} />
+            <div style={{ flex: 1, height: 2, minWidth: 4, background: i < idx ? '#16a34a' : '#e2e8f0', marginBottom: 14 }} />
           )}
         </div>
       ))}
