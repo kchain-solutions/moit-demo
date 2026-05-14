@@ -262,6 +262,8 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
 }
 
 // ── XML generator for seeded BOL / Export Declaration documents ──
+function escXml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
 function makeSeedXml(docType, m, ref) {
   // Deterministic fake values derived from the UCR so they're stable across restarts
   const seed = parseInt(m.ucr.replace(/\D/g, '').slice(-4) || '1234');
@@ -284,35 +286,36 @@ function makeSeedXml(docType, m, ref) {
                      : m.toCountry === 'Vietnam'         ? 'Lien Chieu Industrial Zone, Thai Nguyen, Vietnam'
                      : 'Unknown';
 
+  const e = escXml;
   if (docType === 'Bill of Lading') {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <TransportDocument>
-  <TransportDocumentReference>${ref}</TransportDocumentReference>
-  <ContractQuotationReference>${m.ucr}</ContractQuotationReference>
+  <TransportDocumentReference>${e(ref)}</TransportDocumentReference>
+  <ContractQuotationReference>${e(m.ucr)}</ContractQuotationReference>
   <IssueDate>${m.shipDate}</IssueDate>
   <ShippedOnBoardDate>${m.shipDate}</ShippedOnBoardDate>
   <IssuerCode>NL-SHP-001</IssuerCode>
-  <ServiceContractReference>${m.invoiceRef}</ServiceContractReference>
+  <ServiceContractReference>${e(m.invoiceRef)}</ServiceContractReference>
   <Shipper>
-    <PartyName>${m.exporter}</PartyName>
-    <Address>${exporterAddr}</Address>
+    <PartyName>${e(m.exporter)}</PartyName>
+    <Address>${e(exporterAddr)}</Address>
     <RegistrationNumber>REG-${m.fromCountry.slice(0,2).toUpperCase()}-${seed}</RegistrationNumber>
     <TaxIdentifier>TAX-${seed + 1000}</TaxIdentifier>
   </Shipper>
   <Consignee>
-    <PartyName>${m.importer}</PartyName>
-    <Address>${importerAddr}</Address>
+    <PartyName>${e(m.importer)}</PartyName>
+    <Address>${e(importerAddr)}</Address>
     <RegistrationNumber>REG-${m.toCountry.slice(0,2).toUpperCase()}-${seed + 500}</RegistrationNumber>
   </Consignee>
-  <VesselName>${m.vessel}</VesselName>
+  <VesselName>${e(m.vessel)}</VesselName>
   <VoyageNumber>${voyageNo}</VoyageNumber>
   <IMONumber>${imoNo}</IMONumber>
-  <CarrierName>${carrier}</CarrierName>
-  <PortOfLoading>${m.originPort}</PortOfLoading>
-  <PortOfDischarge>${m.destinationPort}</PortOfDischarge>
+  <CarrierName>${e(carrier)}</CarrierName>
+  <PortOfLoading>${e(m.originPort)}</PortOfLoading>
+  <PortOfDischarge>${e(m.destinationPort)}</PortOfDischarge>
   <EstimatedArrival>${arrival}</EstimatedArrival>
-  <HSCode>${m.hsCode}</HSCode>
-  <DescriptionOfGoods>${m.product}</DescriptionOfGoods>
+  <HSCode>${e(m.hsCode)}</HSCode>
+  <DescriptionOfGoods>${e(m.product)}</DescriptionOfGoods>
   <Quantity>${grossMass}</Quantity>
   <QuantityUnit>MT</QuantityUnit>
   <GrossWeight>${grossMass}</GrossWeight>
@@ -320,45 +323,45 @@ function makeSeedXml(docType, m, ref) {
   <NumberOfPackages>${Math.ceil(parseInt(grossMass) / 25)}</NumberOfPackages>
   <DeclaredValue>${m.totalValue}</DeclaredValue>
   <Currency>${m.currency}</Currency>
-  <Incoterms>${m.incoterms}</Incoterms>
+  <Incoterms>${e(m.incoterms)}</Incoterms>
   <FreightPayableBy>${m.incoterms === 'FOB' ? 'Consignee' : 'Shipper'}</FreightPayableBy>
   <NumberOfOriginalsBL>${blOriginals}</NumberOfOriginalsBL>
-  <IssuePlaceAndDate>${m.originPort}, ${m.shipDate}</IssuePlaceAndDate>
-  <SignatoryName>Captain, ${m.vessel}</SignatoryName>
+  <IssuePlaceAndDate>${e(m.originPort)}, ${m.shipDate}</IssuePlaceAndDate>
+  <SignatoryName>Captain, ${e(m.vessel)}</SignatoryName>
 </TransportDocument>`;
   }
 
   if (docType === 'Export Declaration') {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <CustomsDeclaration>
-  <DeclarationNumber>${ref}</DeclarationNumber>
-  <UCR>${m.ucr}</UCR>
+  <DeclarationNumber>${e(ref)}</DeclarationNumber>
+  <UCR>${e(m.ucr)}</UCR>
   <DeclarationDate>${m.shipDate}</DeclarationDate>
   <DeclarationType>EX</DeclarationType>
   <ProcedureCode>1000</ProcedureCode>
-  <CountryOfDispatch>${m.fromCountry}</CountryOfDispatch>
-  <CountryOfDestination>${m.toCountry}</CountryOfDestination>
-  <PortOfExport>${m.originPort}</PortOfExport>
-  <PortOfDestination>${m.destinationPort}</PortOfDestination>
+  <CountryOfDispatch>${e(m.fromCountry)}</CountryOfDispatch>
+  <CountryOfDestination>${e(m.toCountry)}</CountryOfDestination>
+  <PortOfExport>${e(m.originPort)}</PortOfExport>
+  <PortOfDestination>${e(m.destinationPort)}</PortOfDestination>
   <Exporter>
-    <Name>${m.exporter}</Name>
-    <Address>${exporterAddr}</Address>
+    <Name>${e(m.exporter)}</Name>
+    <Address>${e(exporterAddr)}</Address>
     <Identifier>EXP-${m.fromCountry.slice(0,2).toUpperCase()}-${seed}</Identifier>
     <TaxIdentifier>TAX-${seed + 1000}</TaxIdentifier>
   </Exporter>
   <Consignee>
-    <Name>${m.importer}</Name>
-    <Address>${importerAddr}</Address>
+    <Name>${e(m.importer)}</Name>
+    <Address>${e(importerAddr)}</Address>
     <Identifier>IMP-${m.toCountry.slice(0,2).toUpperCase()}-${seed + 500}</Identifier>
   </Consignee>
   <TransportMode>1</TransportMode>
-  <VesselName>${m.vessel}</VesselName>
+  <VesselName>${e(m.vessel)}</VesselName>
   <VoyageNumber>${voyageNo}</VoyageNumber>
   <IMONumber>${imoNo}</IMONumber>
   <ContainerNumber>${containerNo}</ContainerNumber>
   <SealNumber>${sealNo}</SealNumber>
-  <HSCode>${m.hsCode}</HSCode>
-  <Description>${m.product}</Description>
+  <HSCode>${e(m.hsCode)}</HSCode>
+  <Description>${e(m.product)}</Description>
   <Quantity>${grossMass}</Quantity>
   <QuantityUnit>MT</QuantityUnit>
   <UnitPrice>${Math.round(m.totalValue / parseInt(grossMass))}</UnitPrice>
@@ -366,18 +369,18 @@ function makeSeedXml(docType, m, ref) {
   <Currency>${m.currency}</Currency>
   <GrossMass>${grossMass}</GrossMass>
   <NetMass>${netMass}</NetMass>
-  <CountryOfOrigin>${m.fromCountry}</CountryOfOrigin>
+  <CountryOfOrigin>${e(m.fromCountry)}</CountryOfOrigin>
   <PreferenceCode>100</PreferenceCode>
-  <InvoiceNumber>${m.invoiceRef}</InvoiceNumber>
+  <InvoiceNumber>${e(m.invoiceRef)}</InvoiceNumber>
   <InvoiceDate>${m.shipDate}</InvoiceDate>
   <InvoiceTotal>${m.totalValue}</InvoiceTotal>
   <InvoiceCurrency>${m.currency}</InvoiceCurrency>
-  <Incoterms>${m.incoterms}</Incoterms>
+  <Incoterms>${e(m.incoterms)}</Incoterms>
   <BillOfLadingRef>BL-${ref.replace(/[A-Z]+-\d+-/,'')}</BillOfLadingRef>
   <CertificateOfOriginRef>CO-${ref.replace(/[A-Z]+-\d+-/,'')}</CertificateOfOriginRef>
   <InsuranceCertificateRef>INS-${seed}</InsuranceCertificateRef>
   <DeclarantName>General Department of Vietnam Customs (VNACCS)</DeclarantName>
-  <DeclarationLocation>${m.originPort}</DeclarationLocation>
+  <DeclarationLocation>${e(m.originPort)}</DeclarationLocation>
   <Status>ACCEPTED</Status>
 </CustomsDeclaration>`;
   }
@@ -385,12 +388,12 @@ function makeSeedXml(docType, m, ref) {
   if (docType === 'Bill of Material') {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <BillOfMaterial>
-  <Reference>${ref}</Reference>
-  <UCR>${m.ucr}</UCR>
+  <Reference>${e(ref)}</Reference>
+  <UCR>${e(m.ucr)}</UCR>
   <Date>${m.shipDate}</Date>
-  <Manufacturer>${m.exporter}</Manufacturer>
-  <Product>${m.product}</Product>
-  <HSCode>${m.hsCode}</HSCode>
+  <Manufacturer>${e(m.exporter)}</Manufacturer>
+  <Product>${e(m.product)}</Product>
+  <HSCode>${e(m.hsCode)}</HSCode>
   <OriginComposition>
     <VietnamContentPercent>65.5</VietnamContentPercent>
     <CPTPPCumulationApplied>true</CPTPPCumulationApplied>
@@ -399,7 +402,7 @@ function makeSeedXml(docType, m, ref) {
       <Material><Name>Cotton/synthetic fabric</Name><Supplier>Hyosung Corp.</Supplier><Country>KR</Country><Percent>30.0</Percent><CPTPPMember>true</CPTPPMember></Material>
       <Material><Name>Thread and yarn</Name><Supplier>Vietnam Thread Co.</Supplier><Country>VN</Country><Percent>15.5</Percent><CPTPPMember>true</CPTPPMember></Material>
       <Material><Name>Zippers and buttons</Name><Supplier>YKK Vietnam</Supplier><Country>VN</Country><Percent>10.0</Percent><CPTPPMember>true</CPTPPMember></Material>
-      <Material><Name>Cutting and sewing labor</Name><Supplier>${m.exporter}</Supplier><Country>VN</Country><Percent>40.0</Percent><CPTPPMember>true</CPTPPMember></Material>
+      <Material><Name>Cutting and sewing labor</Name><Supplier>${e(m.exporter)}</Supplier><Country>VN</Country><Percent>40.0</Percent><CPTPPMember>true</CPTPPMember></Material>
       <Material><Name>Elastic bands</Name><Supplier>Zhejiang Elastic Co.</Supplier><Country>CN</Country><Percent>4.5</Percent><CPTPPMember>false</CPTPPMember></Material>
     </InputMaterials>
   </OriginComposition>
@@ -409,16 +412,16 @@ function makeSeedXml(docType, m, ref) {
   if (docType === 'MOIT Certificate of Origin') {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <CertificateOfOrigin>
-  <CertificateNumber>${ref}</CertificateNumber>
+  <CertificateNumber>${e(ref)}</CertificateNumber>
   <FormType>EUR.1</FormType>
   <IssueDate>${m.shipDate}</IssueDate>
   <IssuingAuthority>Ministry of Industry and Trade, Vietnam</IssuingAuthority>
   <IssuingSystem>eCoSys</IssuingSystem>
-  <Exporter><PartyName>${m.exporter}</PartyName><Country>VN</Country></Exporter>
-  <Consignee><PartyName>${m.importer}</PartyName><Country>${m.toCountry.slice(0,2).toUpperCase()}</Country></Consignee>
+  <Exporter><PartyName>${e(m.exporter)}</PartyName><Country>VN</Country></Exporter>
+  <Consignee><PartyName>${e(m.importer)}</PartyName><Country>${m.toCountry.slice(0,2).toUpperCase()}</Country></Consignee>
   <Goods>
-    <HSCode>${m.hsCode}</HSCode>
-    <Description>${m.product}</Description>
+    <HSCode>${e(m.hsCode)}</HSCode>
+    <Description>${e(m.product)}</Description>
     <OriginCriterion>RVC</OriginCriterion>
     <OriginCountry>VN</OriginCountry>
   </Goods>

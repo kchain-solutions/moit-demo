@@ -182,6 +182,97 @@ function parseCUSDEC(doc) {
   ];
 }
 
+function parseBOM(doc) {
+  const root = doc.documentElement;
+  const get = tag => getText(root, tag);
+  const materials = [];
+  root.querySelectorAll('Material').forEach(mat => {
+    materials.push({
+      label: getText(mat, 'Name'),
+      value: `${getText(mat, 'Supplier')} (${getText(mat, 'Country')}) — ${getText(mat, 'Percent')}%${getText(mat, 'CPTPPMember') === 'true' ? ' [CPTPP]' : ''}`,
+      full: true, mono: false,
+    });
+  });
+  return [
+    {
+      title: 'Bill of Material',
+      fields: [
+        { label: 'Reference', value: get('Reference') },
+        { label: 'UCR', value: get('UCR') },
+        { label: 'Date', value: get('Date') },
+        { label: 'Manufacturer', value: get('Manufacturer'), mono: false },
+        { label: 'Product', value: get('Product'), full: true, mono: false },
+        { label: 'HS Code', value: get('HSCode') },
+      ],
+    },
+    {
+      title: 'Origin Composition',
+      fields: [
+        { label: 'Vietnam Content', value: get('VietnamContentPercent') ? `${get('VietnamContentPercent')}%` : '' },
+        { label: 'Third Country Content', value: get('ThirdCountryContentPercent') ? `${get('ThirdCountryContentPercent')}%` : '' },
+        { label: 'CPTPP Cumulation', value: get('CPTPPCumulationApplied') === 'true' ? 'Yes' : 'No' },
+      ],
+    },
+    { title: 'Input Materials', fields: materials },
+  ];
+}
+
+function parseCOO(doc) {
+  const root = doc.documentElement;
+  const get = tag => getText(root, tag);
+  return [
+    {
+      title: 'Certificate of Origin',
+      fields: [
+        { label: 'Certificate Number', value: get('CertificateNumber') },
+        { label: 'Form Type', value: get('FormType') },
+        { label: 'Issue Date', value: get('IssueDate') },
+        { label: 'Issuing Authority', value: get('IssuingAuthority'), full: true, mono: false },
+        { label: 'Issuing System', value: get('IssuingSystem') },
+      ],
+    },
+    {
+      title: 'Exporter',
+      fields: [
+        { label: 'Name', value: get('Exporter PartyName'), full: true, mono: false },
+        { label: 'Country', value: get('Exporter Country') },
+      ],
+    },
+    {
+      title: 'Consignee',
+      fields: [
+        { label: 'Name', value: get('Consignee PartyName'), full: true, mono: false },
+        { label: 'Country', value: get('Consignee Country') },
+      ],
+    },
+    {
+      title: 'Goods',
+      fields: [
+        { label: 'HS Code', value: get('Goods HSCode') },
+        { label: 'Description', value: get('Goods Description'), full: true, mono: false },
+        { label: 'Origin Criterion', value: get('OriginCriterion') },
+        { label: 'Origin Country', value: get('OriginCountry') },
+      ],
+    },
+    {
+      title: 'Cumulation Declaration',
+      fields: [
+        { label: 'CPTPP Cumulation', value: get('CPTPPCumulation') === 'true' ? 'Yes' : 'No' },
+        { label: 'Partner Country', value: get('CumulationPartnerCountry') },
+        { label: 'Material Type', value: get('CumulationMaterialType'), mono: false },
+      ],
+    },
+    {
+      title: 'Digital Signature',
+      fields: [
+        { label: 'Signer', value: get('SignerIdentity') },
+        { label: 'Timestamp', value: get('DigitalSignature Timestamp') },
+        { label: 'Algorithm', value: get('Algorithm') },
+      ],
+    },
+  ];
+}
+
 export default function XmlViewer({ docId, docType, errorType, errorDescription }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -200,6 +291,8 @@ export default function XmlViewer({ docId, docType, errorType, errorDescription 
         const rootTag = xmlDoc.documentElement.tagName;
         if (rootTag === 'TransportDocument') setSections(parseBOL(xmlDoc));
         else if (rootTag === 'CustomsDeclaration') setSections(parseCUSDEC(xmlDoc));
+        else if (rootTag === 'BillOfMaterial') setSections(parseBOM(xmlDoc));
+        else if (rootTag === 'CertificateOfOrigin') setSections(parseCOO(xmlDoc));
         else setSections([{ title: 'Raw Document', fields: [{ label: 'Content', value: content, full: true }] }]);
         setLoading(false);
       })
