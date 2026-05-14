@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
+import { api } from '../utils/api';
 
 const ALPHA_CREDS = [
   { role: 'Manufacturer - Vietnam',                    username: 'tng',         label: 'TNG Investment & Trading JSC' },
@@ -21,17 +22,33 @@ const BETA_CREDS = [
   { role: 'Customs Authority - EU',            username: 'eucustoms', label: 'EU Customs (Netherlands)' },
 ];
 
+// Initial guess from URL param, cookie, or port (synchronous, before /api/node responds)
+function guessNode() {
+  const nodeParam = new URLSearchParams(window.location.search).get('node');
+  if (nodeParam === 'beta') return 'beta';
+  if (nodeParam === 'alpha') return 'alpha';
+  const cookieNode = document.cookie.match(/twin-node=(\w+)/)?.[1];
+  if (cookieNode) return cookieNode;
+  if (window.location.port === '4001') return 'beta';
+  return null; // unknown — wait for /api/node
+}
+
 export default function Login() {
   const { login } = useNode();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  // Detect node via port (direct) or ?node= param / cookie (via proxy)
-  const port = window.location.port;
-  const nodeParam = new URLSearchParams(window.location.search).get('node');
-  const cookieNode = document.cookie.match(/twin-node=(\w+)/)?.[1];
-  const isBeta = port === '4001' || nodeParam === 'beta' || (nodeParam !== 'alpha' && cookieNode === 'beta');
+  const [nodeId, setNodeId] = useState(guessNode);
+
+  // Fetch the authoritative node identity from the server
+  useEffect(() => {
+    api.getNode().then(info => {
+      if (info.nodeId) setNodeId(info.nodeId);
+    }).catch(() => {});
+  }, []);
+
+  const isBeta = nodeId === 'beta';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
