@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:22-alpine
 
 WORKDIR /app
 
@@ -7,7 +7,7 @@ RUN npm ci --production=false
 
 COPY . .
 
-RUN npx vite build --outDir server/public
+RUN npx vite build --outDir ../server/public
 
 RUN npm prune --production
 
