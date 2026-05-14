@@ -664,5 +664,23 @@
     "action": "Finance Seeded",
     "actor": "TNG Investment & Trading JSC",
     "details": "Contract SC-2026-VN-0102 deployed for VN-2026-EXP-00103. 3 release conditions. Hash: 0x459679e786ed40563eee4e8a74a02043."
+  },
+  {
+    "id": "0840632b7f841cb6",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0x518b601768a69e790b77ad71d002cb79",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0101 deployed for VN-2026-EXP-00101. 4 release conditions. Hash: 0x4b5acd426ec849bfc41080e0208d5324."
+  },
+  {
+    "id": "957cc05ebc070b67",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0x09ee6ab9bf82210ab90fe7e203746da9",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0102 deployed for VN-2026-EXP-00103. 3 release conditions. Hash: 0xbb18beda5f5c51635824e1f910bb3742."
   }
 ]
