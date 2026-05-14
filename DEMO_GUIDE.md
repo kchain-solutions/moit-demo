@@ -56,23 +56,70 @@ npm run demo
 
 This is the core demo flow. It mirrors the TWIN Vietnam Concept Note (Annex 1).
 
-```
-Step 1          Step 2          Step 3          Step 4                  Step 5
-Korean CoO +    Bill of         Inspection      MOIT CoO +              Export clearance
-Commercial      Material        Report          Export Declaration +     + Bill of Lading
-Invoice                                         Commercial Invoice +
-(Inputs)                                        Packing List
-   |               |               |               |                       |
-Hyosung/TNG     TNG             Bureau Veritas  MOIT + TNG + Gemadept   Customs + Maersk
-                                                                        + Cat Lai Port
+```mermaid
+sequenceDiagram
+    participant HYO as Hyosung TNS<br/>(South Korea)
+    participant TNG as TNG Investment<br/>(Manufacturer)
+    participant BV as Bureau Veritas<br/>(Inspector)
+    participant MOIT as MOIT<br/>(eCoSys)
+    participant GEM as Gemadept<br/>(Freight Forwarder)
+    participant VNC as Vietnam Customs<br/>(VNACCS)
+    participant MSK as Maersk Vietnam<br/>(Carrier)
+    participant CAT as Cat Lai Port<br/>(Port Authority)
+    participant NIKE as Nike Inc.<br/>(Buyer, US)
+    participant CBP as US CBP<br/>(Customs, US)
 
-                    -----> Cross-border share to Nike + CBP ----->
+    rect rgb(219, 234, 254)
+        Note over HYO,TNG: Step 1: Raw Material Sourcing
+        HYO->>TNG: Certificate of Origin (Korean inputs)
+        HYO->>TNG: Commercial Invoice (Inputs)
+    end
 
-                                                                    Step 6
-                                                                    CBP origin
-                                                                    verification
-                                                                        |
-                                                                    US CBP (Beta)
+    rect rgb(237, 233, 254)
+        Note over TNG: Step 2: Production
+        TNG->>TNG: Bill of Material (origin composition)
+        Note right of TNG: VN 65.5% / KR 30% / CN 4.5%
+    end
+
+    rect rgb(245, 243, 255)
+        Note over TNG,BV: Step 3: Quality Inspection
+        TNG->>BV: Grant access to consignment
+        BV->>TNG: Inspection Report (PASS)
+    end
+
+    rect rgb(254, 243, 199)
+        Note over TNG,GEM: Step 4: Export Documentation
+        TNG->>MOIT: Grant access to consignment
+        MOIT->>TNG: MOIT Certificate of Origin (EUR.1/CPTPP)
+        VNC->>TNG: Export Declaration (VNACCS)
+        TNG->>TNG: Commercial Invoice
+        TNG->>GEM: Grant access to consignment
+        GEM->>TNG: Packing List
+    end
+
+    rect rgb(236, 253, 245)
+        Note over VNC,CAT: Step 5: Export Clearance & Departure
+        TNG->>VNC: Grant access to consignment
+        VNC->>VNC: Export clearance granted
+        TNG->>MSK: Grant access to consignment
+        MSK->>TNG: Bill of Lading
+        CAT->>CAT: Container loaded, vessel departed
+    end
+
+    rect rgb(20, 184, 166)
+        Note over TNG,CBP: Cross-Border Share via TWIN Network
+        TNG-->>NIKE: Share consignment dossier (P2P WebSocket)
+        TNG-->>CBP: Share consignment dossier (P2P WebSocket)
+        Note over TNG,CBP: All 8 documents + ledger audit trail
+    end
+
+    rect rgb(254, 226, 226)
+        Note over NIKE,CBP: Step 6: Destination Verification
+        NIKE->>NIKE: Receive and review documents
+        CBP->>CBP: Origin verification query
+        Note right of CBP: VN content 65.5% > 55% threshold
+        CBP->>CBP: UFLPA screening: PASS
+    end
 ```
 
 ---
