@@ -465,6 +465,7 @@ function docsForConsignment(m) {
       { name:'MOIT Certificate of Origin',    docType:'MOIT Certificate of Origin',   issuer:'Ministry of Industry and Trade (MOIT)',        suffix:'CO'  },
       { name:'Export Declaration',            docType:'Export Declaration',            issuer:'General Department of Vietnam Customs',        suffix:'ED'  },
       { name:'Commercial Invoice',            docType:'Commercial Invoice',           issuer:m.creatorOrgName,                               suffix:'INV' },
+      { name:'Packing List',                  docType:'Packing List',                 issuer:'Gemadept Logistics',                           suffix:'PL'  },
       { name:'Bill of Lading',                docType:'Bill of Lading',               issuer:'Maersk Vietnam',                               suffix:'BL'  },
     ];
   }
