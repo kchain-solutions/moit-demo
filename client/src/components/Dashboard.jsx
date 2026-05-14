@@ -162,14 +162,22 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
           <div className="stat-value">{hasData ? visibleEvents.length : '—'}</div>
           <div className="stat-sub">{hasData ? 'immutable records' : 'Updates on access'}</div>
         </div>
-        <div className="stat-card dark">
-          <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: '#64748b', marginBottom: 8 }}>Entity Trust Score</div>
-          <div className="trust-score-wrap">
-            <span className="trust-num">{verified > 0 ? 87 : '—'}</span>
-            {verified > 0 && <span className="trust-grade">A</span>}
+        <div className="stat-card" style={{ background: '#11224E', border: '1px solid rgba(255,255,255,0.08)', boxShadow: '0 1px 3px rgba(0,0,0,0.3)' }}>
+          <div style={{ fontSize: 9, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '1.5px', color: 'rgba(255,255,255,0.6)', marginBottom: 8 }}>Entity Trust Score</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 10 }}>
+            <span style={{ fontSize: 32, fontWeight: 800, lineHeight: 1, color: verified > 0 ? '#FFFFFF' : 'rgba(255,255,255,0.3)' }}>
+              {verified > 0 ? 87 : '\u2014'}
+            </span>
+            {verified > 0 && (
+              <span style={{ fontSize: 13, fontWeight: 700, color: '#FFFFFF', background: '#FF7200', borderRadius: 6, padding: '2px 8px', lineHeight: '18px' }}>A</span>
+            )}
           </div>
-          <div className="trust-bar-track"><div className="trust-bar-fill" style={{ width: verified > 0 ? '87%' : '0%' }} /></div>
-          <div className="trust-sub">{verified > 0 ? 'Top 5% of AfCFTA Exporters' : 'Register a DID to get a score'}</div>
+          <div style={{ width: '100%', height: 6, borderRadius: 3, background: 'rgba(255,255,255,0.12)', marginBottom: 6, overflow: 'hidden' }}>
+            <div style={{ height: '100%', borderRadius: 3, background: '#FF7200', width: verified > 0 ? '87%' : '0%', transition: 'width 0.6s ease' }} />
+          </div>
+          <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
+            {verified > 0 ? 'Verified Vietnamese Exporter' : 'Register a DID to get a score'}
+          </div>
         </div>
       </div>
 
