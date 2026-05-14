@@ -1,0 +1,22 @@
+services:
+  twin-alpha:
+    build: .
+    container_name: twin-alpha
+    environment:
+      - PORT=4000
+      - NODE_ID=alpha
+      - NODE_NAME=Node Alpha
+      - PEER_URL=ws://twin-beta:4000
+    ports:
+      - "4000:4000"
+
+  twin-beta:
+    build: .
+    container_name: twin-beta
+    environment:
+      - PORT=4000
+      - NODE_ID=beta
+      - NODE_NAME=Node Beta
+      - PEER_URL=ws://twin-alpha:4000
+    ports:
+      - "4001:4000"
