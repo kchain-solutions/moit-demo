@@ -5,7 +5,7 @@ import { Plus, ChevronRight, CheckCircle, Circle, Clock, Zap, Hash, RefreshCw, S
 
 /* ─── helpers ─── */
 const fmtVal = (n, cur = 'USD') => {
-  const symbols = { USD: '$', EUR: '€', KES: 'KSh' };
+  const symbols = { USD: '$', EUR: '€', VND: '₫' };
   const s = symbols[cur] || cur + ' ';
   return `${s}${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
@@ -284,7 +284,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Issuing Bank *</label>
-                <input className="input" placeholder="e.g. Attijariwafa Bank" value={form.issuingBank} onChange={e => setForm(f => ({ ...f, issuingBank: e.target.value }))} />
+                <input className="input" placeholder="e.g. HSBC Vietnam" value={form.issuingBank} onChange={e => setForm(f => ({ ...f, issuingBank: e.target.value }))} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Advising Bank</label>
@@ -305,7 +305,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
                 <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                  <option>USD</option><option>EUR</option><option>KES</option>
+                  <option>USD</option><option>EUR</option><option>VND</option>
                 </select>
               </div>
             </div>
@@ -624,7 +624,7 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
                 <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                  <option>USD</option><option>EUR</option><option>KES</option>
+                  <option>USD</option><option>EUR</option><option>VND</option>
                 </select>
               </div>
               <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', gap: 8 }}>

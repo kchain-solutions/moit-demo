@@ -177,7 +177,7 @@ export default function Identity() {
             <div style={{ fontSize: 12, fontWeight: 700, color: '#166534', marginBottom: 8 }}>✓ Will PASS verification</div>
             <table>
               <tbody>
-                {[['BRN-123456', 'Valid business registration'], ['TIN-254789', 'Valid tax ID'], ['LEI-987654', 'Valid legal entity'], ['DUNS-456123', 'Valid DUNS number']].map(([code, desc]) => (
+                {[['MST-123456', 'Vietnam Tax Code (Ma So Thue)'], ['KBN-254789', 'Korean Business Number'], ['EIN-123456', 'US Employer Identification Number'], ['EORI-123456', 'EU Economic Operator ID (EORI)']].map(([code, desc]) => (
                   <tr key={code}>
                     <td style={{ fontFamily: 'var(--mono)', fontSize: 11, paddingRight: 12 }}>{code}</td>
                     <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{desc}</td>
@@ -190,7 +190,7 @@ export default function Identity() {
             <div style={{ fontSize: 12, fontWeight: 700, color: '#991b1b', marginBottom: 8 }}>✗ Will FAIL verification</div>
             <table>
               <tbody>
-                {[['BRN-000000', 'Denied — blacklisted'], ['BRN-111111', 'Expired licence'], ['BRN-222222', 'Suspended — under review'], ['X-anything', 'Invalid prefix']].map(([code, desc]) => (
+                {[['MST-000000', 'Denied — blacklisted'], ['MST-111111', 'Expired licence'], ['MST-222222', 'Suspended — under review'], ['X-anything', 'Invalid prefix']].map(([code, desc]) => (
                   <tr key={code}>
                     <td style={{ fontFamily: 'var(--mono)', fontSize: 11, paddingRight: 12 }}>{code}</td>
                     <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{desc}</td>
@@ -264,8 +264,8 @@ export default function Identity() {
             <h3>Register {verifying.name}</h3>
             {stage === 'input' && (
               <>
-                <p style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 16 }}>Enter a business registration number. Use BRN-123456 to pass or BRN-000000 to see a denial.</p>
-                <div className="fg"><label>Registration Number</label><input value={regNum} onChange={e => setRegNum(e.target.value)} placeholder="e.g. BRN-123456" autoFocus /></div>
+                <p style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 16 }}>Enter a business registration number. Use MST-123456 to pass or MST-000000 to see a denial.</p>
+                <div className="fg"><label>Registration Number</label><input value={regNum} onChange={e => setRegNum(e.target.value)} placeholder="e.g. MST-123456" autoFocus /></div>
                 <div className="modal-act">
                   <button className="btn btn-s" onClick={() => setVerifying(null)}>Cancel</button>
                   <button className="btn btn-p" onClick={runVerification} disabled={regNum.length < 4}>Verify & Register</button>

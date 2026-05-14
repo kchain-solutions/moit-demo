@@ -30,7 +30,7 @@ export default function Login() {
   // Detect node via port (direct) or ?node= param / cookie (via proxy)
   const port = window.location.port;
   const nodeParam = new URLSearchParams(window.location.search).get('node');
-  const cookieNode = document.cookie.match(/adapt-node=(\w+)/)?.[1];
+  const cookieNode = document.cookie.match(/twin-node=(\w+)/)?.[1];
   const isBeta = port === '4001' || nodeParam === 'beta' || (nodeParam !== 'alpha' && cookieNode === 'beta');
 
   const handleSubmit = async (e) => {

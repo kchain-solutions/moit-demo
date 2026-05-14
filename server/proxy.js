@@ -1,5 +1,5 @@
 /**
- * ADAPT Demo Proxy — single port (4002) routing to both nodes.
+ * TWIN Vietnam Proxy — single port (4002) routing to both nodes.
  *
  * Usage:
  *   node server/proxy.js
@@ -24,19 +24,19 @@ const ALPHA = { host: '127.0.0.1', port: 4000 };
 const BETA  = { host: '127.0.0.1', port: 4001 };
 
 // Resolve target — URL param always beats cookie (so sharing /?node=alpha
-// works even if the browser already has an adapt-node=beta cookie)
+// works even if the browser already has an twin-node=beta cookie)
 function target(req) {
   if (req.url?.includes('node=alpha')) return ALPHA;
   if (req.url?.includes('node=beta'))  return BETA;
   // Fall back to cookie
-  return /adapt-node=beta/.test(req.headers.cookie || '') ? BETA : ALPHA;
+  return /twin-node=beta/.test(req.headers.cookie || '') ? BETA : ALPHA;
 }
 
 // Build a Set-Cookie header when the ?node= param is present so all
 // subsequent requests (no query param) keep routing to the right node
 function nodeCookie(req) {
-  if (req.url?.includes('node=alpha')) return 'adapt-node=alpha; Path=/; HttpOnly; SameSite=Lax';
-  if (req.url?.includes('node=beta'))  return 'adapt-node=beta; Path=/; HttpOnly; SameSite=Lax';
+  if (req.url?.includes('node=alpha')) return 'twin-node=alpha; Path=/; HttpOnly; SameSite=Lax';
+  if (req.url?.includes('node=beta'))  return 'twin-node=beta; Path=/; HttpOnly; SameSite=Lax';
   return null;
 }
 
@@ -94,7 +94,7 @@ server.on('upgrade', (req, clientSocket, head) => {
 
 server.listen(PROXY_PORT, () => {
   const base = `http://localhost:${PROXY_PORT}`;
-  console.log(`\n  ADAPT Demo Proxy running on port ${PROXY_PORT}`);
+  console.log(`\n  TWIN Vietnam Proxy running on port ${PROXY_PORT}`);
   console.log(`\n  Node Alpha  →  ${base}/?node=alpha`);
   console.log(`  Node Beta   →  ${base}/?node=beta`);
   console.log(`\n  Tunnel with:`);
