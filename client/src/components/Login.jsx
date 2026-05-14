@@ -56,7 +56,7 @@ export default function Login() {
     <div className="login-pg">
       <div className="login-box">
         <div className="login-brand" style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center' }}>
-          <img src="/twin-logo.svg" alt="TWIN" className="login-logo-img" style={{ height: 36, width: 36, objectFit: 'contain' }} />
+          <img src="/vietnam.png" alt="Vietnam" className="login-logo-img" style={{ height: 36, width: 36, objectFit: 'contain' }} />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25, textAlign: 'left' }}>
             <span style={{ fontWeight: 700, fontSize: 20, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>TWIN Vietnam</span>
             

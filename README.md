@@ -1,8 +1,8 @@
-# ADAPT — Africa Digital Access & Public Infrastructure for Trade
+# TWIN Vietnam — Trade & Logistics Platform
 
-ADAPT is a framework for cross-border trade infrastructure — demonstrating how digital identity, document exchange, and trade finance can interoperate across organisations and jurisdictions without replacing existing systems.
+TWIN Vietnam is a two-node interactive demo showcasing cross-border trade infrastructure for the Vietnam garment and footwear export corridor. It demonstrates how digital identity, document exchange, and trade finance can interoperate across organisations and jurisdictions without replacing existing systems.
 
-This repository contains a two-node interactive demo built for stakeholder presentations.
+Built for stakeholder presentations to the Vietnamese Ministry of Industry and Trade (MOIT).
 
 ---
 
@@ -15,10 +15,10 @@ npm run dev
 
 Builds the React client and starts two live nodes:
 
-| Node | URL | Organisations |
-|------|-----|---------------|
-| Alpha | http://localhost:4000 | AtlasPhosphate S.A., Morocco Customs, Nigeria Customs, Kenya Revenue Authority, Financier 1, Financier 2 |
-| Beta | http://localhost:4001 | PrimeFert Nigeria Ltd, TradeLink International Ltd |
+| Node | URL | Description |
+|------|-----|-------------|
+| Alpha | http://localhost:4000 | Vietnam Export Corridor (manufacturers, customs, authorities, logistics, financiers) |
+| Beta | http://localhost:4001 | Importers / Destination Markets (buyers, destination customs) |
 
 Open both URLs in separate browser windows and sign in with the credentials shown on each login page (password is `demo` for all accounts).
 
@@ -26,23 +26,29 @@ Open both URLs in separate browser windows and sign in with the credentials show
 
 ## Demo Credentials
 
-### Node Alpha — http://localhost:4000
+### Node Alpha — Vietnam Export Corridor (http://localhost:4000)
 
 | Organisation | Username | Role |
 |---|---|---|
-| AtlasPhosphate S.A. | `atlas` | Exporter · Morocco |
-| Morocco Customs | `macustoms` | Customs Authority · Morocco |
-| Nigeria Customs | `ngcustoms` | Customs Authority · Nigeria |
-| Kenya Revenue Authority | `kra` | Customs Authority · Kenya |
-| Financier 1 | `financier1` | Financier |
-| Financier 2 | `financier2` | Financier |
+| TNG Investment & Trading JSC | `tng` | Manufacturer · Vietnam |
+| General Department of Vietnam Customs | `vncustoms` | Customs Authority · Vietnam |
+| Ministry of Industry and Trade (MOIT) | `moit` | Certificate of Origin Authority · Vietnam |
+| Hyosung TNS Co., Ltd | `hyosung` | Input Supplier · South Korea |
+| Bureau Veritas Vietnam | `bvinspector` | Quality Inspector · Vietnam |
+| Cat Lai Port Authority | `catlaiport` | Port Authority · Ho Chi Minh City |
+| Gemadept Logistics | `gemadept` | Freight Forwarder · Vietnam |
+| Maersk Vietnam | `maersk` | Carrier · Vietnam |
+| Vietcombank | `financier1` | Financier · Vietnam |
+| HSBC Vietnam | `financier2` | Financier · International |
 
-### Node Beta — http://localhost:4001
+### Node Beta — Importers / Destination Markets (http://localhost:4001)
 
 | Organisation | Username | Role |
 |---|---|---|
-| PrimeFert Nigeria Ltd | `primefert` | Importer · Nigeria |
-| TradeLink International Ltd | `tradelink` | Importer · Nigeria |
+| Nike Inc. | `nike` | Importing Buyer · United States |
+| Nike Europe B.V. | `nikeeu` | Importing Buyer · EU |
+| US Customs and Border Protection | `uscbp` | Customs Authority · United States |
+| EU Customs (Netherlands) | `eucustoms` | Customs Authority · EU |
 
 ---
 
@@ -50,15 +56,18 @@ Open both URLs in separate browser windows and sign in with the credentials show
 
 ```
 ┌─────────────────────┐    WebSocket P2P    ┌─────────────────────┐
-│     Node Alpha      │◄────────────────────►│     Node Beta       │
-│   localhost:4000    │   ws://4010 ↔ 4011   │   localhost:4001    │
-│                     │                       │                     │
-│  Exporters          │                       │  Importers          │
-│  Customs Authorities│                       │                     │
-│  Financiers         │                       │                     │
-└─────────────────────┘                       └─────────────────────┘
-          │                                             │
-          └──────── Distributed Ledger (simulated) ─────┘
+│     Node Alpha      │◄──────────────────►│     Node Beta       │
+│   localhost:4000    │   ws://4010 ↔ 4011  │   localhost:4001    │
+│                     │                     │                     │
+│  Manufacturers      │                     │  Importing Buyers   │
+│  Customs (VN)       │                     │  Customs (US/EU)    │
+│  MOIT (CoO)         │                     │                     │
+│  Input Suppliers    │                     │                     │
+│  Logistics & Port   │                     │                     │
+│  Financiers         │                     │                     │
+└─────────────────────┘                     └─────────────────────┘
+          │                                           │
+          └──────── Distributed Ledger (simulated) ───┘
 ```
 
 Each node is a standalone Express server with:
@@ -68,12 +77,25 @@ Each node is a standalone Express server with:
 
 ---
 
+## Trade Scenario
+
+The demo simulates a Vietnam garment/footwear export corridor:
+
+- **Commodity:** HS 61 (knitted garments), HS 62 (woven garments), HS 64 (footwear)
+- **Origin:** Vietnam (with Korean input materials from Hyosung TNS and YKK Vietnam)
+- **Destinations:** United States, European Union (Netherlands)
+- **Preferential trade:** CPTPP cumulation rules (Korean fabric qualifies as non-third-country content)
+- **Certificate of Origin:** Issued electronically by MOIT via eCoSys
+- **Customs clearance:** VNACCS (Vietnam Automated Cargo Clearance System)
+
+---
+
 ## Features
 
 ### Digital Identity
 - Private organisations register a DID using a business registration number
-- 5-step animated verification — format check → registry query → licence status → DID generation → credential issuance
-- Government authorities (Morocco Customs, Nigeria Customs, KRA) act as **attestation authorities** — not registrants
+- 5-step animated verification: format check, registry query, licence status, DID generation, credential issuance
+- Government authorities (Vietnam Customs, MOIT, US CBP, EU Customs) act as **attestation authorities**
 - Verifiable Credentials anchored on the distributed ledger
 - Peer organisations can inspect a "View Credential" modal showing DID, issuing authority, and ledger hash
 
@@ -81,26 +103,30 @@ Each node is a standalone Express server with:
 
 | Code | Result |
 |---|---|
-| `BRN-123456` | ✓ Passes — valid business registration |
-| `TIN-254789` | ✓ Passes — valid tax ID |
-| `BRN-000000` | ✗ Fails step 2 — blacklisted |
-| `BRN-111111` | ✗ Fails step 3 — expired licence |
-| `BRN-222222` | ✗ Fails step 3 — suspended |
-| `X-anything` | ✗ Fails step 2 — invalid prefix |
+| `MST-123456` | Passes: valid Vietnamese tax code (Ma So Thue) |
+| `KBN-254789` | Passes: valid Korean business number |
+| `EIN-123456` | Passes: valid US Employer Identification Number |
+| `EORI-123456` | Passes: valid EU EORI number |
+| `MST-000000` | Fails step 2: blacklisted |
+| `MST-111111` | Fails step 3: expired licence |
+| `MST-222222` | Fails step 3: suspended |
+| `X-anything` | Fails step 2: invalid prefix |
 
 ### Consignments
 - UCR as primary identifier; Commercial Invoice and Export Declaration as secondary IDs
 - Documents attach to consignment digital twins
 - File upload (stored in memory, downloadable by authorised parties)
+- 8 pre-loaded Alpha consignments (6 regular + 2 error scenarios) and 3 Beta consignments (Korean raw materials)
 
 ### Payments
-- Full payment lifecycle per consignment: Unpaid → Partially Paid → Paid / Overdue
+- Full payment lifecycle per consignment: Unpaid, Partially Paid, Paid / Overdue
 - Status changes anchored as ledger events
 - Finance access managed independently from document access
 
 ### Trade Finance
-- **Letters of Credit** — Draft → Issued → Advised → Confirmed → Presented → Drawn, with document compliance checklist
-- **Smart Contracts** — encode payment release conditions; auto-releases when all conditions are met; each state transition anchored on ledger
+- **Letters of Credit:** Draft, Issued, Advised, Confirmed, Presented, Drawn, with document compliance checklist
+- **Smart Contracts:** Encode payment release conditions tied to Certificate of Origin verification; auto-release when all conditions are met; each state transition anchored on ledger
+- Financiers: Vietcombank (domestic) and HSBC Vietnam (international)
 
 ### Cross-Node Sharing
 - Connect Alpha and Beta nodes from the Dashboard
@@ -121,39 +147,39 @@ Each node is a standalone Express server with:
 
 ## Deployment
 
-### Railway (recommended — free tier)
+### Railway (recommended)
 
 1. Push this repository to GitHub.
 2. Create two Railway services from the same repo.
 3. Set environment variables per service:
 
-**adapt-alpha**
+**twin-alpha**
 ```
 NODE_ID=alpha
 NODE_NAME=Node Alpha
-PEER_URL=wss://<adapt-beta-railway-url>
+PEER_URL=wss://<twin-beta-railway-url>
 ```
 
-**adapt-beta**
+**twin-beta**
 ```
 NODE_ID=beta
 NODE_NAME=Node Beta
-PEER_URL=wss://<adapt-alpha-railway-url>
+PEER_URL=wss://<twin-alpha-railway-url>
 ```
 
-> `PORT` is set automatically by Railway. WebSocket runs on the same port as HTTP — no separate WS port needed.
+> `PORT` is set automatically by Railway. WebSocket runs on the same port as HTTP.
 
 4. Set the start command for each service:
    - Alpha: `node server/index.js`
    - Beta: `node server/index.js`
 
-> **Note:** You must build the client (`npm run build`) and commit `server/public/` before deploying, since the build step is not run on Railway. Remove `server/public/` from `.gitignore` before pushing to GitHub.
+> **Note:** The build step (`npx vite build --outDir server/public`) runs automatically via the `railway.toml` configuration.
 
 ---
 
 ## Tech Stack
 
 - **Backend:** Node.js 18+, Express, WebSocket (ws), Multer
-- **Frontend:** React 18, Vite, Lucide icons
+- **Frontend:** React 18, Vite, Lucide icons, react-simple-maps
 - **Fonts:** DM Sans, JetBrains Mono
-- **Storage:** In-memory (resets on server restart — intentional for demo)
+- **Storage:** In-memory (resets on server restart, intentional for demo)
