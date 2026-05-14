@@ -20,8 +20,12 @@ import http from 'http';
 import net  from 'net';
 
 const PROXY_PORT = parseInt(process.env.PROXY_PORT || '4002');
-const ALPHA = { host: '127.0.0.1', port: 4000 };
-const BETA  = { host: '127.0.0.1', port: 4001 };
+const ALPHA_HOST = process.env.ALPHA_HOST || '127.0.0.1';
+const ALPHA_PORT = parseInt(process.env.ALPHA_PORT || '4000');
+const BETA_HOST  = process.env.BETA_HOST  || '127.0.0.1';
+const BETA_PORT  = parseInt(process.env.BETA_PORT  || '4001');
+const ALPHA = { host: ALPHA_HOST, port: ALPHA_PORT };
+const BETA  = { host: BETA_HOST,  port: BETA_PORT };
 
 // Resolve target — URL param always beats cookie (so sharing /?node=alpha
 // works even if the browser already has an twin-node=beta cookie)

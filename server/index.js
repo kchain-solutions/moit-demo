@@ -462,7 +462,8 @@ const BETA_CONSIGNMENTS = [
 function docsForConsignment(m) {
   if (NODE_ID === 'alpha') {
     return [
-      { name:'Input Certificate of Origin',  docType:'Input Certificate of Origin',  issuer:'Korea Customs Service',                        suffix:'ICO' },
+      { name:'Commercial Invoice (Inputs)',   docType:'Commercial Invoice (Inputs)',  issuer:'Hyosung TNS Co., Ltd',                         suffix:'CI-I' },
+      { name:'Input Certificate of Origin',   docType:'Input Certificate of Origin',  issuer:'Korea Customs Service',                        suffix:'ICO' },
       { name:'Bill of Material',              docType:'Bill of Material',             issuer:m.creatorOrgName,                               suffix:'BOM' },
       { name:'Inspection Report',             docType:'Inspection Report',            issuer:'Bureau Veritas Vietnam',                       suffix:'IR'  },
       { name:'MOIT Certificate of Origin',    docType:'MOIT Certificate of Origin',   issuer:'Ministry of Industry and Trade (MOIT)',        suffix:'CO'  },
@@ -531,6 +532,35 @@ function seedConsignments() {
       });
       seedLog('document', 'Document Anchored', m.exporter,
         `"${d.name}" anchored to ${m.ucr}. Issued by ${d.issuer}.`, createdAt);
+    }
+
+    // Seed logistic status events based on consignment progress
+    const shipTs = new Date(m.shipDate + 'T08:00:00.000Z');
+    const day = 86400000;
+    if (['Released', 'In Transit', 'Customs', 'Delivered'].includes(m.status)) {
+      seedLog('logistics', 'Export Clearance', m.exporter,
+        `${m.ucr} — Export clearance granted by Vietnam Customs (VNACCS). All documents verified.`,
+        new Date(shipTs.getTime() - 2 * day).toISOString());
+      seedLog('logistics', 'Container Loaded', m.exporter,
+        `${m.ucr} — Container loaded at ${m.originPort}. Container: TCKU${3000000 + (parseInt(m.ucr.replace(/\D/g,'').slice(-4)||'0') % 9999999)}, Seal: SL${10000 + (parseInt(m.ucr.replace(/\D/g,'').slice(-4)||'0') % 89999)}.`,
+        new Date(shipTs.getTime() - 1 * day).toISOString());
+      seedLog('logistics', 'In Port', m.exporter,
+        `${m.ucr} — Cargo received at ${m.originPort}. Awaiting vessel ${m.vessel}.`,
+        new Date(shipTs.getTime()).toISOString());
+      seedLog('logistics', 'Cleared for Export', m.exporter,
+        `${m.ucr} — Cleared for export. Customs seal verified. Loading onto ${m.vessel}.`,
+        new Date(shipTs.getTime() + 4 * 3600000).toISOString());
+      seedLog('logistics', 'Departed Port', m.exporter,
+        `${m.ucr} — ${m.vessel} departed ${m.originPort} bound for ${m.destinationPort}.`,
+        new Date(shipTs.getTime() + 12 * 3600000).toISOString());
+    }
+    if (m.status === 'Delivered') {
+      seedLog('logistics', 'Arrived at Port', m.importer,
+        `${m.ucr} — ${m.vessel} arrived at ${m.destinationPort}.`,
+        new Date(shipTs.getTime() + 18 * day).toISOString());
+      seedLog('logistics', 'Import Clearance', m.importer,
+        `${m.ucr} — Import clearance granted at ${m.destinationPort}. Goods released to consignee.`,
+        new Date(shipTs.getTime() + 20 * day).toISOString());
     }
   }
   saveTangleLog();

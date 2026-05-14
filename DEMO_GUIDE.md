@@ -7,14 +7,29 @@
 
 ## Quick Start
 
+### Local (Node.js)
+
 ```bash
 npm install
-npm run dev
+npm run demo
 ```
 
-Two nodes start automatically:
+Three processes start automatically:
 - **Node Alpha** (Vietnam Export): http://localhost:4000
 - **Node Beta** (US/EU Import): http://localhost:4001
+- **Proxy** (single URL): http://localhost:4002
+
+Via proxy, use `?node=alpha` or `?node=beta` to switch:
+- http://localhost:4002/?node=alpha
+- http://localhost:4002/?node=beta
+
+### Docker
+
+```bash
+docker compose up --build
+```
+
+Same three services on the same ports (4000, 4001, 4002).
 
 All consignments and documents are **pre-loaded**. No uploads or data entry required.
 
@@ -106,7 +121,7 @@ sequenceDiagram
         Note over TNG,CBP: Cross-Border Share via TWIN Network
         TNG-->>NIKE: Share consignment dossier (P2P WebSocket)
         TNG-->>CBP: Share consignment dossier (P2P WebSocket)
-        Note over TNG,CBP: All 8 documents + ledger audit trail
+        Note over TNG,CBP: All 9 documents + ledger audit trail
     end
 
     rect rgb(254, 226, 226)
@@ -122,7 +137,7 @@ sequenceDiagram
 
 ## Main Demo: Pre-Loaded Walkthrough
 
-All consignments and documents are pre-seeded. The first consignment (`VN-2026-EXP-00101`: polo shirts to Nike US) has all 8 documents attached and permissions pre-configured.
+All consignments and documents are pre-seeded. The first consignment (`VN-2026-EXP-00101`: polo shirts to Nike US) has all 9 documents attached and permissions pre-configured.
 
 ### Part 1: Vietnam Export Side
 
@@ -130,7 +145,7 @@ All consignments and documents are pre-seeded. The first consignment (`VN-2026-E
 2. Login as `tng` / `demo`
 3. **Dashboard**: show trade volume, active consignments, recent activity
 4. **Consignments**: click on `VN-2026-EXP-00101`
-5. Walk through the 8 pre-loaded documents, explaining each step of the journey:
+5. Walk through the 9 pre-loaded documents, explaining each step of the journey:
 
 | Document | Issuer | Explains |
 |----------|--------|----------|
@@ -213,7 +228,7 @@ Test codes that fail: `MST-000000` (blacklisted), `MST-111111` (expired), `MST-2
 ### Analytics (~2 min)
 
 1. Go to **Analytics** (Tangle Explorer) on either node
-2. Filter by event type: CONSIGNMENT, DOCUMENT, PERMISSION, IDENTITY, PAYMENT, CONTRACT
+2. Filter by event type: CONSIGNMENT, DOCUMENT, LOGISTICS, PERMISSION, IDENTITY, PAYMENT, CONTRACT
 3. Each entry shows: timestamp, actor, action, SHA-256 hash
 
 ---
