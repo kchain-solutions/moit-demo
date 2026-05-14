@@ -1,0 +1,686 @@
+[
+  {
+    "id": "1a299badc8c876db",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x94e47d9900158b1275c05e3de6a80bf9",
+    "type": "document",
+    "action": "Consignment Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00101 — Men's Cotton Polo Shirts (Knitted). Anchored on the ledger."
+  },
+  {
+    "id": "27d9f4098be4feb5",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x73b60a8fce6f82ddd70253813515b1f4",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00101. Issued by Korea Customs Service."
+  },
+  {
+    "id": "5e45ef5a1f9ed51a",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x7c912ba098d06b28adaee7d78da0d5fd",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00101. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "c42bdbeb4305ce21",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x8bacf4fa3e65cc159cd7780a17f44f9b",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00101. Issued by Bureau Veritas Vietnam."
+  },
+  {
+    "id": "074a4138ead93f86",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0x5f44e9accdc5816c9bc0dba533384125",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00101. Issued by Ministry of Industry and Trade (MOIT)."
+  },
+  {
+    "id": "f9843b9c59e5a0f2",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0xc8aa9b417d9d19c55e192d07cecafd5a",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00101. Issued by General Department of Vietnam Customs."
+  },
+  {
+    "id": "8adfa158828eea2a",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0xd449b7b7bcd095bdb58ef88adf93d9d9",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00101. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "8ecbfa013863eaae",
+    "timestamp": "2026-03-10T08:00:00.000Z",
+    "hash": "0xc73f51e55cb3f223499c86df106ec3b2",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00101. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "b48afdfe5d981faf",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0xaf84e0c39c0fe7b8f212e666e46eae3f",
+    "type": "document",
+    "action": "Consignment Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00102 — Women's Cotton T-Shirts (Knitted). Anchored on the ledger."
+  },
+  {
+    "id": "0f669f19dd78fdce",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0x03d2ef7b8ad40156e7a029c300e0c359",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00102. Issued by Korea Customs Service."
+  },
+  {
+    "id": "e25008b80d518abd",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0x72993af1e5472b76982be73871079adc",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00102. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "172b1402e527db18",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0xeb74c3f6e5047da843cce6ac7b2ac845",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00102. Issued by Bureau Veritas Vietnam."
+  },
+  {
+    "id": "166cd3607123949b",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0x0a89d44f3416a4e41be217091ef950a1",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00102. Issued by Ministry of Industry and Trade (MOIT)."
+  },
+  {
+    "id": "747d2df086a4a58a",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0x43818d45019f562d20511003e6ef5662",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00102. Issued by General Department of Vietnam Customs."
+  },
+  {
+    "id": "ed56748e8dec5cac",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0xed8e32b88f72efad262fb82ef3653680",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00102. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "7d6e5a29c2fe527b",
+    "timestamp": "2026-03-18T08:00:00.000Z",
+    "hash": "0xa4bba617bc7b7fd9dca4f2d712fd1873",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00102. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "251fe363fc3fc4f9",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0x7072dc884d739656c4739a16f4f7b0b5",
+    "type": "document",
+    "action": "Consignment Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00103 — Men's Synthetic Windbreaker Jackets (Woven). Anchored on the ledger."
+  },
+  {
+    "id": "4cdda9b2eb79cfaa",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0x83f2ce0d89a3c72f9add038e3afe19d4",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00103. Issued by Korea Customs Service."
+  },
+  {
+    "id": "2a41aa79d836cb7c",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0x0112c9dd3379f9633fde3c55878ef8a5",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00103. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "8fc56857c000bb4f",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xfc6de305eb8aa06605f1daea0577f6f9",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00103. Issued by Bureau Veritas Vietnam."
+  },
+  {
+    "id": "dcb851310d3c0ecc",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xccc98463eac7ebdd833800f046020345",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00103. Issued by Ministry of Industry and Trade (MOIT)."
+  },
+  {
+    "id": "0099c6b19e3a3d73",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xec3c60d584081a5eba7a80fee3e13b13",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00103. Issued by General Department of Vietnam Customs."
+  },
+  {
+    "id": "1c2e37e3d4da640a",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xe8534796636d9599de0ed1d3eb6e138e",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00103. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "e0b770b2d0476495",
+    "timestamp": "2026-03-25T08:00:00.000Z",
+    "hash": "0xb2f979e98b3438b1c3d253a19239d647",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00103. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "e15fc00f9dd2aa2f",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x122aa2991799185426944f91ed16d8c1",
+    "type": "document",
+    "action": "Consignment Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00104 — Women's Knitted Sports Trousers. Anchored on the ledger."
+  },
+  {
+    "id": "3ef50025a1d89ee3",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x606928479f4c72c8cd31b00957cba461",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00104. Issued by Korea Customs Service."
+  },
+  {
+    "id": "e1f43b6736f62c6f",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x6683d1104f759af884a45a00476c79d2",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00104. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "7ee57af130cc89dc",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x03085fb9342c80e03ea2fa506bb24d2a",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00104. Issued by Bureau Veritas Vietnam."
+  },
+  {
+    "id": "1f3e11ecfd602a9b",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x12cf2fe1a8582e64b9d1e4279933e52e",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00104. Issued by Ministry of Industry and Trade (MOIT)."
+  },
+  {
+    "id": "837dab4701f16842",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0xdfc7391db8aaaf2eceeacab8143a2260",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00104. Issued by General Department of Vietnam Customs."
+  },
+  {
+    "id": "a6922a23eafd9876",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0x989596803ded1dd2879628775866060c",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00104. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "9fd618ac72790c61",
+    "timestamp": "2026-04-02T08:00:00.000Z",
+    "hash": "0xd13009d1d0d1c4a57aa1606bd3d0998d",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00104. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "55f3f87cf2362e51",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xec26110d0cbd53e9edee97847b155ca3",
+    "type": "document",
+    "action": "Consignment Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00105 — Athletic Running Shoes (Rubber/Plastic Upper). Anchored on the ledger."
+  },
+  {
+    "id": "8b7652eb107bfafb",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0x35c8b0a871f82855a619065e1dc8db69",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00105. Issued by Korea Customs Service."
+  },
+  {
+    "id": "ca58a10c9fef5145",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xbf5164057e2999f8ea805944ebba7040",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00105. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "a0d3c6d7ee77d9b8",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xdbf95627359834b7c45a5eb645411d60",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00105. Issued by Bureau Veritas Vietnam."
+  },
+  {
+    "id": "087e713710b7d34d",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xc713b511b2cb26a02b04503256bf2aba",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00105. Issued by Ministry of Industry and Trade (MOIT)."
+  },
+  {
+    "id": "021875b25cbd83ba",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0x6a1b8a919e690e9f5bc5677f9cafe0e5",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00105. Issued by General Department of Vietnam Customs."
+  },
+  {
+    "id": "db9fe73652756d25",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0xb72602c6dc7e3976a2b60472623c0db5",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00105. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "db3e2f250a0d239e",
+    "timestamp": "2026-04-08T08:00:00.000Z",
+    "hash": "0x8c1c992cbd9251ebadae60e10f7e3eac",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00105. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "1e9e52960c06f189",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x8953376df3cfcd19beb6a8635dd65e41",
+    "type": "document",
+    "action": "Consignment Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-00106 — Casual Canvas Sneakers (Textile Upper). Anchored on the ledger."
+  },
+  {
+    "id": "b95fe7461d3c6454",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0xd54485bc214303e8090266e8a3e6ea2e",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-00106. Issued by Korea Customs Service."
+  },
+  {
+    "id": "37e587935aa8b643",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0xfd0d3bcdd5949bb4f6bd3a2902cd4adb",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-00106. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "e2bb5cf224532eac",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0xad2c572023e4602034db07d4bcfd7706",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-00106. Issued by Bureau Veritas Vietnam."
+  },
+  {
+    "id": "53a877929504149f",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x672f1354dfc973379324c6563d572b01",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-00106. Issued by Ministry of Industry and Trade (MOIT)."
+  },
+  {
+    "id": "ba8ae25b7a1e349a",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x6bf7418d730f8afe5db24403388a4815",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-00106. Issued by General Department of Vietnam Customs."
+  },
+  {
+    "id": "07e785a9a83026fd",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x930ea7d47be849b0b46045a85fcf607e",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-00106. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "0fb25444cef949d2",
+    "timestamp": "2026-04-15T08:00:00.000Z",
+    "hash": "0x991b7f5ec47d3a5260558d4103862f05",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-00106. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "e1ac01177cfde6fa",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0x2873f0ebd4a60113a0eefafff8721d21",
+    "type": "document",
+    "action": "Consignment Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-E001 — Men's Cotton Dress Shirts (Woven). Anchored on the ledger."
+  },
+  {
+    "id": "e8668d09a81da8fe",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0x72389b81224d30e2bc9d6ff2bbdbcc33",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-E001. Issued by Korea Customs Service."
+  },
+  {
+    "id": "3e3c1d6befec3134",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0xf4759a7a78e6b04804294d734335c678",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-E001. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "09c1130d1365964e",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0xd73f81b5ab1c16a3b53399b056cef826",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-E001. Issued by Bureau Veritas Vietnam."
+  },
+  {
+    "id": "5065d3b645d6d438",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0x3ea91ba3499d9f61406019fc2cca2421",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-E001. Issued by Ministry of Industry and Trade (MOIT)."
+  },
+  {
+    "id": "f3945a69cda8e500",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0xc8710d1d8c691d8fb079bbb84deee6d6",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-E001. Issued by General Department of Vietnam Customs."
+  },
+  {
+    "id": "422595432da89782",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0x843e0d192dbd1faf5c9ac34b5d38c7e1",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-E001. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "68ccc358794c0d7d",
+    "timestamp": "2026-02-20T08:00:00.000Z",
+    "hash": "0xdfee5494e93207b63d76b1812311c494",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-E001. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "22c9b82e97d48247",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x3d4dbbef7cb16d78e53447de9c1e0e9f",
+    "type": "document",
+    "action": "Consignment Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Digital twin created: VN-2026-EXP-E002 — Knitted Fleece Hooded Sweatshirts. Anchored on the ledger."
+  },
+  {
+    "id": "33f720cc135960c8",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x920069590cc23712dfe0fe781f0fdb4e",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Input Certificate of Origin\" anchored to VN-2026-EXP-E002. Issued by Korea Customs Service."
+  },
+  {
+    "id": "53da633c6fca54c4",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0xaf192730538a59817a3404dcac20be03",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Material\" anchored to VN-2026-EXP-E002. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "ecd46481bf244148",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0xfd0ce9fc381b6e0c84423f1bd14b40ce",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Inspection Report\" anchored to VN-2026-EXP-E002. Issued by Bureau Veritas Vietnam."
+  },
+  {
+    "id": "ab68d2cf5b88a596",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x5e77bc8651b938f697200a9be3975866",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"MOIT Certificate of Origin\" anchored to VN-2026-EXP-E002. Issued by Ministry of Industry and Trade (MOIT)."
+  },
+  {
+    "id": "0737d41f043ea4d4",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x24ab814ed01891432d66079639a046ca",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Export Declaration\" anchored to VN-2026-EXP-E002. Issued by General Department of Vietnam Customs."
+  },
+  {
+    "id": "7dd2304540f399c8",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x7f84020b34bb589a3e5021652081748f",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Commercial Invoice\" anchored to VN-2026-EXP-E002. Issued by TNG Investment & Trading JSC."
+  },
+  {
+    "id": "dbaed4b0306672c6",
+    "timestamp": "2026-02-28T08:00:00.000Z",
+    "hash": "0x51ca0a35cbd37a4824749baa7f66e07d",
+    "type": "document",
+    "action": "Document Anchored",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "\"Bill of Lading\" anchored to VN-2026-EXP-E002. Issued by Maersk Vietnam."
+  },
+  {
+    "id": "38ca70ad09c0b369",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0x56a452804f3d5b99ef25759f5fdbe9f6",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Payment INV-2026-TNG-0101 created for VN-2026-EXP-00101. USD 168,000. Partially Paid."
+  },
+  {
+    "id": "5dfe1e8996c61267",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0x827e788c566176df59b7b3b5b47e9f23",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Payment INV-2026-TNG-0103 created for VN-2026-EXP-00103. EUR 264,000. Overdue."
+  },
+  {
+    "id": "2f2421c2a09d5fae",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0xb9a2619664e4835599093667356c78b8",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "LC LC-2026-VCB-0101 created for VN-2026-EXP-00101. Amount: USD 168,000. Status: Confirmed."
+  },
+  {
+    "id": "6044dba78b70a180",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0xd1ff2b66f98ab76ec70087e11c0316fa",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "LC LC-2026-VCB-0102 created for VN-2026-EXP-00103. Amount: EUR 264,000. Status: Issued."
+  },
+  {
+    "id": "705ba6865931fd2f",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0x5a676e395a6a41efb25c4fb12761279c",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0101 deployed for VN-2026-EXP-00101. 4 release conditions. Hash: 0xb041e750148f546385e62cebe96e4ebe."
+  },
+  {
+    "id": "ec3ac7b27cfd04bf",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0x394e0773ccd794a1b1ca5b976ad8ac39",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0102 deployed for VN-2026-EXP-00103. 3 release conditions. Hash: 0x742a05a99032a570e3d230db0a03fe85."
+  },
+  {
+    "id": "3b2ca4f2c54a325d",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0x4ad23e6591583c1207643301330ada11",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0101 deployed for VN-2026-EXP-00101. 4 release conditions. Hash: 0x14b86c0d16a7be5a49aeaa47fc0ffb94."
+  },
+  {
+    "id": "8dcc506ed991699e",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0xa8c5c53b556c2875f73a83728316f2e8",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0102 deployed for VN-2026-EXP-00103. 3 release conditions. Hash: 0xb898c363bff47a2e5f07aec30b5e657e."
+  },
+  {
+    "id": "df5ebca168237513",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0x2c6232befcca29b99e1e65d133561b6d",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0101 deployed for VN-2026-EXP-00101. 4 release conditions. Hash: 0xf38b701365dc2ebb9692c66c0ad11e52."
+  },
+  {
+    "id": "9e7ab6a62db34da7",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0x96b5080c74c8e8f46cad609b94190e55",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0102 deployed for VN-2026-EXP-00103. 3 release conditions. Hash: 0x459679e786ed40563eee4e8a74a02043."
+  },
+  {
+    "id": "0840632b7f841cb6",
+    "timestamp": "2026-03-10T09:00:00.000Z",
+    "hash": "0x518b601768a69e790b77ad71d002cb79",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0101 deployed for VN-2026-EXP-00101. 4 release conditions. Hash: 0x4b5acd426ec849bfc41080e0208d5324."
+  },
+  {
+    "id": "957cc05ebc070b67",
+    "timestamp": "2026-03-25T11:30:00.000Z",
+    "hash": "0x09ee6ab9bf82210ab90fe7e203746da9",
+    "type": "finance",
+    "action": "Finance Seeded",
+    "actor": "TNG Investment & Trading JSC",
+    "details": "Contract SC-2026-VN-0102 deployed for VN-2026-EXP-00103. 3 release conditions. Hash: 0xbb18beda5f5c51635824e1f910bb3742."
+  }
+]
