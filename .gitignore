@@ -1,6 +1,7 @@
 node_modules/
 client/dist/
 server/public/
+data/
 .DS_Store
 *.log
 .env

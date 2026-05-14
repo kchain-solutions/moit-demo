@@ -22,9 +22,8 @@ const DATA_DIR = path.join(__dirname, '../data');
 const TANGLE_FILE = path.join(DATA_DIR, `tangle-${NODE_ID}.json`);
 
 function loadTangleLog() {
-  try {
-    if (existsSync(TANGLE_FILE)) return JSON.parse(readFileSync(TANGLE_FILE, 'utf-8'));
-  } catch (e) { console.error(`[${NODE_NAME}] Failed to load tangle log:`, e.message); }
+  // Always start fresh — in-memory data (orgs, consignments, docs) re-seeds on restart,
+  // so loading old tangle entries would create stale references.
   return [];
 }
 
