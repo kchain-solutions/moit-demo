@@ -997,22 +997,15 @@ function handlePeerMsg(m) {
       broadcastToClients({ type: 'DATA_SYNC' }); break;
     }
     case 'REVOKE_CONSIGNMENT': {
-      const { consignmentId, recipientOrgId } = m;
-      // Remove permissions for the revoked org
-      if (store.permissions[consignmentId]) delete store.permissions[consignmentId][recipientOrgId];
+      const { consignmentId } = m;
+      // Cascade: the consignment originated from the peer, so revoke
+      // removes ALL local access and deletes the data entirely.
       const docs = store.documents.filter(d => d.consignmentId === consignmentId);
-      docs.forEach(d => { if (store.docPermissions[d.id]) delete store.docPermissions[d.id][recipientOrgId]; });
-      // If no local org has access anymore, remove the consignment and its documents entirely
-      const remaining = store.permissions[consignmentId] || {};
-      const localOrgIds = store.orgs.map(o => o.id);
-      const anyLocalAccess = localOrgIds.some(id => remaining[id] === 'owner' || remaining[id] === 'viewer');
-      if (!anyLocalAccess) {
-        store.consignments = store.consignments.filter(c => c.id !== consignmentId);
-        store.documents = store.documents.filter(d => d.consignmentId !== consignmentId);
-        delete store.permissions[consignmentId];
-        docs.forEach(d => delete store.docPermissions[d.id]);
-        delete store.financePermissions[consignmentId];
-      }
+      store.consignments = store.consignments.filter(c => c.id !== consignmentId);
+      store.documents = store.documents.filter(d => d.consignmentId !== consignmentId);
+      delete store.permissions[consignmentId];
+      docs.forEach(d => delete store.docPermissions[d.id]);
+      delete store.financePermissions[consignmentId];
       broadcastToClients({ type: 'DATA_SYNC' }); break;
     }
   }
