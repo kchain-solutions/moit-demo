@@ -88,7 +88,8 @@ function addLog(type, action, actor, details, extra = {}) {
   store.tangleLog.unshift(entry);
   saveTangleLog();
   broadcastToClients({ type: 'TANGLE_UPDATE', log: store.tangleLog });
-  if (store.peerConnected && peerWs?.readyState === WebSocket.OPEN) peerWs.send(JSON.stringify({ type: 'TANGLE_ENTRY', entry }));
+  const activePeer = [peerWs, peerInWs].find(w => w?.readyState === WebSocket.OPEN);
+  if (store.peerConnected && activePeer) activePeer.send(JSON.stringify({ type: 'TANGLE_ENTRY', entry }));
   return entry;
 }
 
@@ -597,7 +598,8 @@ app.post('/api/node/connect', (req, res) => {
   setTimeout(() => res.json({ success: store.peerConnected, message: store.peerConnected ? 'Connected — organisations now discoverable' : 'Connection attempt sent. Peer may not be online yet.' }), 2500);
 });
 app.post('/api/node/disconnect', (req, res) => {
-  if (peerWs) { peerWs.close(); peerWs = null; }
+  if (peerWs) { const old = peerWs; peerWs = null; old.close(); }
+  if (peerInWs) { const old = peerInWs; peerInWs = null; old.close(); }
   store.peerConnected = false; store.peerOrgs = [];
   broadcastToClients({ type: 'PEER_STATUS', connected: false, peerOrgs: [] });
   addLog('network', 'Peer Disconnected', 'System', 'P2P connection terminated. Peer organisations no longer visible.');
@@ -736,9 +738,10 @@ app.post('/api/permissions/share', (req, res) => {
     addLog('permission', 'Full Share', sharerOrgName, `"${consignment.ucr}" — all ${allDocs.length} docs shared with ${recipientOrgName}. Encrypted via TLIP.`);
   }
   const isPeer = store.peerOrgs.some(o => o.id === recipientOrgId);
-  if (isPeer && peerWs?.readyState === WebSocket.OPEN) {
+  const peerSock = [peerWs, peerInWs].find(w => w?.readyState === WebSocket.OPEN);
+  if (isPeer && peerSock) {
     const docsToSend = shareMode === 'selective' && selectedDocIds?.length ? allDocs.filter(d => selectedDocIds.includes(d.id)) : allDocs;
-    peerWs.send(JSON.stringify({ type: 'SHARE_CONSIGNMENT', consignment, documents: docsToSend.map(d => ({ ...d, fileBase64: undefined })), permissions: store.permissions[consignmentId], docPermissions: Object.fromEntries(docsToSend.map(d => [d.id, store.docPermissions[d.id] || {}])) }));
+    peerSock.send(JSON.stringify({ type: 'SHARE_CONSIGNMENT', consignment, documents: docsToSend.map(d => ({ ...d, fileBase64: undefined })), permissions: store.permissions[consignmentId], docPermissions: Object.fromEntries(docsToSend.map(d => [d.id, store.docPermissions[d.id] || {}])) }));
   }
   res.json({ success: true });
 });
@@ -937,6 +940,7 @@ function broadcastToClients(msg) {
 }
 
 let peerWs = null;
+let peerInWs = null;  // inbound peer WebSocket (when the other node connects to us)
 function connectToPeer() {}   // no-op stub (filled below if not Vercel)
 function syncOrgsToPeer() {}  // no-op stub
 
@@ -949,27 +953,29 @@ if (!IS_VERCEL) {
 
   // ── P2P ──
   connectToPeer = function() {
-    if (!PEER_URL || peerWs?.readyState === WebSocket.OPEN) return;
+    if (!PEER_URL || peerWs?.readyState === WebSocket.OPEN || peerInWs?.readyState === WebSocket.OPEN) return;
     try {
-      peerWs = new WebSocket(PEER_URL + '/peer');
-      peerWs.on('open', () => {
+      const ws = new WebSocket(PEER_URL + '/peer');
+      peerWs = ws;
+      ws.on('open', () => {
         store.peerConnected = true;
-        peerWs.send(JSON.stringify({ type: 'HANDSHAKE', nodeId: NODE_ID, nodeName: NODE_NAME, nodeIp: NODE_IP, orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) }));
+        ws.send(JSON.stringify({ type: 'HANDSHAKE', nodeId: NODE_ID, nodeName: NODE_NAME, nodeIp: NODE_IP, orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) }));
         addLog('network', 'Peer Connected', 'System', `P2P handshake completed with peer at ${PEER_URL}. Organisations now discoverable.`);
         broadcastToClients({ type: 'PEER_STATUS', connected: true });
       });
-      peerWs.on('message', d => handlePeerMsg(JSON.parse(d.toString())));
-      peerWs.on('close', () => { store.peerConnected = false; store.peerOrgs = []; broadcastToClients({ type: 'PEER_STATUS', connected: false, peerOrgs: [] }); });
-      peerWs.on('error', () => {});
+      ws.on('message', d => handlePeerMsg(JSON.parse(d.toString())));
+      ws.on('close', () => { if (peerWs !== ws) return; store.peerConnected = false; store.peerOrgs = []; broadcastToClients({ type: 'PEER_STATUS', connected: false, peerOrgs: [] }); });
+      ws.on('error', () => {});
     } catch (e) {}
   };
 
-  syncOrgsToPeer = function() { if (peerWs?.readyState === WebSocket.OPEN) peerWs.send(JSON.stringify({ type: 'ORG_UPDATE', orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) })); };
+  syncOrgsToPeer = function() { const w = [peerWs, peerInWs].find(w => w?.readyState === WebSocket.OPEN); if (w) w.send(JSON.stringify({ type: 'ORG_UPDATE', orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) })); };
 }
 
 function handlePeerIn(ws) {
+  peerInWs = ws;
   ws.on('message', d => { const m = JSON.parse(d.toString()); if (m.type === 'HANDSHAKE') { store.peerOrgs = m.orgs || []; store.peerConnected = true; broadcastToClients({ type: 'PEER_STATUS', connected: true, peerOrgs: store.peerOrgs }); ws.send(JSON.stringify({ type: 'ORG_DIRECTORY', orgs: store.orgs.map(o => ({ id: o.id, name: o.name, role: o.role, did: o.did, verified: o.verified, nodeId: NODE_ID, nodeName: NODE_NAME })) })); addLog('network', 'Peer Connected', 'System', 'Inbound P2P connection accepted. Peer orgs now discoverable.'); } else handlePeerMsg(m); });
-  ws.on('close', () => { store.peerConnected = false; store.peerOrgs = []; broadcastToClients({ type: 'PEER_STATUS', connected: false, peerOrgs: [] }); });
+  ws.on('close', () => { if (peerInWs !== ws) return; peerInWs = null; store.peerConnected = false; store.peerOrgs = []; broadcastToClients({ type: 'PEER_STATUS', connected: false, peerOrgs: [] }); });
 }
 function handlePeerMsg(m) {
   switch (m.type) {
