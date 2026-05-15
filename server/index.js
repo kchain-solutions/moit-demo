@@ -751,6 +751,12 @@ app.post('/api/permissions/revoke', (req, res) => {
   if (store.permissions[consignmentId]) delete store.permissions[consignmentId][recipientOrgId];
   store.documents.filter(d => d.consignmentId === consignmentId).forEach(d => { if (store.docPermissions[d.id]) delete store.docPermissions[d.id][recipientOrgId]; });
   addLog('permission', 'Access Revoked', revokerOrgName, `Access to "${c?.ucr}" revoked for ${recipientOrgName}.`);
+  // Propagate revoke to peer node so shared data is removed
+  const isPeer = store.peerOrgs.some(o => o.id === recipientOrgId);
+  if (isPeer) {
+    const peerSock = [peerWs, peerInWs].find(w => w?.readyState === WebSocket.OPEN);
+    if (peerSock) peerSock.send(JSON.stringify({ type: 'REVOKE_CONSIGNMENT', consignmentId, recipientOrgId }));
+  }
   res.json({ success: true });
 });
 
@@ -988,6 +994,25 @@ function handlePeerMsg(m) {
       for (const doc of documents) { if (!store.documents.some(d => d.id === doc.id)) store.documents.push(doc); }
       if (permissions) store.permissions[consignment.id] = { ...store.permissions[consignment.id], ...permissions };
       if (docPermissions) { for (const [did, p] of Object.entries(docPermissions)) { store.docPermissions[did] = { ...store.docPermissions[did], ...p }; } }
+      broadcastToClients({ type: 'DATA_SYNC' }); break;
+    }
+    case 'REVOKE_CONSIGNMENT': {
+      const { consignmentId, recipientOrgId } = m;
+      // Remove permissions for the revoked org
+      if (store.permissions[consignmentId]) delete store.permissions[consignmentId][recipientOrgId];
+      const docs = store.documents.filter(d => d.consignmentId === consignmentId);
+      docs.forEach(d => { if (store.docPermissions[d.id]) delete store.docPermissions[d.id][recipientOrgId]; });
+      // If no local org has access anymore, remove the consignment and its documents entirely
+      const remaining = store.permissions[consignmentId] || {};
+      const localOrgIds = store.orgs.map(o => o.id);
+      const anyLocalAccess = localOrgIds.some(id => remaining[id] === 'owner' || remaining[id] === 'viewer');
+      if (!anyLocalAccess) {
+        store.consignments = store.consignments.filter(c => c.id !== consignmentId);
+        store.documents = store.documents.filter(d => d.consignmentId !== consignmentId);
+        delete store.permissions[consignmentId];
+        docs.forEach(d => delete store.docPermissions[d.id]);
+        delete store.financePermissions[consignmentId];
+      }
       broadcastToClients({ type: 'DATA_SYNC' }); break;
     }
   }
