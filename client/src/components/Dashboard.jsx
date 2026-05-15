@@ -196,14 +196,14 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
           {recent.length === 0 ? (
             <div className="empty">No consignments visible. Create one or connect to a peer node.</div>
           ) : (
-            <table>
+            <table style={{ tableLayout: 'fixed' }}>
               <thead>
                 <tr>
-                  <th>Reference</th>
-                  <th>Route & Product</th>
-                  <th>Docs</th>
-                  <th>Status</th>
-                  <th style={{ textAlign: 'right' }}>Value</th>
+                  <th style={{ width: '28%' }}>Reference</th>
+                  <th style={{ width: '28%' }}>Route & Product</th>
+                  <th style={{ width: '12%' }}>Docs</th>
+                  <th style={{ width: '16%' }}>Status</th>
+                  <th style={{ width: '16%', textAlign: 'right' }}>Value</th>
                 </tr>
               </thead>
               <tbody>
