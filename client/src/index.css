@@ -427,6 +427,9 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
   .sidebar-overlay.open{display:block}
   .main{margin-left:0}
   .hamburger{display:flex}
+  /* Network: hero stats wrap to 2x2 grid */
+  .net-hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .net-map-wrap .tn-map-wrap{height:380px}
 }
 
 /* ── Mobile (≤767px) ── */
@@ -448,6 +451,11 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
   /* Table-to-card conversion */
   .desktop-table{display:none}
   .mobile-cards{display:flex}
+  /* Network: map shorter, detail panel becomes bottom sheet */
+  .net-map-wrap .tn-map-wrap{height:280px}
+  .net-hero{flex-direction:column;gap:14px}
+  .net-hero-left{min-width:0}
+  .tn-detail{position:fixed;top:auto;right:0;bottom:0;left:0;width:100%;max-height:55vh;border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(15,23,42,0.15)}
 }
 
 /* ── Small Mobile (≤479px) ── */
