@@ -1,0 +1,236 @@
+# TWIN Vietnam Demo: Task Board
+
+> This file is the index. Each task has its own file in `.claude/tasks/{id}.md`.
+> Agents update individual task files for concurrency safety. Regenerate with `node scripts/regen-board.cjs`.
+
+## Quick Summary
+
+| Phase | Total | Backlog | In Progress | Blocked | Done |
+|-------|-------|---------|-------------|---------|------|
+| 1     | 54    | 54      | 0           | 0       | 0    |
+| 2     | 30    | 30      | 0           | 0       | 0    |
+| 3     | 12    | 12      | 0           | 0       | 0    |
+| 4     | 10    | 10      | 0           | 0       | 0    |
+| **Total** | **106** | **106** | **0** | **0** | **0** |
+
+---
+
+## Phase 1: Configuration System + Mobile Optimization
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-101](tasks/T-101.md) | Create JSON Schema for demo config | P0 | backlog | none |
+| [T-103](tasks/T-103.md) | Create configs directory and branding assets | P0 | backlog | none |
+| [T-104](tasks/T-104.md) | Implement server/config.js config loader | P0 | backlog | T-102 |
+| [T-105](tasks/T-105.md) | Refactor server orgs to read from config | P0 | backlog | T-104 |
+| [T-106](tasks/T-106.md) | Refactor server consignments and documents to read from config | P0 | backlog | T-104 |
+| [T-107](tasks/T-107.md) | Refactor credential validation to read from config | P1 | backlog | T-104 |
+| [T-108](tasks/T-108.md) | Refactor finance seed data to read from config | P1 | backlog | T-104 |
+| [T-110](tasks/T-110.md) | Add or refactor GET /api/orgs endpoint | P0 | backlog | T-105 |
+| [T-111](tasks/T-111.md) | Create ConfigContext and ConfigProvider | P0 | backlog | T-109 |
+| [T-112](tasks/T-112.md) | Add getConfig() and getOrgs() to api.js | P0 | backlog | T-109, T-110 |
+| [T-113](tasks/T-113.md) | Wrap App with ConfigProvider | P0 | backlog | T-111 |
+| [T-114](tasks/T-114.md) | Refactor Login.jsx to use config-driven orgs | P0 | backlog | T-111, T-112 |
+| [T-115](tasks/T-115.md) | Implement adaptive login credential list layout | P2 | backlog | T-114 |
+| [T-116](tasks/T-116.md) | Refactor App.jsx sidebar branding to use config | P0 | backlog | T-111 |
+| [T-117](tasks/T-117.md) | Refactor countries.js to accept config overrides | P1 | backlog | T-111 |
+| [T-118](tasks/T-118.md) | Expand CSS custom properties for corridor theming | P0 | backlog | none |
+| [T-119](tasks/T-119.md) | Implement runtime theme application from config | P0 | backlog | T-118, T-111 |
+| [T-120](tasks/T-120.md) | Replace hardcoded hex colors in components | P1 | backlog | T-118 |
+| [T-121](tasks/T-121.md) | Extract Dashboard.jsx inline grid to CSS class | P0 | backlog | none |
+| [T-122](tasks/T-122.md) | Extract TradeFinance.jsx inline styles to CSS classes | P0 | backlog | none |
+| [T-123](tasks/T-123.md) | Extract Payments.jsx inline styles to CSS classes | P0 | backlog | none |
+| [T-124](tasks/T-124.md) | Extract TangleExplorer.jsx inline grid to CSS class | P0 | backlog | none |
+| [T-125](tasks/T-125.md) | Add base responsive breakpoint media queries | P0 | backlog | T-121, T-122, T-123, T-124 |
+| [T-126](tasks/T-126.md) | Implement sidebar drawer for tablet | P0 | backlog | T-125 |
+| [T-127](tasks/T-127.md) | Add hamburger menu button to header | P0 | backlog | T-126 |
+| [T-128](tasks/T-128.md) | Implement mobile header adaptation | P0 | backlog | T-127 |
+| [T-129](tasks/T-129.md) | Implement bottom tab bar for phones | P2 | backlog | T-126 |
+| [T-130](tasks/T-130.md) | Dashboard mobile: stat cards and grid | P1 | backlog | T-121, T-125 |
+| [T-131](tasks/T-131.md) | Dashboard mobile: consignment table to card list | P1 | backlog | T-130 |
+| [T-132](tasks/T-132.md) | Consignments page: table-to-card conversion | P1 | backlog | T-125 |
+| [T-133](tasks/T-133.md) | Payments page: responsive grid and table-to-card | P1 | backlog | T-123, T-125 |
+| [T-134](tasks/T-134.md) | Network page: map height and responsive grids | P2 | backlog | T-125 |
+| [T-135](tasks/T-135.md) | Network page: country detail as bottom sheet | P2 | backlog | T-134 |
+| [T-136](tasks/T-136.md) | TradeFinance: stepper vertical conversion | P2 | backlog | T-122, T-125 |
+| [T-137](tasks/T-137.md) | Identity page: responsive grids and peer table cards | P2 | backlog | T-125 |
+| [T-138](tasks/T-138.md) | TangleExplorer: filter grid responsive | P2 | backlog | T-124, T-125 |
+| [T-139](tasks/T-139.md) | Permissions page: matrix to card list | P2 | backlog | T-125 |
+| [T-140](tasks/T-140.md) | Wrap hover states in @media (hover: hover) | P3 | backlog | T-125 |
+| [T-141](tasks/T-141.md) | Increase touch targets to WCAG 2.1 AA (44x44px) | P1 | backlog | T-125 |
+| [T-142](tasks/T-142.md) | Convert modals to bottom sheets on mobile | P1 | backlog | T-125 |
+| [T-145](tasks/T-145.md) | End-to-end testing: config system | P0 | backlog | T-143, T-144 |
+| [T-146](tasks/T-146.md) | End-to-end testing: mobile responsiveness | P0 | backlog | T-128, T-129, T-131, T-132 |
+| [T-147](tasks/T-147.md) | Update Docker Compose for CONFIG_FILE env var | P1 | backlog | T-104 |
+| [T-1V01](tasks/T-1V01.md) | Add Vietnam government actor types to config schema | P1 | backlog | none |
+| [T-1V02](tasks/T-1V02.md) | Add document type registry to config schema | P2 | backlog | none |
+| [T-1V04](tasks/T-1V04.md) | Create vietnam-eu.json corridor config | P2 | backlog | T-1V03, T-143 |
+| [T-1V05](tasks/T-1V05.md) | Add regulatory metadata to config schema | P2 | backlog | T-1V03 |
+
+### 1A. Configuration Schema and Infrastructure
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-102](tasks/T-102.md) | Extract Vietnam corridor data into config JSON | P0 | backlog | T-101 |
+| [T-1V03](tasks/T-1V03.md) | Add origin composition fields to config schema | P0 | backlog | none |
+| [T-1V06](tasks/T-1V06.md) | Add two-channel architecture indicator to config | P3 | backlog | none |
+
+### 1B. Server-Side Config Integration
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-109](tasks/T-109.md) | Add GET /api/config endpoint | P0 | backlog | T-104 |
+
+### 1I. Validation and Cleanup
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-143](tasks/T-143.md) | Create Cambodia-EU corridor config for validation | P1 | backlog | T-101, T-116, T-114 |
+| [T-144](tasks/T-144.md) | Remove hardcoded fallback arrays from server | P1 | backlog | T-143 |
+
+### 1H. Touch and Accessibility
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-1V07](tasks/T-1V07.md) | Support Vietnamese diacritics in config and UI | P1 | backlog | none |
+
+---
+
+## Phase 2: API Adapter Layer + Real Node Integration
+
+### 2A. Infrastructure and Node Setup
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-201](tasks/T-201.md) | Request TWIN Node staging/testnet access | P0 | backlog | none (can start during Phase 1) |
+| [T-202](tasks/T-202.md) | Deploy TWIN Node Alpha on testnet | P0 | backlog | T-201 |
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-203](tasks/T-203.md) | Deploy TWIN Node Beta on testnet | P0 | backlog | T-201 |
+| [T-204](tasks/T-204.md) | Fund testnet wallets via IOTA faucet | P0 | backlog | T-202, T-203 |
+| [T-205](tasks/T-205.md) | Scaffold adapter Express server | P0 | backlog | T-145 |
+| [T-206](tasks/T-206.md) | Implement TWIN Node REST client wrapper | P0 | backlog | T-202 |
+| [T-207](tasks/T-207.md) | Implement adapter session/JWT middleware | P0 | backlog | T-206 |
+| [T-208](tasks/T-208.md) | Implement adapter error translation middleware | P1 | backlog | T-205 |
+| [T-210](tasks/T-210.md) | Implement adapter auth routes | P0 | backlog | T-207, T-209 |
+| [T-211](tasks/T-211.md) | Implement adapter identity routes (real DID) | P0 | backlog | T-206, T-210 |
+| [T-212](tasks/T-212.md) | Implement adapter org routes | P1 | backlog | T-211 |
+| [T-213](tasks/T-213.md) | Verify DID resolvability on IOTA Explorer | P0 | backlog | T-211 |
+| [T-214](tasks/T-214.md) | Implement adapter notarization routes | P0 | backlog | T-206, T-210 |
+| [T-215](tasks/T-215.md) | Implement adapter document routes with real notarization | P0 | backlog | T-214 |
+| [T-216](tasks/T-216.md) | Verify notarization on-chain hash matching | P0 | backlog | T-215 |
+| [T-217](tasks/T-217.md) | Implement adapter consignment routes | P1 | backlog | T-206, T-210 |
+| [T-218](tasks/T-218.md) | Implement adapter permission routes | P2 | backlog | T-205 |
+| [T-219](tasks/T-219.md) | Implement adapter finance routes | P2 | backlog | T-205 |
+| [T-220](tasks/T-220.md) | Implement hybrid Tangle log (real + simulated) | P1 | backlog | T-214 |
+| [T-221](tasks/T-221.md) | Adapter test: simulated mode parity | P0 | backlog | T-210, T-212, T-214, T-217, T-218, T-219 |
+| [T-222](tasks/T-222.md) | Adapter test: real mode end-to-end | P0 | backlog | T-221 |
+| [T-223](tasks/T-223.md) | Update Docker Compose for adapter + TWIN Nodes | P1 | backlog | T-202, T-203, T-205 |
+| [T-2V04](tasks/T-2V04.md) | Implement Vietnam-specific ISN signal types | P1 | backlog | T-205, T-214 |
+| [T-2V05](tasks/T-2V05.md) | Add UFLPA attestation field to consignment model | P2 | backlog | T-1V03, T-205 |
+| [T-2V06](tasks/T-2V06.md) | Test cross-border data flow: Alpha to Beta | P1 | backlog | T-215, T-1V07 |
+
+### 2B. Adapter Layer Scaffolding
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-209](tasks/T-209.md) | Implement ADAPTER_MODE env var toggle | P0 | backlog | T-205 |
+
+### 2E. Vietnam-Specific Integrations
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-2V01](tasks/T-2V01.md) | Design eCoSys integration adapter stub | P1 | backlog | T-205 |
+| [T-2V02](tasks/T-2V02.md) | Design VNACCS integration adapter stub | P1 | backlog | T-205 |
+| [T-2V03](tasks/T-2V03.md) | Implement origin composition calculator | P0 | backlog | T-1V03, T-205 |
+| [T-2V07](tasks/T-2V07.md) | Design ODRL policy templates for Vietnam corridor | P1 | backlog | T-205 |
+
+---
+
+## Phase 3: Full Real Node Integration
+
+### 2F. Remaining Adapter Routes and Testing
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-301](tasks/T-301.md) | Research and document DSC protocol configuration | P0 | backlog | T-222 |
+| [T-302](tasks/T-302.md) | Implement DSC-based cross-border data exchange | P0 | backlog | T-301 |
+| [T-305](tasks/T-305.md) | Migrate consignment model to UNECE D23B | P1 | backlog | T-217 |
+| [T-3V01](tasks/T-3V01.md) | Formalize IOriginComposition as TWIN model extension | P0 | backlog | T-305, T-2V03 |
+| [T-3V02](tasks/T-3V02.md) | Implement data sovereignty enforcement mode | P1 | backlog | T-302, T-304 |
+| [T-3V04](tasks/T-3V04.md) | NDATrace integration assessment | P2 | backlog | T9 output |
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-303](tasks/T-303.md) | Integrate Auditable Item Graph for Tangle log | P1 | backlog | T-222 |
+| [T-304](tasks/T-304.md) | Implement real ODRL policy enforcement | P1 | backlog | T-301 |
+| [T-306](tasks/T-306.md) | Implement federated catalogue for org discovery | P2 | backlog | T-302 |
+| [T-307](tasks/T-307.md) | Add ISN signal notification stubs | P3 | backlog | T-302 |
+| [T-308](tasks/T-308.md) | Phase 3 end-to-end testing | P0 | backlog | T-302, T-303, T-304 |
+| [T-3V03](tasks/T-3V03.md) | Implement multi-destination ISN subscriber config | P1 | backlog | T-302, T-2V04 |
+
+---
+
+## Phase 4: Production Readiness
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-401](tasks/T-401.md) | Replace demo credentials with proper auth | P0 | backlog | T-308 |
+| [T-403](tasks/T-403.md) | Migrate document storage to cloud blob storage | P1 | backlog | T-402 |
+| [T-404](tasks/T-404.md) | Implement key management with Vault or KMS | P0 | backlog | T-401 |
+| [T-405](tasks/T-405.md) | Add health checks and structured logging | P1 | backlog | T-402 |
+| [T-406](tasks/T-406.md) | Create Kubernetes manifests and production Docker Compose | P1 | backlog | T-405 |
+| [T-407](tasks/T-407.md) | Security audit and hardening | P0 | backlog | T-401, T-402 |
+| [T-408](tasks/T-408.md) | Write operator deployment guide | P1 | backlog | T-406 |
+| [T-4V02](tasks/T-4V02.md) | Vietnamese government SSO integration | P2 | backlog | T-401, T9 output |
+
+### 2F. Remaining Adapter Routes and Testing
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-402](tasks/T-402.md) | Implement PostgreSQL persistence layer | P0 | backlog | T-308 |
+| [T-4V01](tasks/T-4V01.md) | Vietnam-hosted deployment option | P1 | backlog | T8 output, T-3V02 |
+
+---
+
+## Critical Path
+
+```
+Phase 1 (two parallel workstreams):
+
+Config:  T-101 -> T-102 -> T-104 -> T-105/T-106 -> T-109 -> T-111 -> T-113/T-114/T-116 -> T-143 -> T-144 -> T-145
+Mobile:  T-121/T-122/T-123/T-124 -> T-125 -> T-126 -> T-127 -> T-128 -> T-146
+Theming: T-118 -> T-119 -> T-120
+
+Phase 2:
+Infra:   T-201 -> T-202/T-203 -> T-204
+Adapter: T-205 -> T-206 -> T-207 -> T-210 -> T-211 -> T-213
+Notarize:                          T-214 -> T-215 -> T-216
+Testing:                                              T-221 -> T-222
+
+Phase 3:
+DSC:     T-301 -> T-302 -> T-308
+AIG:     T-303 ----^
+ODRL:    T-304 ----^
+
+Phase 4:
+Auth:    T-401 -> T-404
+Persist: T-402 -> T-405 -> T-406
+Audit:   T-407
+```
+
+## Risk Register (Vietnam-Specific)
+
+| ID | Risk | Probability | Impact | Mitigation |
+|----|------|------------|--------|------------|
+| RV-01 | eCoSys API unavailable | HIGH | HIGH | Manual upload fallback from day one |
+| RV-02 | VNACCS API unavailable | HIGH | HIGH | Manual fallback, research third-party access precedent |
+| RV-03 | Vietnam Cybersecurity Law forces local hosting | MEDIUM | HIGH | Design location-agnostic adapter, evaluate Vietnamese clouds early |
+| RV-04 | MOIT C/O format incompatible with UNECE D23B | MEDIUM | MEDIUM | Request sample from T9, fallback to OCR if PDF-only |
+| RV-05 | Two-channel confusion at destination customs | LOW | HIGH | Document clearly, include eCoSys C/O reference in TWIN data |
+| RV-06 | Named pilot manufacturer not confirmed | MEDIUM | MEDIUM | Config system makes switching a 30-minute task |
+| RV-07 | Vietnamese diacritics rendering issues | LOW | MEDIUM | UTF-8 test cases in Phase 1 |
+| RV-08 | MLETR not adopted in Vietnam | MEDIUM | LOW (pilot) | Display "simulation mode" indicator |
+| RV-09 | Origin composition thresholds unknown | MEDIUM | MEDIUM | Make calculator fully configurable |
+| RV-10 | ASW 2.0 evolves conflicting standards | LOW | MEDIUM | Monitor via Nitas Polachai, adapter pattern supports format transformation |

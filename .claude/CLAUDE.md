@@ -68,7 +68,42 @@ Dockerfile
 
 ## Task Management
 
-Tasks are tracked in `.claude/tasks.md`. This is the single source of truth for all development work.
+### File Structure
+
+```
+.claude/
+  board.md              # Read-only index (regenerated from task files)
+  tasks/
+    T-101.md            # One file per task
+    T-102.md
+    T-1V01.md
+    ...
+```
+
+- **`.claude/tasks/{id}.md`** is the source of truth for each task.
+- **`.claude/board.md`** is a summary index with links to task files. Regenerate it with `node scripts/regen-board.cjs`.
+- Agents edit **only their assigned task file**, never the board or other agents' task files. This enables safe parallel development.
+
+### Task File Format
+
+```markdown
+# T-101 | Create JSON Schema for demo config
+
+- **Status:** backlog
+- **Phase:** 1
+- **Priority:** P0
+- **Category:** config
+- **Effort:** M
+- **Dependencies:** none
+- **Branch:** feat/T-101-config-schema
+- **Assignee:** Valerio Mellini
+- **Notes:** (optional, used for blockers or context)
+- **Section:** 1A. Configuration Schema and Infrastructure
+
+## Description
+
+Author `configs/demo-config.schema.json` with all constraints...
+```
 
 ### Task Statuses
 
@@ -89,38 +124,34 @@ backlog --> in_progress --> done
 ```
 
 1. **Pick a task from backlog:** Choose the highest-priority unblocked task. Check that all dependencies are `done`.
-2. **Move to `in_progress`:** Update the task status in `.claude/tasks.md`.
+2. **Move to `in_progress`:** Update the task's file (`.claude/tasks/{id}.md`): set Status, Branch, Assignee.
 3. **Create a feature branch:** Branch from `develop` using the task ID (see Git Workflow below).
 4. **Do the work:** Implement, test, commit to the feature branch.
-5. **Move to `done`:** Update the task status in `.claude/tasks.md`. Merge the feature branch into `develop`. Delete the feature branch.
-6. **If blocked:** Move to `blocked`, document the reason in the task's notes field. Pick another task.
+5. **Move to `done`:** Update the task's file: set Status to `done`. Merge the feature branch into `develop`. Delete the feature branch.
+6. **If blocked:** Set Status to `blocked`, document the reason in the Notes field. Pick another task.
 
-### Task Format in tasks.md
+### Parallel Development
 
-Each task is a markdown section with structured fields:
+Multiple agents can work on independent tasks simultaneously. Each agent:
+1. Claims a task by setting `Status: in_progress` and `Assignee` in the task file.
+2. Works on its own feature branch (e.g., `feat/T-101-config-schema`).
+3. Only edits its own task file in `.claude/tasks/`. Never touches other task files.
+4. Merges to `develop` when done, updates its task file to `done`.
 
-```markdown
-### T-101 | Create JSON Schema for demo config
-- **Status:** backlog
-- **Phase:** 1
-- **Priority:** P0
-- **Category:** config
-- **Effort:** M
-- **Dependencies:** none
-- **Branch:** (created when in_progress)
-- **Assignee:** (name of who is working on it)
-- **Notes:** (optional, used for blockers or context)
-
-Description of what needs to be done.
-```
+**Conflict avoidance:**
+- Each agent edits exactly ONE file in `.claude/tasks/` (its own task).
+- The board index is regenerated on demand, not during parallel work.
+- Feature branches are independent; merge conflicts (if any) happen only at `develop` merge time.
+- Before starting, verify dependencies by reading (not writing) other task files.
 
 ### Rules
 
-- Only ONE task should be `in_progress` at a time (per developer).
+- Only ONE task should be `in_progress` at a time (per agent/developer).
 - Always check dependencies before starting a task. All listed dependencies must be `done`.
-- When a task is moved to `done`, immediately update `.claude/tasks.md` before doing anything else.
+- When a task is moved to `done`, immediately update its `.claude/tasks/{id}.md` before doing anything else.
 - When blocked, always document WHY in the Notes field.
-- Tasks are grouped by Phase in the file, but work order follows Priority and Dependencies, not file order.
+- Work order follows Priority and Dependencies, not file order.
+- After a batch of task updates, regenerate board: `node scripts/regen-board.cjs`.
 
 ---
 
