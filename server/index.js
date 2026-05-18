@@ -7,8 +7,12 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
+import { loadConfig, getConfig } from './config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Load corridor configuration (before store init)
+loadConfig();
 const args = process.argv.slice(2).reduce((a, c) => { const [k, v] = c.replace('--', '').split('='); a[k] = v; return a; }, {});
 // Env vars take priority (Railway/cloud deployment), CLI args used for local dev
 const PORT     = parseInt(process.env.PORT     || args.port || '4000');
