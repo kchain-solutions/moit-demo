@@ -19,6 +19,8 @@ export function ConfigProvider({ children }) {
         if (c.theme.navActive)   s.setProperty('--nav-active', c.theme.navActive);
         if (c.theme.amber)       s.setProperty('--amber', c.theme.amber);
       }
+      // Set page title from branding
+      if (c?.branding?.appName) document.title = c.branding.appName;
     }).catch(() => {});
   }, []);
 
