@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
 import { CheckCircle, XCircle, Loader, Shield, Edit3, Search, AlertTriangle, ExternalLink } from 'lucide-react';
 
 export default function Identity() {
   const { user, peerOrgs, peerConnected, refresh, refreshKey } = useNode();
+  const config = useConfig();
   const [orgs, setOrgs] = useState([]);
   const [verifying, setVerifying] = useState(null);
   const [regNum, setRegNum] = useState('');
@@ -177,10 +179,10 @@ export default function Identity() {
             <div style={{ fontSize: 12, fontWeight: 700, color: '#166534', marginBottom: 8 }}>✓ Will PASS verification</div>
             <table>
               <tbody>
-                {[['MST-123456', 'Vietnam Tax Code (Ma So Thue)'], ['KBN-254789', 'Korean Business Number'], ['EIN-123456', 'US Employer Identification Number'], ['EORI-123456', 'EU Economic Operator ID (EORI)']].map(([code, desc]) => (
+                {(config?.credentials?.testCredentials?.pass || []).map(({ code, description }) => (
                   <tr key={code}>
                     <td style={{ fontFamily: 'var(--mono)', fontSize: 11, paddingRight: 12 }}>{code}</td>
-                    <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{desc}</td>
+                    <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -190,10 +192,10 @@ export default function Identity() {
             <div style={{ fontSize: 12, fontWeight: 700, color: '#991b1b', marginBottom: 8 }}>✗ Will FAIL verification</div>
             <table>
               <tbody>
-                {[['MST-000000', 'Denied — blacklisted'], ['MST-111111', 'Expired licence'], ['MST-222222', 'Suspended — under review'], ['X-anything', 'Invalid prefix']].map(([code, desc]) => (
+                {(config?.credentials?.testCredentials?.fail || []).map(({ code, description }) => (
                   <tr key={code}>
                     <td style={{ fontFamily: 'var(--mono)', fontSize: 11, paddingRight: 12 }}>{code}</td>
-                    <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{desc}</td>
+                    <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -298,8 +300,8 @@ export default function Identity() {
             <h3>Register {verifying.name}</h3>
             {stage === 'input' && (
               <>
-                <p style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 16 }}>Enter a business registration number. Use MST-123456 to pass or MST-000000 to see a denial.</p>
-                <div className="fg"><label>Registration Number</label><input value={regNum} onChange={e => setRegNum(e.target.value)} placeholder="e.g. MST-123456" autoFocus /></div>
+                <p style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 16 }}>Enter a business registration number. Use {config?.credentials?.testCredentials?.pass?.[0]?.code || 'a valid code'} to pass or {config?.credentials?.testCredentials?.fail?.[0]?.code || 'an invalid code'} to see a denial.</p>
+                <div className="fg"><label>Registration Number</label><input value={regNum} onChange={e => setRegNum(e.target.value)} placeholder={`e.g. ${config?.credentials?.testCredentials?.pass?.[0]?.code || 'REG-123456'}`} autoFocus /></div>
                 <div className="modal-act">
                   <button className="btn btn-s" onClick={() => setVerifying(null)}>Cancel</button>
                   <button className="btn btn-p" onClick={runVerification} disabled={regNum.length < 4}>Verify & Register</button>

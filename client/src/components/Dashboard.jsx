@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
 import XmlViewer from './XmlViewer';
 import {
@@ -59,6 +60,7 @@ function DocTypeIcon({ docType }) {
 
 export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
   const { nodeInfo, peerConnected, peerOrgs, tangleLog, user, refreshKey, refresh } = useNode();
+  const config = useConfig();
   const [orgs, setOrgs] = useState([]);
   const [consignments, setConsignments] = useState([]);
   const [discoverable, setDiscoverable] = useState([]);
@@ -176,7 +178,7 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
             <div style={{ height: '100%', borderRadius: 3, background: '#FF7200', width: verified > 0 ? '87%' : '0%', transition: 'width 0.6s ease' }} />
           </div>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
-            {verified > 0 ? 'Verified Vietnamese Exporter' : 'Register a DID to get a score'}
+            {verified > 0 ? (config?.geography?.trustScoreLabel || 'Verified Exporter') : 'Register a DID to get a score'}
           </div>
         </div>
       </div>

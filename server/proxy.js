@@ -1,5 +1,5 @@
 /**
- * TWIN Vietnam Proxy — single port (4002) routing to both nodes.
+ * TWIN Proxy — single port (4002) routing to both nodes.
  *
  * Usage:
  *   node server/proxy.js
@@ -98,7 +98,7 @@ server.on('upgrade', (req, clientSocket, head) => {
 
 server.listen(PROXY_PORT, () => {
   const base = `http://localhost:${PROXY_PORT}`;
-  console.log(`\n  TWIN Vietnam Proxy running on port ${PROXY_PORT}`);
+  console.log(`\n  TWIN Proxy running on port ${PROXY_PORT}`);
   console.log(`\n  Node Alpha  →  ${base}/?node=alpha`);
   console.log(`  Node Beta   →  ${base}/?node=beta`);
   console.log(`\n  Tunnel with:`);

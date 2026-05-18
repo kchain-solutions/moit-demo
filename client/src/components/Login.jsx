@@ -1,26 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
-
-const ALPHA_CREDS = [
-  { role: 'Manufacturer - Vietnam',                    username: 'tng',         label: 'TNG Investment & Trading JSC' },
-  { role: 'Customs Authority - Vietnam',               username: 'vncustoms',   label: 'General Department of Vietnam Customs' },
-  { role: 'Certificate of Origin Authority - Vietnam', username: 'moit',        label: 'Ministry of Industry and Trade (MOIT)' },
-  { role: 'Input Supplier - South Korea',              username: 'hyosung',     label: 'Hyosung TNS Co., Ltd' },
-  { role: 'Quality Inspector - Vietnam',               username: 'bvinspector', label: 'Bureau Veritas Vietnam' },
-  { role: 'Port Authority - Ho Chi Minh City',         username: 'catlaiport',  label: 'Cat Lai Port Authority' },
-  { role: 'Freight Forwarder - Vietnam',               username: 'gemadept',    label: 'Gemadept Logistics' },
-  { role: 'Carrier - Vietnam',                         username: 'maersk',      label: 'Maersk Vietnam' },
-  { role: 'Financier - Vietnam',                       username: 'financier1',  label: 'Vietcombank' },
-  { role: 'Financier - International',                 username: 'financier2',  label: 'HSBC Vietnam' },
-];
-
-const BETA_CREDS = [
-  { role: 'Importing Buyer - United States',   username: 'nike',      label: 'Nike Inc.' },
-  { role: 'Importing Buyer - EU',              username: 'nikeeu',    label: 'Nike Europe B.V.' },
-  { role: 'Customs Authority - United States', username: 'uscbp',     label: 'US Customs and Border Protection' },
-  { role: 'Customs Authority - EU',            username: 'eucustoms', label: 'EU Customs (Netherlands)' },
-];
 
 // Initial guess from URL param, cookie, or port (synchronous, before /api/node responds)
 function guessNode() {
@@ -35,11 +16,13 @@ function guessNode() {
 
 export default function Login() {
   const { login } = useNode();
+  const config = useConfig();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [nodeId, setNodeId] = useState(guessNode);
+  const [orgs, setOrgs] = useState([]);
 
   // Fetch the authoritative node identity from the server
   useEffect(() => {
@@ -47,6 +30,13 @@ export default function Login() {
       if (info.nodeId) setNodeId(info.nodeId);
     }).catch(() => {});
   }, []);
+
+  // Fetch orgs from the API (returned without passwords)
+  useEffect(() => {
+    api.getOrgs()
+      .then(list => setOrgs(list.map(o => ({ username: o.username, label: o.name, role: o.role }))))
+      .catch(() => {});
+  }, [nodeId]);
 
   const isBeta = nodeId === 'beta';
 
@@ -67,22 +57,28 @@ export default function Login() {
     setPassword('demo');
   };
 
-  const creds = isBeta ? BETA_CREDS : ALPHA_CREDS;
+  const creds = orgs;
+
+  const logoSrc = config?.branding?.logo || '/logo.png';
+  const appName = config?.branding?.appName || 'TWIN';
+  const tagline = config?.branding?.tagline || 'Trade & Logistics Platform';
+  const alphaDesc = config?.branding?.alpha?.description || 'Alpha';
+  const betaDesc = config?.branding?.beta?.description || 'Beta';
 
   return (
     <div className="login-pg">
       <div className="login-box">
         <div className="login-brand" style={{ display: 'flex', alignItems: 'center', gap: 10, justifyContent: 'center' }}>
-          <img src="/vietnam.png" alt="Vietnam" className="login-logo-img" style={{ height: 36, width: 36, objectFit: 'contain' }} />
+          <img src={logoSrc} alt="Logo" className="login-logo-img" style={{ height: 36, width: 36, objectFit: 'contain' }} />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25, textAlign: 'left' }}>
-            <span style={{ fontWeight: 700, fontSize: 20, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>TWIN Vietnam</span>
-            
+            <span style={{ fontWeight: 700, fontSize: 20, color: 'var(--text-primary)', letterSpacing: '0.02em' }}>{appName}</span>
+
           </div>
         </div>
-        <p className="sub" style={{ marginTop: 10 }}>Trade & Logistics Platform — Sign in to your organisation</p>
+        <p className="sub" style={{ marginTop: 10 }}>{tagline} — Sign in to your organisation</p>
 
         <div className="node-badge">
-          Node: <strong>{isBeta ? 'Beta — Importers / Destination Markets' : 'Alpha — Vietnam Export Corridor'}</strong>
+          Node: <strong>{isBeta ? `Beta — ${betaDesc}` : `Alpha — ${alphaDesc}`}</strong>
         </div>
 
         {error && <div className="err">{error}</div>}

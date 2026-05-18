@@ -7,8 +7,12 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import crypto from 'crypto';
+import { loadConfig, getConfig } from './config.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Load corridor configuration (before store init)
+loadConfig();
 const args = process.argv.slice(2).reduce((a, c) => { const [k, v] = c.replace('--', '').split('='); a[k] = v; return a; }, {});
 // Env vars take priority (Railway/cloud deployment), CLI args used for local dev
 const PORT     = parseInt(process.env.PORT     || args.port || '4000');
@@ -41,10 +45,11 @@ const genDID = () => 'did:iota:0x' + crypto.randomBytes(12).toString('hex');
 const now = () => new Date().toISOString();
 
 
-// ── Credential validation ──
-const BLACKLISTED = ['MST-000000','BRN-000000','TIN-000000','KBN-000000','EIN-000000'];
-const EXPIRED = ['MST-111111','BRN-111111'];
-const SUSPENDED = ['MST-222222','BRN-222222'];
+// ── Credential validation (all lists from config, empty if no config) ──
+const cfg = getConfig();
+const BLACKLISTED = cfg?.credentials?.blacklisted ?? [];
+const EXPIRED = cfg?.credentials?.expired ?? [];
+const SUSPENDED = cfg?.credentials?.suspended ?? [];
 
 function validateCredential(regNumber) {
   const n = (regNumber || '').toUpperCase().trim();
@@ -54,29 +59,19 @@ function validateCredential(regNumber) {
   if (EXPIRED.includes(n)) return { valid: false, reason: 'Registration has EXPIRED — licence is no longer active. Organisation must renew before DID issuance.', failStep: 2 };
   if (SUSPENDED.includes(n)) return { valid: false, reason: 'Registration is SUSPENDED — organisation is under regulatory review. DID issuance blocked.', failStep: 2 };
   const prefix = n.split('-')[0];
-  const typeMap = { MST: 'Vietnam Tax Code (Ma So Thue)', BRN: 'Business Registration Number', TIN: 'Tax Identification Number', LEI: 'Legal Entity Identifier', KBN: 'Korean Business Number', EIN: 'US Employer Identification Number', EORI: 'EU Economic Operator ID', DUNS: 'DUNS Number' };
+  const typeMap = cfg?.credentials?.registrationTypes ?? {};
   return { valid: true, type: typeMap[prefix] || 'National Registration Number', formatted: n };
 }
 
-// ── Store ──
+// ── Store (all orgs from config, empty if no config) ──
+function initOrgs() {
+  const cfgOrgs = getConfig()?.nodes?.[NODE_ID]?.orgs;
+  if (cfgOrgs) return cfgOrgs.map(o => ({ ...o, did: null, verified: false, regNumber: null }));
+  return [];
+}
+
 const store = {
-  orgs: NODE_ID === 'alpha' ? [
-    { id: 'org1', name: 'TNG Investment & Trading JSC',          role: 'Manufacturer - Vietnam',                    username: 'tng',         password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org2', name: 'General Department of Vietnam Customs',  role: 'Customs Authority - Vietnam',               username: 'vncustoms',   password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
-    { id: 'org3', name: 'Ministry of Industry and Trade (MOIT)',  role: 'Certificate of Origin Authority - Vietnam', username: 'moit',        password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
-    { id: 'org4', name: 'Hyosung TNS Co., Ltd',                  role: 'Input Supplier - South Korea',              username: 'hyosung',     password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org7', name: 'Vietcombank',                            role: 'Financier - Vietnam',                       username: 'financier1',  password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org8', name: 'HSBC Vietnam',                           role: 'Financier - International',                 username: 'financier2',  password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org9', name: 'Bureau Veritas Vietnam',                 role: 'Quality Inspector - Vietnam',               username: 'bvinspector', password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org10', name: 'Cat Lai Port Authority',                role: 'Port Authority - Ho Chi Minh City',         username: 'catlaiport',  password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
-    { id: 'org11', name: 'Gemadept Logistics',                    role: 'Freight Forwarder - Vietnam',               username: 'gemadept',    password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org12', name: 'Maersk Vietnam',                        role: 'Carrier - Vietnam',                         username: 'maersk',      password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-  ] : [
-    { id: 'org5', name: 'Nike Inc.',                              role: 'Importing Buyer - United States',           username: 'nike',        password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org6', name: 'Nike Europe B.V.',                       role: 'Importing Buyer - EU',                      username: 'nikeeu',      password: 'demo', orgType: 'private', did: null, verified: false, regNumber: null },
-    { id: 'org13', name: 'US Customs and Border Protection',      role: 'Customs Authority - United States',         username: 'uscbp',       password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
-    { id: 'org14', name: 'EU Customs (Netherlands)',               role: 'Customs Authority - EU',                    username: 'eucustoms',   password: 'demo', orgType: 'public',  did: null, verified: false, regNumber: null },
-  ],
+  orgs: initOrgs(),
   consignments: [], documents: [], permissions: {}, docPermissions: {},
   payments: [], letterOfCredits: [], smartContracts: [], financePermissions: {},
   tangleLog: loadTangleLog(),
@@ -101,6 +96,32 @@ function seedLog(type, action, actor, details, timestamp) {
 
 // ── PDF generator for seeded documents ──
 function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fromCountry, toCountry) {
+  // Try config-based PDF template first
+  const cfgTemplate = getConfig()?.documentTemplates?.pdfTemplates?.[docType];
+  if (cfgTemplate?.lines) {
+    const vars = { ref, shipDate, exporter, importer, ucr, fromCountry, toCountry, issuer };
+    const templateLines = cfgTemplate.lines.map(line =>
+      line.replace(/\$\{(\w+)\}/g, (_, key) => vars[key] ?? '')
+    );
+    // Build the PDF using templateLines instead of falling through
+    const body = templateLines
+      .map(l => `(${l.replace(/[()\\]/g, '\\$&')}) Tj T*`)
+      .join('\n');
+    const stream = `BT\n/F1 11 Tf\n72 720 Td\n14 TL\n` + body + `\nET`;
+    const streamLen = Buffer.byteLength(stream, 'utf8');
+    const pdf =
+      `%PDF-1.4\n` +
+      `1 0 obj<</Type/Catalog/Pages 2 0 R>>endobj\n` +
+      `2 0 obj<</Type/Pages/Kids[3 0 R]/Count 1>>endobj\n` +
+      `3 0 obj<</Type/Page/MediaBox[0 0 612 792]/Parent 2 0 R/Resources<</Font<</F1 4 0 R>>>>/Contents 5 0 R>>endobj\n` +
+      `4 0 obj<</Type/Font/Subtype/Type1/BaseFont/Helvetica>>endobj\n` +
+      `5 0 obj<</Length ${streamLen}>>\nstream\n${stream}\nendstream\nendobj\n` +
+      `xref\n0 6\n0000000000 65535 f \n` +
+      `trailer<</Size 6/Root 1 0 R>>\nstartxref\n0\n%%EOF\n`;
+    return Buffer.from(pdf, 'utf8').toString('base64');
+  }
+
+  // Fallback: generic templates (corridor-specific types must come from config)
   const lines = {
     'Commercial Invoice': [
       `COMMERCIAL INVOICE`, ``,
@@ -111,18 +132,6 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
       `UCR        : ${ucr}`,
       `Route      : ${fromCountry} to ${toCountry}`,
       ``, `This document serves as the commercial invoice for the above shipment.`,
-      `All details are as agreed under the relevant sales contract.`,
-    ],
-    'Commercial Invoice (Inputs)': [
-      `COMMERCIAL INVOICE (INPUT MATERIALS)`, ``,
-      `Invoice No : ${ref}`,
-      `Date       : ${shipDate}`,
-      `Supplier   : Hyosung TNS Co., Ltd (South Korea)`,
-      `Buyer      : ${exporter}`,
-      `UCR        : ${ucr}`,
-      ``, `Description: Spandex yarn (Creora 40D/70D) and nylon fabric`,
-      `Origin: South Korea (CPTPP member)`,
-      `Terms: CIF Cat Lai Terminal, Ho Chi Minh City`,
     ],
     'Packing List': [
       `PACKING LIST`, ``,
@@ -131,7 +140,6 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
       `Exporter   : ${exporter}`,
       `UCR        : ${ucr}`,
       ``, `Package details are as per the accompanying commercial invoice.`,
-      `All goods have been inspected and packed in accordance with export requirements.`,
     ],
     'Bill of Lading': [
       `BILL OF LADING`, ``,
@@ -142,20 +150,7 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
       `UCR        : ${ucr}`,
       `Port of Loading    : ${fromCountry}`,
       `Port of Discharge  : ${toCountry}`,
-      `Carrier    : Maersk Line`,
       ``, `Received in apparent good order and condition the goods described herein.`,
-    ],
-    'Input Certificate of Origin': [
-      `CERTIFICATE OF ORIGIN (INPUT MATERIALS)`, ``,
-      `Certificate No : ${ref}`,
-      `Date           : ${shipDate}`,
-      `Issued by      : Korea Customs Service`,
-      `Supplier       : Hyosung TNS Co., Ltd`,
-      `UCR            : ${ucr}`,
-      `Country of Origin : South Korea`,
-      ``, `CPTPP cumulation eligible.`,
-      `We certify that the materials described originate in the Republic of Korea`,
-      `and qualify as non-third-country content under CPTPP cumulation rules.`,
     ],
     'Certificate of Origin': [
       `CERTIFICATE OF ORIGIN`, ``,
@@ -168,25 +163,24 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
       ``, `We hereby certify that the goods described in this document`,
       `originate in ${fromCountry} and comply with all applicable regulations.`,
     ],
-    'MOIT Certificate of Origin': [
-      `CERTIFICATE OF ORIGIN`, `(MOIT Electronic Certificate via eCoSys)`, ``,
-      `Certificate No : ${ref}`,
-      `Form Type      : EUR.1 (EVFTA) / CPTPP`,
+    'Export Declaration': [
+      `EXPORT DECLARATION`, ``,
+      `Declaration No : ${ref}`,
       `Date           : ${shipDate}`,
-      `Issued by      : Ministry of Industry and Trade, Vietnam`,
-      `                 Multilateral Trade Policy Department`,
-      ``,
+      `Declarant      : ${issuer}`,
       `Exporter       : ${exporter}`,
-      `Consignee      : ${importer}`,
-      `Country of Origin : Vietnam`,
-      `Destination    : ${toCountry}`,
       `UCR            : ${ucr}`,
-      ``,
-      `Origin Criterion: RVC (Regional Value Content)`,
-      `CPTPP cumulation applied. Korean fabric counts as non-third-country.`,
-      `Vietnam content exceeds 55% threshold.`,
-      ``,
-      `Digital Signature: MOIT-eCoSys-2026`,
+      `Country of Export : ${fromCountry}`,
+      `Country of Destination : ${toCountry}`,
+    ],
+    'Inspection Report': [
+      `QUALITY INSPECTION REPORT`, ``,
+      `Report No    : ${ref}`,
+      `Date         : ${shipDate}`,
+      `Inspector    : ${issuer}`,
+      `Manufacturer : ${exporter}`,
+      `UCR          : ${ucr}`,
+      ``, `RESULT: PASS`,
     ],
     'Bill of Material': [
       `BILL OF MATERIAL`, ``,
@@ -194,51 +188,6 @@ function makeSeedPdf(docType, ref, issuer, ucr, shipDate, exporter, importer, fr
       `Date         : ${shipDate}`,
       `Manufacturer : ${exporter}`,
       `UCR          : ${ucr}`,
-      ``,
-      `INPUT MATERIALS:`,
-      `1. Cotton/synthetic fabric  - Hyosung Corp., South Korea`,
-      `2. Thread and yarn          - Vietnam Thread Co., Vietnam`,
-      `3. Zippers and buttons      - YKK Vietnam, Vietnam`,
-      `4. Woven labels             - Saigon Labels, Vietnam`,
-      `5. Elastic bands            - Zhejiang Elastic Co., China`,
-      ``,
-      `ORIGIN COMPOSITION:`,
-      `Vietnam content: 65.5%`,
-      `CPTPP member content (Korea): 30.0%`,
-      `Third-country content (China): 4.5%`,
-      ``,
-      `This BOM certifies the input composition for the above production lot.`,
-    ],
-    'Inspection Report': [
-      `QUALITY INSPECTION REPORT`, ``,
-      `Report No    : ${ref}`,
-      `Date         : ${shipDate}`,
-      `Inspector    : Bureau Veritas Vietnam`,
-      `Manufacturer : ${exporter}`,
-      `UCR          : ${ucr}`,
-      ``,
-      `RESULT: PASS`,
-      ``,
-      `Tests performed:`,
-      `- Fabric tensile strength: PASS`,
-      `- Color fastness (washing): PASS`,
-      `- Dimensional stability: PASS`,
-      `- Fiber composition analysis: PASS (matches BOM)`,
-      `- AZO dye test: PASS (EU REACH compliant)`,
-      ``,
-      `Inspector ID: BV-VN-2026-0847`,
-    ],
-    'Export Declaration': [
-      `EXPORT DECLARATION`, ``,
-      `Declaration No : ${ref}`,
-      `Date           : ${shipDate}`,
-      `Declarant      : General Department of Vietnam Customs`,
-      `System         : VNACCS`,
-      `Exporter       : ${exporter}`,
-      `UCR            : ${ucr}`,
-      `Country of Export : ${fromCountry}`,
-      `Country of Destination : ${toCountry}`,
-      ``, `This export declaration is filed via VNACCS in accordance with Vietnamese customs regulations.`,
     ],
   };
   const body = (lines[docType] || [`${docType}`, ``, `Reference: ${ref}`, `Issuer: ${issuer}`, `UCR: ${ucr}`])
@@ -276,16 +225,10 @@ function makeSeedXml(docType, m, ref) {
   const grossMass   = m.quantity.match(/[\d,]+/)?.[0]?.replace(',','') || '1000';
   const netMass     = Math.round(parseInt(grossMass) * 0.97);
   const arrival     = new Date(new Date(m.shipDate).getTime() + 14 * 86400000).toISOString().slice(0,10);
-  const carrier     = 'Maersk Line';
-  const exporterAddr = m.fromCountry === 'Vietnam' ? 'Lien Chieu Industrial Zone, Thai Nguyen, Vietnam'
-                     : m.fromCountry === 'South Korea' ? '235 Banpo-daero, Seocho-gu, Seoul, South Korea'
-                     : 'Unknown';
-  const importerAddr = m.toCountry === 'United States' ? 'One Bowerman Drive, Beaverton, OR 97005, USA'
-                     : m.toCountry === 'Netherlands'    ? 'Colosseum 1, 1213 NL Hilversum, Netherlands'
-                     : m.toCountry === 'Germany'         ? 'Tamara-Danz-Strasse 1, 10243 Berlin, Germany'
-                     : m.toCountry === 'Japan'           ? '4-1 Nihonbashi-Muromachi, Chuo-ku, Tokyo, Japan'
-                     : m.toCountry === 'Vietnam'         ? 'Lien Chieu Industrial Zone, Thai Nguyen, Vietnam'
-                     : 'Unknown';
+  const addrBook = getConfig()?.documentTemplates?.addressBook ?? {};
+  const carrier  = getConfig()?.documentTemplates?.defaultCarrier ?? 'Carrier';
+  const exporterAddr = addrBook[m.fromCountry] ?? 'Unknown';
+  const importerAddr = addrBook[m.toCountry] ?? 'Unknown';
 
   const e = escXml;
   if (docType === 'Bill of Lading') {
@@ -333,6 +276,8 @@ function makeSeedXml(docType, m, ref) {
   }
 
   if (docType === 'Export Declaration') {
+    const edCfg = getConfig()?.documentTemplates?.xmlTemplates?.['Export Declaration'];
+    const declarantName = edCfg?.declarantName ?? 'Customs Authority';
     return `<?xml version="1.0" encoding="UTF-8"?>
 <CustomsDeclaration>
   <DeclarationNumber>${e(ref)}</DeclarationNumber>
@@ -380,13 +325,21 @@ function makeSeedXml(docType, m, ref) {
   <BillOfLadingRef>BL-${ref.replace(/[A-Z]+-\d+-/,'')}</BillOfLadingRef>
   <CertificateOfOriginRef>CO-${ref.replace(/[A-Z]+-\d+-/,'')}</CertificateOfOriginRef>
   <InsuranceCertificateRef>INS-${seed}</InsuranceCertificateRef>
-  <DeclarantName>General Department of Vietnam Customs (VNACCS)</DeclarantName>
+  <DeclarantName>${e(declarantName)}</DeclarantName>
   <DeclarationLocation>${e(m.originPort)}</DeclarationLocation>
   <Status>ACCEPTED</Status>
 </CustomsDeclaration>`;
   }
 
   if (docType === 'Bill of Material') {
+    const bomCfg = getConfig()?.documentTemplates?.xmlTemplates?.['Bill of Material']?.originComposition;
+    const localPct = bomCfg?.localContentPercent ?? 0;
+    const cumulationApplied = bomCfg?.cptppCumulationApplied ?? false;
+    const thirdPct = bomCfg?.thirdCountryContentPercent ?? 0;
+    const materials = bomCfg?.inputMaterials ?? [];
+    const materialsXml = materials.map(mat =>
+      `      <Material><Name>${e(mat.material)}</Name><Country>${e(mat.origin)}</Country><Percent>${mat.percent}</Percent></Material>`
+    ).join('\n');
     return `<?xml version="1.0" encoding="UTF-8"?>
 <BillOfMaterial>
   <Reference>${e(ref)}</Reference>
@@ -396,43 +349,41 @@ function makeSeedXml(docType, m, ref) {
   <Product>${e(m.product)}</Product>
   <HSCode>${e(m.hsCode)}</HSCode>
   <OriginComposition>
-    <VietnamContentPercent>65.5</VietnamContentPercent>
-    <CPTPPCumulationApplied>true</CPTPPCumulationApplied>
-    <ThirdCountryContentPercent>4.5</ThirdCountryContentPercent>
+    <LocalContentPercent>${localPct}</LocalContentPercent>
+    <CPTPPCumulationApplied>${cumulationApplied}</CPTPPCumulationApplied>
+    <ThirdCountryContentPercent>${thirdPct}</ThirdCountryContentPercent>
     <InputMaterials>
-      <Material><Name>Cotton/synthetic fabric</Name><Supplier>Hyosung Corp.</Supplier><Country>KR</Country><Percent>30.0</Percent><CPTPPMember>true</CPTPPMember></Material>
-      <Material><Name>Thread and yarn</Name><Supplier>Vietnam Thread Co.</Supplier><Country>VN</Country><Percent>15.5</Percent><CPTPPMember>true</CPTPPMember></Material>
-      <Material><Name>Zippers and buttons</Name><Supplier>YKK Vietnam</Supplier><Country>VN</Country><Percent>10.0</Percent><CPTPPMember>true</CPTPPMember></Material>
-      <Material><Name>Cutting and sewing labor</Name><Supplier>${e(m.exporter)}</Supplier><Country>VN</Country><Percent>40.0</Percent><CPTPPMember>true</CPTPPMember></Material>
-      <Material><Name>Elastic bands</Name><Supplier>Zhejiang Elastic Co.</Supplier><Country>CN</Country><Percent>4.5</Percent><CPTPPMember>false</CPTPPMember></Material>
+${materialsXml}
     </InputMaterials>
   </OriginComposition>
 </BillOfMaterial>`;
   }
 
-  if (docType === 'MOIT Certificate of Origin') {
+  // Corridor-specific Certificate of Origin (e.g., MOIT CO) — reads all fields from config
+  const coCfg = getConfig()?.documentTemplates?.xmlTemplates?.[docType];
+  if (coCfg?.issuingAuthority) {
     return `<?xml version="1.0" encoding="UTF-8"?>
 <CertificateOfOrigin>
   <CertificateNumber>${e(ref)}</CertificateNumber>
-  <FormType>EUR.1</FormType>
+  <FormType>${coCfg.formType || 'Standard'}</FormType>
   <IssueDate>${m.shipDate}</IssueDate>
-  <IssuingAuthority>Ministry of Industry and Trade, Vietnam</IssuingAuthority>
-  <IssuingSystem>eCoSys</IssuingSystem>
-  <Exporter><PartyName>${e(m.exporter)}</PartyName><Country>VN</Country></Exporter>
+  <IssuingAuthority>${e(coCfg.issuingAuthority)}</IssuingAuthority>
+  <IssuingSystem>${coCfg.issuingSystem || 'Manual'}</IssuingSystem>
+  <Exporter><PartyName>${e(m.exporter)}</PartyName><Country>${m.fromCountry.slice(0,2).toUpperCase()}</Country></Exporter>
   <Consignee><PartyName>${e(m.importer)}</PartyName><Country>${m.toCountry.slice(0,2).toUpperCase()}</Country></Consignee>
   <Goods>
     <HSCode>${e(m.hsCode)}</HSCode>
     <Description>${e(m.product)}</Description>
-    <OriginCriterion>RVC</OriginCriterion>
-    <OriginCountry>VN</OriginCountry>
+    <OriginCriterion>${coCfg.originCriterion || 'WO'}</OriginCriterion>
+    <OriginCountry>${m.fromCountry.slice(0,2).toUpperCase()}</OriginCountry>
   </Goods>
   <CumulationDeclaration>
-    <CPTPPCumulation>true</CPTPPCumulation>
-    <CumulationPartnerCountry>KR</CumulationPartnerCountry>
-    <CumulationMaterialType>Fabric and yarn</CumulationMaterialType>
+    <CumulationApplied>${!!coCfg.cumulationPartnerCountry}</CumulationApplied>
+    <CumulationPartnerCountry>${coCfg.cumulationPartnerCountry || ''}</CumulationPartnerCountry>
+    <CumulationMaterialType>${e(coCfg.cumulationMaterialType || '')}</CumulationMaterialType>
   </CumulationDeclaration>
   <DigitalSignature>
-    <SignerIdentity>MOIT-eCoSys</SignerIdentity>
+    <SignerIdentity>${coCfg.issuingSystem || 'Authority'}</SignerIdentity>
     <Timestamp>${m.shipDate}T10:00:00.000Z</Timestamp>
     <Algorithm>Ed25519</Algorithm>
   </DigitalSignature>
@@ -442,45 +393,21 @@ function makeSeedXml(docType, m, ref) {
   return null;
 }
 
-// ── Hardcoded demo consignments ──
-const ALPHA_CONSIGNMENTS = [
-  { ucr:'VN-2026-EXP-00101', product:"Men's Cotton Polo Shirts (Knitted)",          hsCode:'6105.10', quantity:'24,000 pcs', totalValue:168000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',        fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Los Angeles',  vessel:'MV Maersk Seletar',   shipDate:'2026-03-10', incoterms:'FOB', invoiceRef:'INV-2026-TNG-0101', declRef:'VN-EXP-2026-0101', status:'Delivered',    creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
-  { ucr:'VN-2026-EXP-00102', product:"Women's Cotton T-Shirts (Knitted)",           hsCode:'6109.10', quantity:'36,000 pcs', totalValue:216000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',        fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Los Angeles',  vessel:'MV Maersk Sentosa',   shipDate:'2026-03-18', incoterms:'FOB', invoiceRef:'INV-2026-TNG-0102', declRef:'VN-EXP-2026-0102', status:'In Transit',   creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
-  { ucr:'VN-2026-EXP-00103', product:"Men's Synthetic Windbreaker Jackets (Woven)", hsCode:'6201.93', quantity:'12,000 pcs', totalValue:264000, currency:'EUR', exporter:'TNG Investment & Trading JSC', importer:'Nike Europe B.V.', fromCountry:'Vietnam', toCountry:'Netherlands',  originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Rotterdam',    vessel:'MV CMA CGM Mekong',   shipDate:'2026-03-25', incoterms:'CIF', invoiceRef:'INV-2026-TNG-0103', declRef:'VN-EXP-2026-0103', status:'Customs',      creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
-  { ucr:'VN-2026-EXP-00104', product:"Women's Knitted Sports Trousers",             hsCode:'6104.63', quantity:'18,000 pcs', totalValue:198000, currency:'EUR', exporter:'TNG Investment & Trading JSC', importer:'Nike Europe B.V.', fromCountry:'Vietnam', toCountry:'Germany',      originPort:'Hai Phong International Container Terminal', destinationPort:'Port of Hamburg',  vessel:'MV Evergreen Harmony', shipDate:'2026-04-02', incoterms:'CFR', invoiceRef:'INV-2026-TNG-0104', declRef:'VN-EXP-2026-0104', status:'Submitted',    creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
-  { ucr:'VN-2026-EXP-00105', product:"Athletic Running Shoes (Rubber/Plastic Upper)", hsCode:'6402.99', quantity:'8,400 pairs', totalValue:378000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',    fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Long Beach',   vessel:'MV Maersk Seletar',   shipDate:'2026-04-08', incoterms:'FOB', invoiceRef:'INV-2026-TNG-0105', declRef:'VN-EXP-2026-0105', status:'Released',     creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
-  { ucr:'VN-2026-EXP-00106', product:"Casual Canvas Sneakers (Textile Upper)",       hsCode:'6404.19', quantity:'6,000 pairs', totalValue:132000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'ABC-Mart Inc.', fromCountry:'Vietnam', toCountry:'Japan',         originPort:'Hai Phong International Container Terminal', destinationPort:'Port of Yokohama', vessel:'MV ONE Commitment',    shipDate:'2026-04-15', incoterms:'CIF', invoiceRef:'INV-2026-TNG-0106', declRef:'VN-EXP-2026-0106', status:'In Transit',   creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC' },
-  { ucr:'VN-2026-EXP-E001',  product:"Men's Cotton Dress Shirts (Woven)",           hsCode:'6205.20', quantity:'15,000 pcs', totalValue:225000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',        fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Los Angeles',  vessel:'MV Maersk Sentosa',   shipDate:'2026-02-20', incoterms:'FOB', invoiceRef:'INV-2026-TNG-E001', declRef:'VN-EXP-2026-E001', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC', errorType:'HS Code Mismatch', errorDescription:'Export Declaration filed under HS 6205.30 (man-made fibres) but Commercial Invoice declares HS 6205.20 (cotton). Vietnam Customs (VNACCS) has flagged the shipment for reconciliation.' },
-  { ucr:'VN-2026-EXP-E002',  product:"Knitted Fleece Hooded Sweatshirts",           hsCode:'6110.30', quantity:'20,000 pcs', totalValue:340000, currency:'USD', exporter:'TNG Investment & Trading JSC', importer:'Nike Inc.',        fromCountry:'Vietnam', toCountry:'United States', originPort:'Cat Lai Terminal, Ho Chi Minh City', destinationPort:'Port of Los Angeles',  vessel:'MV Maersk Seletar',   shipDate:'2026-02-28', incoterms:'FOB', invoiceRef:'INV-2026-TNG-E002', declRef:'VN-EXP-2026-E002', status:'Under Review', creatorOrgId:'org1', creatorOrgName:'TNG Investment & Trading JSC', errorType:'Origin Verification Failed', errorDescription:'Origin composition shows 38% Vietnamese value-added content (below 40% threshold). Fleece fabric from non-CPTPP supplier (China). UFLPA screening flag: supplier region requires additional documentation.' },
-];
-
-const BETA_CONSIGNMENTS = [
-  { ucr:'KR-2026-EXP-00201', product:'Spandex Yarn (Creora, 40D/70D)',      hsCode:'5402.44', quantity:'45,000 kg',  totalValue:135000, currency:'USD', exporter:'Hyosung TNS Co., Ltd',  importer:'TNG Investment & Trading JSC', fromCountry:'South Korea', toCountry:'Vietnam', originPort:'Port of Busan', destinationPort:'Cat Lai Terminal, Ho Chi Minh City',           vessel:'MV HMM Promise',    shipDate:'2026-01-20', incoterms:'CIF', invoiceRef:'INV-2026-HYO-0201', declRef:'KR-EXP-2026-0201', status:'Delivered',   creatorOrgId:'org5', creatorOrgName:'Nike Inc.' },
-  { ucr:'KR-2026-EXP-00202', product:'Nylon Woven Fabric (Ripstop, Dyed)',   hsCode:'5407.42', quantity:'32,000 kg',  totalValue:192000, currency:'USD', exporter:'Hyosung TNS Co., Ltd',  importer:'TNG Investment & Trading JSC', fromCountry:'South Korea', toCountry:'Vietnam', originPort:'Port of Busan', destinationPort:'Hai Phong International Container Terminal',  vessel:'MV HMM Algeciras',  shipDate:'2026-02-15', incoterms:'FOB', invoiceRef:'INV-2026-HYO-0202', declRef:'KR-EXP-2026-0202', status:'In Transit',  creatorOrgId:'org5', creatorOrgName:'Nike Inc.' },
-  { ucr:'KR-2026-EXP-00203', product:'YKK Metal Zippers and Snap Buttons',   hsCode:'9607.11', quantity:'500,000 pcs', totalValue:45000,  currency:'USD', exporter:'YKK Korea Co., Ltd',    importer:'TNG Investment & Trading JSC', fromCountry:'South Korea', toCountry:'Vietnam', originPort:'Port of Busan', destinationPort:'Cat Lai Terminal, Ho Chi Minh City',           vessel:'MV HMM Promise',    shipDate:'2026-02-22', incoterms:'CIF', invoiceRef:'INV-2026-YKK-0203', declRef:'KR-EXP-2026-0203', status:'Customs',     creatorOrgId:'org6', creatorOrgName:'Nike Europe B.V.' },
-];
+// ── Demo consignments (from config, empty if no config) ──
+const ALPHA_CONSIGNMENTS = getConfig()?.consignments?.alpha ?? [];
+const BETA_CONSIGNMENTS = getConfig()?.consignments?.beta ?? [];
 
 function docsForConsignment(m) {
-  if (NODE_ID === 'alpha') {
-    return [
-      { name:'Commercial Invoice (Inputs)',   docType:'Commercial Invoice (Inputs)',  issuer:'Hyosung TNS Co., Ltd',                         suffix:'CI-I' },
-      { name:'Input Certificate of Origin',   docType:'Input Certificate of Origin',  issuer:'Korea Customs Service',                        suffix:'ICO' },
-      { name:'Bill of Material',              docType:'Bill of Material',             issuer:m.creatorOrgName,                               suffix:'BOM' },
-      { name:'Inspection Report',             docType:'Inspection Report',            issuer:'Bureau Veritas Vietnam',                       suffix:'IR'  },
-      { name:'MOIT Certificate of Origin',    docType:'MOIT Certificate of Origin',   issuer:'Ministry of Industry and Trade (MOIT)',        suffix:'CO'  },
-      { name:'Export Declaration',            docType:'Export Declaration',            issuer:'General Department of Vietnam Customs',        suffix:'ED'  },
-      { name:'Commercial Invoice',            docType:'Commercial Invoice',           issuer:m.creatorOrgName,                               suffix:'INV' },
-      { name:'Packing List',                  docType:'Packing List',                 issuer:'Gemadept Logistics',                           suffix:'PL'  },
-      { name:'Bill of Lading',                docType:'Bill of Lading',               issuer:'Maersk Vietnam',                               suffix:'BL'  },
-    ];
+  const cfgDocs = getConfig()?.documents?.[NODE_ID];
+  if (cfgDocs) {
+    return cfgDocs.map(d => ({
+      name: d.name,
+      docType: d.docType,
+      issuer: d.issuerOrgId === 'creator' ? m.creatorOrgName : (d.issuerName || m.creatorOrgName),
+      suffix: d.suffix,
+    }));
   }
-  return [
-    { name:'Commercial Invoice',    docType:'Commercial Invoice',   issuer:m.creatorOrgName,         suffix:'INV' },
-    { name:'Packing List',          docType:'Packing List',          issuer:m.creatorOrgName,         suffix:'PL'  },
-    { name:'Bill of Lading',        docType:'Bill of Lading',        issuer:'HMM Co., Ltd',           suffix:'BL'  },
-    { name:'Certificate of Origin', docType:'Certificate of Origin', issuer:'Korea Customs Service',  suffix:'CO'  },
-    { name:'Export Declaration',    docType:'Export Declaration',    issuer:'Korea Customs Service',  suffix:'ED'  },
-  ];
+  return [];
 }
 
 function seedConsignments() {
@@ -540,7 +467,7 @@ function seedConsignments() {
     const day = 86400000;
     if (['Released', 'In Transit', 'Customs', 'Delivered'].includes(m.status)) {
       seedLog('logistics', 'Export Clearance', m.exporter,
-        `${m.ucr} — Export clearance granted by Vietnam Customs (VNACCS). All documents verified.`,
+        `${m.ucr} — Export clearance granted. All documents verified.`,
         new Date(shipTs.getTime() - 2 * day).toISOString());
       seedLog('logistics', 'Container Loaded', m.exporter,
         `${m.ucr} — Container loaded at ${m.originPort}. Container: TCKU${3000000 + (parseInt(m.ucr.replace(/\D/g,'').slice(-4)||'0') % 9999999)}, Seal: SL${10000 + (parseInt(m.ucr.replace(/\D/g,'').slice(-4)||'0') % 89999)}.`,
@@ -574,6 +501,20 @@ app.use(express.json({ limit: '50mb' }));
 const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 * 1024 * 1024 } });
 const publicDir = path.join(__dirname, 'public');
 if (existsSync(publicDir)) app.use(express.static(publicDir));
+
+// Public config (excludes passwords, blacklists, seed data)
+app.get('/api/config', (req, res) => {
+  const c = getConfig();
+  if (!c) return res.json(null);
+  res.json({
+    corridor: c.corridor,
+    branding: c.branding,
+    theme: c.theme,
+    geography: c.geography,
+    credentials: { testCredentials: c.credentials?.testCredentials },
+    finance: { currencies: c.finance?.currencies, paymentMethods: c.finance?.paymentMethods },
+  });
+});
 
 // Auth
 app.post('/api/login', (req, res) => {
@@ -622,11 +563,12 @@ app.put('/api/orgs/:id', (req, res) => {
 
 // DID registration
 function getAttestingAuthority(org) {
-  if (org.role?.includes('Vietnam'))        return 'General Department of Vietnam Customs';
-  if (org.role?.includes('South Korea'))    return 'Korea Customs Service';
-  if (org.role?.includes('United States'))  return 'US Customs and Border Protection';
-  if (org.role?.includes('EU'))             return 'EU Customs Authority';
-  return 'National Business Registry';
+  const authorities = getConfig()?.credentials?.attestationAuthorities;
+  if (authorities) {
+    const match = authorities.find(a => org.role?.includes(a.roleMatch));
+    if (match) return match.authority;
+  }
+  return getConfig()?.credentials?.defaultAuthority ?? 'National Business Registry';
 }
 
 app.post('/api/orgs/:id/register', (req, res) => {
@@ -1015,104 +957,88 @@ function seedFinanceData() {
   if (NODE_ID !== 'alpha') return;
   if (store.payments.length > 0 || store.letterOfCredits.length > 0 || store.smartContracts.length > 0) return;
 
-  const c1 = store.consignments.find(c => c.ucr === 'VN-2026-EXP-00101');
-  const c2 = store.consignments.find(c => c.ucr === 'VN-2026-EXP-00103');
-  if (!c1 || !c2) return;
+  const seedData = getConfig()?.finance?.seedData;
 
-  const tng = 'org1';
-  const vietcombank = 'org7';
-  const hsbc = 'org8';
-  const ts1 = '2026-03-10T09:00:00.000Z';
-  const ts2 = '2026-03-25T11:30:00.000Z';
+  // Apply finance viewer permissions from config
+  const viewers = seedData?.financeViewers ?? {};
+  for (const [ucr, orgIds] of Object.entries(viewers)) {
+    const c = store.consignments.find(cs => cs.ucr === ucr);
+    if (c && store.financePermissions[c.id]) {
+      for (const orgId of orgIds) store.financePermissions[c.id][orgId] = 'viewer';
+    }
+  }
 
-  store.financePermissions[c1.id][vietcombank] = 'viewer';
-  store.financePermissions[c1.id][hsbc]        = 'viewer';
-  store.financePermissions[c2.id][vietcombank] = 'viewer';
-  store.financePermissions[c2.id][hsbc]        = 'viewer';
+  // Seed payments
+  const cfgPayments = seedData?.payments ?? [];
 
-  const pay1 = {
-    id: genId(), consignmentId: c1.id, ucr: c1.ucr,
-    invoiceRef: 'INV-2026-TNG-0101', amount: 168000, currency: 'USD',
-    dueDate: '2026-05-31', status: 'Partially Paid', paidAmount: 67200,
-    paymentMethod: 'Letter of Credit',
-    payorOrgId: 'org5', payeeOrgId: tng, creatorOrgId: tng,
-    notes: 'First instalment (40%) received via LC. Balance due on B/L presentation and CBP clearance.', createdAt: ts1, updatedAt: ts1,
-  };
-  const pay2 = {
-    id: genId(), consignmentId: c2.id, ucr: c2.ucr,
-    invoiceRef: 'INV-2026-TNG-0103', amount: 264000, currency: 'EUR',
-    dueDate: '2026-04-30', status: 'Overdue', paidAmount: 0,
-    paymentMethod: 'Open Account',
-    payorOrgId: 'org6', payeeOrgId: tng, creatorOrgId: tng,
-    notes: 'Payment overdue. Nike Europe requested 30-day extension citing customs hold at Rotterdam. EVFTA preference verification pending.', createdAt: ts2, updatedAt: ts2,
-  };
-  store.payments.push(pay1, pay2);
+  for (const p of cfgPayments) {
+    const c = store.consignments.find(cs => cs.ucr === p.consignmentUcr);
+    if (!c) continue;
+    store.payments.push({
+      id: genId(), consignmentId: c.id, ucr: c.ucr,
+      invoiceRef: p.invoiceRef, amount: p.amount, currency: p.currency,
+      dueDate: p.dueDate, status: p.status, paidAmount: p.paidAmount,
+      paymentMethod: p.paymentMethod,
+      payorOrgId: p.payorOrgId, payeeOrgId: p.payeeOrgId,
+      creatorOrgId: p.payeeOrgId,
+      notes: p.notes, createdAt: p.createdAt, updatedAt: p.createdAt,
+    });
+  }
 
-  const docs1 = store.documents.filter(d => d.consignmentId === c1.id);
-  const docs2 = store.documents.filter(d => d.consignmentId === c2.id);
-  const lc1 = {
-    id: genId(), consignmentId: c1.id, ucr: c1.ucr,
-    lcNumber: 'LC-2026-VCB-0101',
-    issuingBank: 'HSBC Vietnam', advisingBank: 'Vietcombank',
-    beneficiary: 'TNG Investment & Trading JSC', applicant: 'Nike Inc.',
-    amount: 168000, currency: 'USD', expiryDate: '2026-08-31',
-    status: 'Confirmed',
-    documentCompliance: docs1.map((d, i) => ({ docType: d.title, required: true, submitted: true, compliant: i < 5 ? true : null })),
-    creatorOrgId: tng, createdAt: ts1,
-  };
-  const lc2 = {
-    id: genId(), consignmentId: c2.id, ucr: c2.ucr,
-    lcNumber: 'LC-2026-VCB-0102',
-    issuingBank: 'HSBC Vietnam', advisingBank: 'Vietcombank',
-    beneficiary: 'TNG Investment & Trading JSC', applicant: 'Nike Europe B.V.',
-    amount: 264000, currency: 'EUR', expiryDate: '2026-07-31',
-    status: 'Issued',
-    documentCompliance: docs2.map(d => ({ docType: d.title, required: true, submitted: false, compliant: null })),
-    creatorOrgId: tng, createdAt: ts2,
-  };
-  store.letterOfCredits.push(lc1, lc2);
+  // Seed Letters of Credit
+  const cfgLCs = seedData?.letterOfCredits ?? [];
 
-  const hash1 = genHash();
-  const hash2 = genHash();
-  const sc1 = {
-    id: genId(), consignmentId: c1.id, ucr: c1.ucr,
-    contractRef: 'SC-2026-VN-0101', contractHash: hash1,
-    payorOrgId: 'org5', payeeOrgId: tng,
-    amount: 168000, currency: 'USD',
-    conditions: [
-      { id: 'cond-0', description: 'MOIT Certificate of Origin (EUR.1/CPTPP) issued and verified', docType: 'MOIT Certificate of Origin', met: true,  metAt: '2026-03-12T08:00:00.000Z' },
-      { id: 'cond-1', description: 'Origin composition verified (Vietnam content >= 55%)',          docType: 'Bill of Material',            met: true,  metAt: '2026-03-12T09:15:00.000Z' },
-      { id: 'cond-2', description: 'Bill of Lading (eBL) verified and presented',                   docType: 'Bill of Lading',              met: false, metAt: null },
-      { id: 'cond-3', description: 'US CBP pre-clearance (no UFLPA hold)',                          docType: null,                          met: false, metAt: null },
-    ],
-    status: 'Active', autoRelease: true, creatorOrgId: tng,
-    createdAt: ts1, settledAt: null,
-  };
-  const sc2 = {
-    id: genId(), consignmentId: c2.id, ucr: c2.ucr,
-    contractRef: 'SC-2026-VN-0102', contractHash: hash2,
-    payorOrgId: 'org6', payeeOrgId: tng,
-    amount: 264000, currency: 'EUR',
-    conditions: [
-      { id: 'cond-0', description: 'MOIT Certificate of Origin issued and EVFTA-compliant', docType: 'MOIT Certificate of Origin', met: false, metAt: null },
-      { id: 'cond-1', description: 'Export Declaration cleared by Vietnam Customs (VNACCS)', docType: 'Export Declaration',          met: false, metAt: null },
-      { id: 'cond-2', description: 'Bill of Lading verified and presented',                  docType: 'Bill of Lading',              met: false, metAt: null },
-    ],
-    status: 'Active', autoRelease: true, creatorOrgId: tng,
-    createdAt: ts2, settledAt: null,
-  };
-  store.smartContracts.push(sc1, sc2);
+  for (const lc of cfgLCs) {
+    const c = store.consignments.find(cs => cs.ucr === lc.consignmentUcr);
+    if (!c) continue;
+    const docs = store.documents.filter(d => d.consignmentId === c.id);
+    store.letterOfCredits.push({
+      id: genId(), consignmentId: c.id, ucr: c.ucr,
+      lcNumber: lc.lcNumber,
+      issuingBank: lc.issuingBank, advisingBank: lc.advisingBank,
+      beneficiary: lc.beneficiary, applicant: lc.applicant,
+      amount: lc.amount, currency: lc.currency, expiryDate: lc.expiryDate,
+      status: lc.status,
+      documentCompliance: docs.map((d, i) => ({ docType: d.title, required: true, submitted: lc.status === 'Confirmed', compliant: lc.status === 'Confirmed' ? (i < 5 ? true : null) : null })),
+      creatorOrgId: lc.creatorOrgId, createdAt: lc.createdAt,
+    });
+  }
 
-  const seedTs = (t, ts) => { if (!store.tangleLog.some(e => e.details && e.details.includes(t))) store.tangleLog.push({ id: genId(), timestamp: ts, hash: genHash(), type: 'finance', action: 'Finance Seeded', actor: 'TNG Investment & Trading JSC', details: t }); };
-  seedTs(`Payment INV-2026-TNG-0101 created for ${c1.ucr}. USD 168,000. Partially Paid.`, ts1);
-  seedTs(`Payment INV-2026-TNG-0103 created for ${c2.ucr}. EUR 264,000. Overdue.`, ts2);
-  seedTs(`LC LC-2026-VCB-0101 created for ${c1.ucr}. Amount: USD 168,000. Status: Confirmed.`, ts1);
-  seedTs(`LC LC-2026-VCB-0102 created for ${c2.ucr}. Amount: EUR 264,000. Status: Issued.`, ts2);
-  seedTs(`Contract SC-2026-VN-0101 deployed for ${c1.ucr}. 4 release conditions. Hash: ${hash1}.`, ts1);
-  seedTs(`Contract SC-2026-VN-0102 deployed for ${c2.ucr}. 3 release conditions. Hash: ${hash2}.`, ts2);
+  // Seed Smart Contracts
+  const cfgSCs = seedData?.smartContracts ?? [];
+
+  for (const sc of cfgSCs) {
+    const c = store.consignments.find(cs => cs.ucr === sc.consignmentUcr);
+    if (!c) continue;
+    store.smartContracts.push({
+      id: genId(), consignmentId: c.id, ucr: c.ucr,
+      contractRef: sc.contractRef, contractHash: genHash(),
+      payorOrgId: sc.payorOrgId, payeeOrgId: sc.payeeOrgId,
+      amount: sc.amount, currency: sc.currency,
+      conditions: sc.conditions.map((cond, i) => ({ id: `cond-${i}`, ...cond })),
+      status: sc.status, autoRelease: sc.autoRelease, creatorOrgId: sc.payeeOrgId,
+      createdAt: sc.createdAt, settledAt: null,
+    });
+  }
+
+  // Seed tangle log entries for finance
+  const seedTs = (t, ts) => {
+    if (!store.tangleLog.some(e => e.details && e.details.includes(t)))
+      store.tangleLog.push({ id: genId(), timestamp: ts, hash: genHash(), type: 'finance', action: 'Finance Seeded', actor: 'System', details: t });
+  };
+  for (const p of store.payments) {
+    const fmtAmt = `${p.currency} ${p.amount.toLocaleString()}`;
+    seedTs(`Payment ${p.invoiceRef} created for ${p.ucr}. ${fmtAmt}. ${p.status}.`, p.createdAt);
+  }
+  for (const lc of store.letterOfCredits) {
+    seedTs(`LC ${lc.lcNumber} created for ${lc.ucr}. Amount: ${lc.currency} ${lc.amount.toLocaleString()}. Status: ${lc.status}.`, lc.createdAt);
+  }
+  for (const sc of store.smartContracts) {
+    seedTs(`Contract ${sc.contractRef} deployed for ${sc.ucr}. ${sc.conditions.length} release conditions. Hash: ${sc.contractHash}.`, sc.createdAt);
+  }
   saveTangleLog();
 
-  console.log(`[${NODE_NAME}] Seeded finance data: 2 payments, 2 LCs, 2 smart contracts`);
+  console.log(`[${NODE_NAME}] Seeded finance data: ${store.payments.length} payments, ${store.letterOfCredits.length} LCs, ${store.smartContracts.length} smart contracts`);
 }
 
 // Seed demo data
