@@ -368,3 +368,39 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
 .pay-form-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 .tf-form-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .analytics-filters{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+══════════════════════════════════════════════════════════ */
+
+/* ── Tablet (≤1023px) ── */
+@media(max-width:1023px){
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .dash-grid{grid-template-columns:1fr}
+  .tf-grid--detail,.tf-grid--detail-lg{grid-template-columns:1fr}
+  .pay-grid--detail{grid-template-columns:1fr}
+  .net-bottom-grid{grid-template-columns:1fr}
+  .analytics-filters{grid-template-columns:repeat(3,1fr)}
+}
+
+/* ── Mobile (≤767px) ── */
+@media(max-width:767px){
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr}
+  .g2{grid-template-columns:1fr}
+  .cnt{padding:16px}
+  .tf-form-2col{grid-template-columns:1fr}
+  .pay-form-2col{grid-template-columns:1fr}
+  .pay-form-amount{grid-template-columns:1fr}
+  .analytics-filters{grid-template-columns:1fr 1fr}
+  .lc-stepper{gap:2px}
+}
+
+/* ── Small Mobile (≤479px) ── */
+@media(max-width:479px){
+  .g4{grid-template-columns:1fr}
+  .stat-value{font-size:22px}
+  .cnt{padding:12px}
+  .analytics-filters{grid-template-columns:1fr}
+}
