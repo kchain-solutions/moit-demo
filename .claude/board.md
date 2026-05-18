@@ -8,11 +8,11 @@
 
 | Phase | Total | Backlog | In Progress | Blocked | Done |
 |-------|-------|---------|-------------|---------|------|
-| 1     | 56    | 33      | 0           | 0       | 23    |
+| 1     | 56    | 13      | 0           | 0       | 43    |
 | 2     | 30    | 30      | 0           | 0       | 0    |
 | 3     | 12    | 12      | 0           | 0       | 0    |
 | 4     | 10    | 10      | 0           | 0       | 0    |
-| **Total** | **108** | **85** | **0** | **0** | **23** |
+| **Total** | **108** | **65** | **0** | **0** | **43** |
 
 ---
 
@@ -20,24 +20,24 @@
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
-| [T-101](tasks/backlog/T-101.md) | Create JSON Schema for demo config | P0 | backlog | none |
-| [T-103](tasks/backlog/T-103.md) | Create configs directory and branding assets | P0 | backlog | none |
-| [T-104](tasks/backlog/T-104.md) | Implement server/config.js config loader | P0 | backlog | T-102 |
-| [T-105](tasks/backlog/T-105.md) | Refactor server orgs to read from config | P0 | backlog | T-104 |
-| [T-106](tasks/backlog/T-106.md) | Refactor server consignments and documents to read from config | P0 | backlog | T-104 |
-| [T-107](tasks/backlog/T-107.md) | Refactor credential validation to read from config | P1 | backlog | T-104 |
-| [T-108](tasks/backlog/T-108.md) | Refactor finance seed data to read from config | P1 | backlog | T-104 |
-| [T-110](tasks/backlog/T-110.md) | Add or refactor GET /api/orgs endpoint | P0 | backlog | T-105 |
-| [T-111](tasks/backlog/T-111.md) | Create ConfigContext and ConfigProvider | P0 | backlog | T-109 |
-| [T-112](tasks/backlog/T-112.md) | Add getConfig() and getOrgs() to api.js | P0 | backlog | T-109, T-110 |
-| [T-113](tasks/backlog/T-113.md) | Wrap App with ConfigProvider | P0 | backlog | T-111 |
-| [T-114](tasks/backlog/T-114.md) | Refactor Login.jsx to use config-driven orgs | P0 | backlog | T-111, T-112 |
+| [T-101](tasks/done/T-101.md) | Create JSON Schema for demo config | P0 | Done | none |
+| [T-103](tasks/done/T-103.md) | Create configs directory and branding assets | P0 | Done | none |
+| [T-104](tasks/done/T-104.md) | Implement server/config.js config loader | P0 | Done | T-102 |
+| [T-105](tasks/done/T-105.md) | Refactor server orgs to read from config | P0 | Done | T-104 |
+| [T-106](tasks/done/T-106.md) | Refactor server consignments and documents to read from config | P0 | Done | T-104 |
+| [T-107](tasks/done/T-107.md) | Refactor credential validation to read from config | P1 | Done | T-104 |
+| [T-108](tasks/done/T-108.md) | Refactor finance seed data to read from config | P1 | Done | T-104 |
+| [T-110](tasks/done/T-110.md) | Add or refactor GET /api/orgs endpoint | P0 | Done | T-105 |
+| [T-111](tasks/done/T-111.md) | Create ConfigContext and ConfigProvider | P0 | Done | T-109 |
+| [T-112](tasks/done/T-112.md) | Add getConfig() and getOrgs() to api.js | P0 | Done | T-109, T-110 |
+| [T-113](tasks/done/T-113.md) | Wrap App with ConfigProvider | P0 | Done | T-111 |
+| [T-114](tasks/done/T-114.md) | Refactor Login.jsx to use config-driven orgs | P0 | Done | T-111, T-112 |
 | [T-115](tasks/backlog/T-115.md) | Implement adaptive login credential list layout | P2 | backlog | T-114 |
-| [T-116](tasks/backlog/T-116.md) | Refactor App.jsx sidebar branding to use config | P0 | backlog | T-111 |
-| [T-117](tasks/backlog/T-117.md) | Refactor countries.js to accept config overrides | P1 | backlog | T-111 |
-| [T-118](tasks/backlog/T-118.md) | Expand CSS custom properties for corridor theming | P0 | backlog | none |
-| [T-119](tasks/backlog/T-119.md) | Implement runtime theme application from config | P0 | backlog | T-118, T-111 |
-| [T-120](tasks/backlog/T-120.md) | Replace hardcoded hex colors in components | P1 | backlog | T-118 |
+| [T-116](tasks/done/T-116.md) | Refactor App.jsx sidebar branding to use config | P0 | Done | T-111 |
+| [T-117](tasks/done/T-117.md) | Refactor countries.js to accept config overrides | P1 | Done | T-111 |
+| [T-118](tasks/done/T-118.md) | Expand CSS custom properties for corridor theming | P0 | Done | none |
+| [T-119](tasks/done/T-119.md) | Implement runtime theme application from config | P0 | Done | T-118, T-111 |
+| [T-120](tasks/done/T-120.md) | Replace hardcoded hex colors in components | P1 | Done | T-118 |
 | [T-121](tasks/done/T-121.md) | Extract Dashboard.jsx inline grid to CSS class | P0 | Done | none |
 | [T-122](tasks/done/T-122.md) | Extract TradeFinance.jsx inline styles to CSS classes | P0 | Done | none |
 | [T-123](tasks/done/T-123.md) | Extract Payments.jsx inline styles to CSS classes | P0 | Done | none |
@@ -74,7 +74,7 @@
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
-| [T-102](tasks/backlog/T-102.md) | Extract Vietnam corridor data into config JSON | P0 | backlog | T-101 |
+| [T-102](tasks/done/T-102.md) | Extract Vietnam corridor data into config JSON | P0 | Done | T-101 |
 | [T-1V03](tasks/backlog/T-1V03.md) | Add origin composition fields to config schema | P0 | backlog | none |
 | [T-1V06](tasks/backlog/T-1V06.md) | Add two-channel architecture indicator to config | P3 | backlog | none |
 
@@ -82,14 +82,14 @@
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
-| [T-109](tasks/backlog/T-109.md) | Add GET /api/config endpoint | P0 | backlog | T-104 |
+| [T-109](tasks/done/T-109.md) | Add GET /api/config endpoint | P0 | Done | T-104 |
 
 ### 1I. Validation and Cleanup
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
 | [T-143](tasks/backlog/T-143.md) | Create Cambodia-EU corridor config for validation | P1 | backlog | T-101, T-116, T-114 |
-| [T-144](tasks/backlog/T-144.md) | Remove hardcoded fallback arrays from server | P1 | backlog | T-143 |
+| [T-144](tasks/done/T-144.md) | Remove hardcoded fallback arrays from server | P1 | Done | T-143 |
 
 ### 1H. Touch and Accessibility
 
