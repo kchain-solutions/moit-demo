@@ -168,7 +168,9 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
 
 /* ── Modals ── */
 .modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:100}
-.modal{background:white;border-radius:16px;padding:28px;width:540px;max-width:94vw;box-shadow:0 24px 80px rgba(0,0,0,0.2)}
+.modal{background:white;border-radius:16px;padding:28px;width:540px;max-width:94vw;box-shadow:0 24px 80px rgba(0,0,0,0.2);box-sizing:border-box}
+.modal-sm{width:400px}.modal-md{width:480px}.modal-lg{width:560px}
+.modal-card{max-width:94vw;box-sizing:border-box}
 .modal h3{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:18px}
 .modal-act{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
 
@@ -456,6 +458,13 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
   .net-hero{flex-direction:column;gap:14px}
   .net-hero-left{min-width:0}
   .tn-detail{position:fixed;top:auto;right:0;bottom:0;left:0;width:100%;max-height:55vh;border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(15,23,42,0.15)}
+  /* Touch targets: 44px minimum */
+  .sb-nav button,.bottom-tab,.btn,.btn-primary,.btn-secondary,.btn-sm,.hamburger,.hdr-bell,.search-btn-mobile{min-height:44px}
+  .mobile-card{min-height:44px}
+  .perm-org-row{min-height:44px}
+  /* Modals: bottom-sheet on mobile */
+  .modal-bg{align-items:flex-end}
+  .modal,.modal-card{width:100%!important;max-width:100%!important;border-radius:16px 16px 0 0;max-height:90vh;overflow-y:auto}
 }
 
 /* ── Small Mobile (≤479px) ── */
@@ -464,4 +473,20 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
   .stat-value{font-size:22px}
   .cnt{padding:12px;padding-bottom:72px}
   .analytics-filters{grid-template-columns:1fr}
+}
+
+/* ── Hover: disable sticky hover on touch-only devices ── */
+@media(hover:none){
+  .sb-nav button:hover{background:transparent;color:var(--nav-text)}
+  .sb-nav button.active:hover{background:var(--accent);color:#ffffff}
+  tbody tr:hover td{background:transparent}
+  .btn-p:hover{background:var(--accent)}
+  .btn-s:hover{background:white}
+  .btn-primary:hover{background:#3b82f6;border-color:#3b82f6}
+  .btn-secondary:hover{background:white}
+  .perm-cell:hover{background:transparent}
+  .tn-org-card:hover{background:white;border-color:#f1f5f9}
+  .net-org-row--clickable:hover{background:transparent}
+  .hdr-bell:hover{background:transparent}
+  .hamburger:hover{background:transparent}
 }

@@ -288,7 +288,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
       {/* Create LC Modal */}
       {showCreate && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card" style={{ width: 520, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
+          <div className="card modal-card" style={{ width: 520, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ margin: 0, fontSize: 17 }}>New Letter of Credit</h3>
               <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
@@ -347,7 +347,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
       {/* Share Finance Modal */}
       {showShare && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card" style={{ width: 400, padding: 28 }}>
+          <div className="card modal-card" style={{ width: 400, padding: 28 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ margin: 0, fontSize: 17 }}>Share Finance Access</h3>
               <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
@@ -648,7 +648,7 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
       {/* Create Contract Modal */}
       {showCreate && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card" style={{ width: 560, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
+          <div className="card modal-card" style={{ width: 560, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ margin: 0, fontSize: 17 }}>New Smart Contract</h3>
               <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>

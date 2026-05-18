@@ -276,7 +276,7 @@ export default function Payments() {
       {/* New Payment Modal */}
       {showNew && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card" style={{ width: 480, maxHeight: '90vh', overflow: 'auto', padding: 24 }}>
+          <div className="card modal-card" style={{ width: 480, maxHeight: '90vh', overflow: 'auto', padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ fontSize: 15, fontWeight: 700 }}>New Payment Record</h3>
               <button onClick={() => setShowNew(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X style={{ width: 18, height: 18 }} /></button>
@@ -333,7 +333,7 @@ export default function Payments() {
       {/* Finance Share Modal */}
       {showShare && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card" style={{ width: 400, padding: 24 }}>
+          <div className="card modal-card" style={{ width: 400, padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ fontSize: 15, fontWeight: 700 }}>Share Finance Access</h3>
               <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X style={{ width: 18, height: 18 }} /></button>

@@ -453,7 +453,7 @@ function ShareModal({ consignment, user, allOrgs, peerOrgs, peerConnected, onClo
 
   return (
     <div className="modal-bg" onClick={onClose}>
-      <div className="modal" style={{ width: 560 }} onClick={e => e.stopPropagation()}>
+      <div className="modal modal-lg" onClick={e => e.stopPropagation()}>
         <h3>Share — {consignment.ucr}</h3>
         {docs.length > 0 && (
           <div style={{ marginBottom: 16 }}>

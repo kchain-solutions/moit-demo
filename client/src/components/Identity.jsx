@@ -354,7 +354,7 @@ export default function Identity() {
       {/* Credential modal — shown when viewing a peer org's credential */}
       {credentialOrg && (
         <div className="modal-bg" onClick={() => setCredentialOrg(null)}>
-          <div className="modal" style={{ maxWidth: 500 }} onClick={e => e.stopPropagation()}>
+          <div className="modal modal-md" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
               <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Shield style={{ width: 18, height: 18, color: '#fff' }} />
