@@ -74,14 +74,22 @@ Dockerfile
 .claude/
   board.md              # Read-only index (regenerated from task files)
   tasks/
-    T-101.md            # One file per task
-    T-102.md
-    T-1V01.md
-    ...
+    backlog/            # Tasks not yet started
+      T-101.md
+      T-102.md
+      ...
+    in-progress/        # Tasks currently being worked on
+    done/               # Completed tasks
+      T-121.md
+      T-122.md
+      ...
+    blocked/            # Tasks that cannot proceed (reason in Notes)
+    cancelled/          # Tasks removed from scope
 ```
 
-- **`.claude/tasks/{id}.md`** is the source of truth for each task.
+- **`.claude/tasks/{status}/{id}.md`** is the source of truth for each task. The folder determines the task status.
 - **`.claude/board.md`** is a summary index with links to task files. Regenerate it with `node scripts/regen-board.cjs`.
+- Agents move task files between status folders to update status (e.g., `mv tasks/backlog/T-101.md tasks/in-progress/`).
 - Agents edit **only their assigned task file**, never the board or other agents' task files. This enables safe parallel development.
 
 ### Task File Format
@@ -117,32 +125,35 @@ Author `configs/demo-config.schema.json` with all constraints...
 ### Task Lifecycle
 
 ```
-backlog --> in_progress --> done
-              |
-              v
-           blocked --> in_progress --> done
+backlog/ --> in-progress/ --> done/
+                  |
+                  v
+             blocked/ --> in-progress/ --> done/
+
+             cancelled/  (removed from scope)
 ```
 
-1. **Pick a task from backlog:** Choose the highest-priority unblocked task. Check that all dependencies are `done`.
-2. **Move to `in_progress`:** Update the task's file (`.claude/tasks/{id}.md`): set Status, Branch, Assignee.
+1. **Pick a task from backlog/:** Choose the highest-priority unblocked task. Check that all dependencies are in `done/`.
+2. **Move to `in-progress/`:** Move the file from `tasks/backlog/` to `tasks/in-progress/`. Update Status, Branch, Assignee inside the file.
 3. **Create a feature branch:** Branch from `develop` using the task ID (see Git Workflow below).
 4. **Do the work:** Implement, test, commit to the feature branch.
-5. **Move to `done`:** Update the task's file: set Status to `done`. Merge the feature branch into `develop`. Delete the feature branch.
-6. **If blocked:** Set Status to `blocked`, document the reason in the Notes field. Pick another task.
+5. **Move to `done/`:** Move the file from `tasks/in-progress/` to `tasks/done/`. Update Status to `Done`. Merge the feature branch into `develop`. Delete the feature branch.
+6. **If blocked:** Move to `tasks/blocked/`, set Status to `Blocked`, document the reason in the Notes field. Pick another task.
+7. **If cancelled:** Move to `tasks/cancelled/`, set Status to `Cancelled`, document the reason in the Notes field.
 
 ### Parallel Development
 
 Multiple agents can work on independent tasks simultaneously. Each agent:
-1. Claims a task by setting `Status: in_progress` and `Assignee` in the task file.
+1. Claims a task by moving it from `tasks/backlog/` to `tasks/in-progress/` and setting `Assignee` in the task file.
 2. Works on its own feature branch (e.g., `feat/T-101-config-schema`).
-3. Only edits its own task file in `.claude/tasks/`. Never touches other task files.
-4. Merges to `develop` when done, updates its task file to `done`.
+3. Only edits its own task file. Never touches other task files.
+4. Merges to `develop` when done, moves its task file to `tasks/done/`.
 
 **Conflict avoidance:**
-- Each agent edits exactly ONE file in `.claude/tasks/` (its own task).
+- Each agent edits exactly ONE file (its own task).
 - The board index is regenerated on demand, not during parallel work.
 - Feature branches are independent; merge conflicts (if any) happen only at `develop` merge time.
-- Before starting, verify dependencies by reading (not writing) other task files.
+- Before starting, verify dependencies by checking that required tasks exist in `tasks/done/`.
 
 ### Rules
 
