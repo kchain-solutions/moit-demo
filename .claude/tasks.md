@@ -6,11 +6,11 @@
 
 | Phase | Total | Backlog | In Progress | Blocked | Done |
 |-------|-------|---------|-------------|---------|------|
-| 1     | 35    | 35      | 0           | 0       | 0    |
+| 1     | 54    | 54      | 0           | 0       | 0    |
 | 2     | 30    | 30      | 0           | 0       | 0    |
 | 3     | 12    | 12      | 0           | 0       | 0    |
 | 4     | 10    | 10      | 0           | 0       | 0    |
-| **Total** | **87** | **87** | **0** | **0** | **0** |
+| **Total** | **106** | **106** | **0** | **0** | **0** |
 
 ---
 
@@ -28,6 +28,7 @@
 - **Effort:** M
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Author `configs/demo-config.schema.json` with all constraints: unique org IDs, valid org references in consignments, slug format for `corridor.id`, at least 1 org per node.
@@ -42,6 +43,7 @@ Author `configs/demo-config.schema.json` with all constraints: unique org IDs, v
 - **Effort:** L
 - **Dependencies:** T-101
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Use actual stakeholder names from S7/S12. TNG is placeholder pending GATF/VITAS confirmation. Use UN/LOCODE for ports: VNSGN (Cat Lai), VNHPH (Hai Phong).
 
 Extract all hardcoded data from `server/index.js` into `configs/vietnam-us.json`: 10 Alpha orgs (L63-73), 4 Beta orgs (L74-79), 8 Alpha consignments (L446-455), 3 Beta consignments (L457-461), credential validation (L45-59), attesting authorities (L624-630), finance seed data (L1014-1116), geography from `countries.js`.
@@ -56,6 +58,7 @@ Extract all hardcoded data from `server/index.js` into `configs/vietnam-us.json`
 - **Effort:** S
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Create `configs/` directory. Move `vietnam.png` to `public/corridors/vietnam/`. Set up convention `public/corridors/{corridor-id}/`.
@@ -70,6 +73,7 @@ Create `configs/` directory. Move `vietnam.png` to `public/corridors/vietnam/`. 
 - **Effort:** M
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Core Vietnam differentiator. Without origin data, demo is indistinguishable from generic trade corridor.
 
 Add `originComposition` block to consignment config: `totalVietnamContentPercent`, `inputMaterials[]` (materialType, supplierCountry, cptppMember, valueOrWeight), `calculationMethod`, `cptppCumulationApplied`. Dashboard and Consignments pages must render this data.
@@ -84,6 +88,7 @@ Add `originComposition` block to consignment config: `totalVietnamContentPercent
 - **Effort:** S
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Extend org schema with `regulatoryAuthority`, `governmentSystem` (eCoSys, VNACCS), `digitalSignatureCapability`. Distinguishes government regulatory actors from commercial actors.
@@ -98,6 +103,7 @@ Extend org schema with `regulatoryAuthority`, `governmentSystem` (eCoSys, VNACCS
 - **Effort:** S
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Add top-level `documentTypes` registry defining valid document types per corridor with UNECE codes, source system, issuing authority, and Source of Truth vs Immutable Snapshot designation (per ADR-004).
@@ -112,6 +118,7 @@ Add top-level `documentTypes` registry defining valid document types per corrido
 - **Effort:** S
 - **Dependencies:** T-1V03
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Add `regulations` array to corridor config: UFLPA (US-bound), EVFTA (EU-bound), CPTPP with `applicableToDestinations`, `displayLabel`, `complianceFieldMapping`.
@@ -126,6 +133,7 @@ Add `regulations` array to corridor config: UFLPA (US-bound), EVFTA (EU-bound), 
 - **Effort:** S
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Important for MOIT demos: shows TWIN complements NSW/ASW, does not replace it.
 
 Add `channels` section declaring Channel A (Government NSW/ASW) and Channel B (TWIN) with which documents flow through each. Network page can visually distinguish the two channels.
@@ -144,6 +152,7 @@ Add `channels` section declaring Channel A (Government NSW/ASW) and Channel B (T
 - **Effort:** M
 - **Dependencies:** T-102
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Create `server/config.js`: reads JSON from `CONFIG_FILE` env var, validates structure, resolves org references, builds lookup maps. Returns `null` if file not found (hardcoded fallback).
@@ -158,6 +167,7 @@ Create `server/config.js`: reads JSON from `CONFIG_FILE` env var, validates stru
 - **Effort:** M
 - **Dependencies:** T-104
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace hardcoded `store.orgs` arrays (L62-84) with `config.organizations.filter(o => o.node === nodeId)`. Preserve hardcoded fallback when `config === null`.
@@ -172,6 +182,7 @@ Replace hardcoded `store.orgs` arrays (L62-84) with `config.organizations.filter
 - **Effort:** M
 - **Dependencies:** T-104
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace `ALPHA_CONSIGNMENTS` / `BETA_CONSIGNMENTS` (L446-461) and `docsForConsignment()` (L463-484) with config-driven reads.
@@ -186,6 +197,7 @@ Replace `ALPHA_CONSIGNMENTS` / `BETA_CONSIGNMENTS` (L446-461) and `docsForConsig
 - **Effort:** S
 - **Dependencies:** T-104
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace blacklist/expired/suspended arrays (L45-58) and `getAttestingAuthority()` (L624-630) with config reads.
@@ -200,6 +212,7 @@ Replace blacklist/expired/suspended arrays (L45-58) and `getAttestingAuthority()
 - **Effort:** S
 - **Dependencies:** T-104
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace hardcoded payments, LCs, smart contracts (L1014-1116) with `config.finance`.
@@ -214,6 +227,7 @@ Replace hardcoded payments, LCs, smart contracts (L1014-1116) with `config.finan
 - **Effort:** S
 - **Dependencies:** T-104
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Must NOT expose credentials, passwords, or validation blacklists. Should include `corridor.tradeAgreements` and regulatory metadata for government stakeholder demos.
 
 Serve corridor metadata, branding, node info, geography to frontend.
@@ -228,6 +242,7 @@ Serve corridor metadata, branding, node info, geography to frontend.
 - **Effort:** S
 - **Dependencies:** T-105
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Ensure org list endpoint returns orgs from config (username, name, role, category, country) without passwords. Login.jsx will use this instead of hardcoded arrays.
@@ -246,6 +261,7 @@ Ensure org list endpoint returns orgs from config (username, name, role, categor
 - **Effort:** M
 - **Dependencies:** T-109
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Create `client/src/context/ConfigContext.jsx`. Fetches from `GET /api/config`, provides via React context. Loading state while fetching. Sensible defaults on failure.
@@ -260,6 +276,7 @@ Create `client/src/context/ConfigContext.jsx`. Fetches from `GET /api/config`, p
 - **Effort:** S
 - **Dependencies:** T-109, T-110
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Add API client methods for the new endpoints.
@@ -274,6 +291,7 @@ Add API client methods for the new endpoints.
 - **Effort:** S
 - **Dependencies:** T-111
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Wrap application tree with `<ConfigProvider>` in App.jsx or main.jsx.
@@ -288,6 +306,7 @@ Wrap application tree with `<ConfigProvider>` in App.jsx or main.jsx.
 - **Effort:** M
 - **Dependencies:** T-111, T-112
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Remove `ALPHA_CREDS` (L5-16) and `BETA_CREDS` (L18-23). Fetch from `GET /api/orgs`. Replace node badge, title, logo with config values.
@@ -302,6 +321,7 @@ Remove `ALPHA_CREDS` (L5-16) and `BETA_CREDS` (L18-23). Fetch from `GET /api/org
 - **Effort:** M
 - **Dependencies:** T-114
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Actor-count-based layout: single list (1-4), scrollable (9-12), grouped by category with collapsible sections (13+).
@@ -316,6 +336,7 @@ Actor-count-based layout: single list (1-4), scrollable (9-12), grouped by categ
 - **Effort:** S
 - **Dependencies:** T-111
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace hardcoded "TWIN Vietnam" and `vietnam.png` (L44-48) with `useConfig().branding`. TWIN prefix + corridor name pattern.
@@ -330,6 +351,7 @@ Replace hardcoded "TWIN Vietnam" and `vietnam.png` (L44-48) with `useConfig().br
 - **Effort:** S
 - **Dependencies:** T-111
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Export function that merges defaults with `config.geography.countries`.
@@ -348,6 +370,7 @@ Export function that merges defaults with `config.geography.countries`.
 - **Effort:** M
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace `:root` variables (L1-22) with structured theming: `--corridor-accent`, `--corridor-secondary`, semantic colors, node colors, login gradient.
@@ -362,6 +385,7 @@ Replace `:root` variables (L1-22) with structured theming: `--corridor-accent`, 
 - **Effort:** M
 - **Dependencies:** T-118, T-111
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Create `applyTheme(config)` that sets CSS custom properties from config branding. Include `darken()`/`lighten()` utilities. Call from ConfigProvider.
@@ -376,6 +400,7 @@ Create `applyTheme(config)` that sets CSS custom properties from config branding
 - **Effort:** M
 - **Dependencies:** T-118
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace ~15 instances of `#11224E` and `#FF7200` in inline styles across Dashboard.jsx, TradeNetworkPanel.jsx, TradeFinance.jsx with CSS variable references.
@@ -394,6 +419,7 @@ Replace ~15 instances of `#11224E` and `#FF7200` in inline styles across Dashboa
 - **Effort:** S
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace `gridTemplateColumns: '1fr 360px'` (L185) with CSS class `.dash-grid`. Required for responsive media queries.
@@ -408,6 +434,7 @@ Replace `gridTemplateColumns: '1fr 360px'` (L185) with CSS class `.dash-grid`. R
 - **Effort:** M
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Extract LCTab grid (L155), ContractsTab grid (L424), LCStepper layout (L45-64) to `.tf-grid`, `.lc-stepper`, `.lc-step`, `.lc-connector`.
@@ -422,6 +449,7 @@ Extract LCTab grid (L155), ContractsTab grid (L424), LCStepper layout (L45-64) t
 - **Effort:** S
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Extract grid styles (L142, L267) to `.pay-grid`, `.pay-grid--detail`, `.pay-form-amount`.
@@ -436,6 +464,7 @@ Extract grid styles (L142, L267) to `.pay-grid`, `.pay-grid--detail`, `.pay-form
 - **Effort:** S
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Extract `gridTemplateColumns: 'repeat(5, 1fr)'` (L42) to `.analytics-filters`.
@@ -454,6 +483,7 @@ Extract `gridTemplateColumns: 'repeat(5, 1fr)'` (L42) to `.analytics-filters`.
 - **Effort:** M
 - **Dependencies:** T-121, T-122, T-123, T-124
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Three-tier breakpoints in `index.css`: tablet (1023px), mobile (767px), small mobile (480px). Base grid overrides for `.g4`, `.g3`, `.g2`.
@@ -468,6 +498,7 @@ Three-tier breakpoints in `index.css`: tablet (1023px), mobile (767px), small mo
 - **Effort:** M
 - **Dependencies:** T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Hide sidebar below 1024px. `sidebarOpen` state in App.jsx. Slide-out drawer (260px, fixed, z-50, shadow) with overlay. Close on nav item click or overlay tap.
@@ -482,6 +513,7 @@ Hide sidebar below 1024px. `sidebarOpen` state in App.jsx. Slide-out drawer (260
 - **Effort:** S
 - **Dependencies:** T-126
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `.hdr-menu` button, left-aligned before org name. Visible only below 1024px. Wired to `setSidebarOpen`.
@@ -496,6 +528,7 @@ Hide sidebar below 1024px. `sidebarOpen` state in App.jsx. Slide-out drawer (260
 - **Effort:** M
 - **Dependencies:** T-127
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Mobile: search collapses to icon with expandable overlay, hide user info text (avatar only), truncate org name. Tablet: search flex-shrinks.
@@ -510,6 +543,7 @@ Mobile: search collapses to icon with expandable overlay, hide user info text (a
 - **Effort:** M
 - **Dependencies:** T-126
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Fixed bottom bar (56px) for < 768px. 5 tabs: Dashboard, Consignments, Payments, Trade Finance, Network. Active tab highlighted. Content gets padding-bottom.
@@ -528,6 +562,7 @@ Fixed bottom bar (56px) for < 768px. 5 tabs: Dashboard, Consignments, Payments, 
 - **Effort:** S
 - **Dependencies:** T-121, T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `.g4` becomes 2x2 below 768px, 1-column below 480px. `.dash-grid` becomes single column below 1024px.
@@ -542,6 +577,7 @@ Fixed bottom bar (56px) for < 768px. 5 tabs: Dashboard, Consignments, Payments, 
 - **Effort:** M
 - **Dependencies:** T-130
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Card-based view for consignment table. Each card: UCR, status, route, product. Table hidden below 768px.
@@ -556,6 +592,7 @@ Card-based view for consignment table. Each card: UCR, status, route, product. T
 - **Effort:** M
 - **Dependencies:** T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `.csg-card-list` mobile view. Card: UCR, status, route, product, docs count, value. Tap expands detail. Meta grid 2-column on mobile.
@@ -570,6 +607,7 @@ Card-based view for consignment table. Each card: UCR, status, route, product. T
 - **Effort:** M
 - **Dependencies:** T-123, T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Single-column below 1024px. Card list below 768px. Detail inline instead of side-by-side.
@@ -584,6 +622,7 @@ Single-column below 1024px. Card list below 768px. Detail inline instead of side
 - **Effort:** M
 - **Dependencies:** T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Map 480px -> 280px on mobile. Hero stats 2x2 wrap. Bottom grid single column.
@@ -598,6 +637,7 @@ Map 480px -> 280px on mobile. Hero stats 2x2 wrap. Bottom grid single column.
 - **Effort:** M
 - **Dependencies:** T-134
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 TradeNetworkPanel detail panel becomes bottom sheet on mobile (full-width, max 55%, border-radius 12px top).
@@ -612,6 +652,7 @@ TradeNetworkPanel detail panel becomes bottom sheet on mobile (full-width, max 5
 - **Effort:** M
 - **Dependencies:** T-122, T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 6-step LC stepper vertical on < 768px. Connector becomes vertical. Grid single column. Tables to card lists.
@@ -626,6 +667,7 @@ TradeNetworkPanel detail panel becomes bottom sheet on mobile (full-width, max 5
 - **Effort:** S
 - **Dependencies:** T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `.g3` single column. Peer table to card list on mobile.
@@ -640,6 +682,7 @@ TradeNetworkPanel detail panel becomes bottom sheet on mobile (full-width, max 5
 - **Effort:** S
 - **Dependencies:** T-124, T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 5-column `.analytics-filters` to 2-column on mobile.
@@ -654,6 +697,7 @@ TradeNetworkPanel detail panel becomes bottom sheet on mobile (full-width, max 5
 - **Effort:** M
 - **Dependencies:** T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Hide permission matrix table on mobile. Per-consignment card list showing each org's access status.
@@ -672,6 +716,7 @@ Hide permission matrix table on mobile. Per-consignment card list showing each o
 - **Effort:** S
 - **Dependencies:** T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Prevent sticky hover on touch devices. All `:hover` rules wrapped in `@media (hover: hover)`.
@@ -686,6 +731,7 @@ Prevent sticky hover on touch devices. All `:hover` rules wrapped in `@media (ho
 - **Effort:** M
 - **Dependencies:** T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Targets: `.sb-nav button`, `.btn-sm`, `.hdr-bell`, `.tn-zoom-btn`, table rows, `.cred-row`.
@@ -700,6 +746,7 @@ Targets: `.sb-nav button`, `.btn-sm`, `.hdr-bell`, `.tn-zoom-btn`, table rows, `
 - **Effort:** S
 - **Dependencies:** T-125
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Modals on < 768px: `width: 100%`, `max-height: 90vh`, `border-radius: 16px 16px 0 0`.
@@ -714,6 +761,7 @@ Modals on < 768px: `width: 100%`, `max-height: 90vh`, `border-radius: 16px 16px 
 - **Effort:** S
 - **Dependencies:** none
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Low effort but high embarrassment risk. A demo shown to MOIT must correctly render Vietnamese names.
 
 Verify UTF-8 Vietnamese characters across the pipeline: config JSON parsing, Express API, React rendering, PDF templates, XML templates. Test with real names.
@@ -732,6 +780,7 @@ Verify UTF-8 Vietnamese characters across the pipeline: config JSON parsing, Exp
 - **Effort:** L
 - **Dependencies:** T-101, T-116, T-114
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Cambodia uses ASYCUDA (not VNACCS) and different business registration formats than Vietnam's MST system.
 
 Create `configs/cambodia-eu.json` with different orgs, countries, branding colors, geography. Validates config system works without code changes.
@@ -746,6 +795,7 @@ Create `configs/cambodia-eu.json` with different orgs, countries, branding color
 - **Effort:** S
 - **Dependencies:** T-1V03, T-143
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Same origin actors but European destination orgs (Nike EU, EU Customs Rotterdam), EVFTA instead of CPTPP, Port of Rotterdam. Tests same-origin/different-destination scenario.
@@ -760,6 +810,7 @@ Same origin actors but European destination orgs (Nike EU, EU Customs Rotterdam)
 - **Effort:** M
 - **Dependencies:** T-143
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** This is the only breaking change. Config file becomes required.
 
 Remove hardcoded data from `server/index.js`. Server exits with clear error if config file missing.
@@ -774,6 +825,7 @@ Remove hardcoded data from `server/index.js`. Server exits with clear error if c
 - **Effort:** M
 - **Dependencies:** T-143, T-144
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Test both configs end-to-end. Vietnam-US: verify identical to current demo. Cambodia-EU: verify different branding, orgs, consignments. Login works on both nodes for both.
@@ -788,6 +840,7 @@ Test both configs end-to-end. Vietnam-US: verify identical to current demo. Camb
 - **Effort:** M
 - **Dependencies:** T-128, T-129, T-131, T-132
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Test iPad (1024x768) and iPhone (375x812). Verify: no horizontal scroll, drawer works, hamburger visible, bottom nav functional, card lists render, modals as bottom sheets, 44px+ targets.
@@ -802,6 +855,7 @@ Test iPad (1024x768) and iPhone (375x812). Verify: no horizontal scroll, drawer 
 - **Effort:** S
 - **Dependencies:** T-104
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Accept `CONFIG_FILE` env var per service. Default to `./configs/vietnam-us.json`.
@@ -822,6 +876,7 @@ Accept `CONFIG_FILE` env var per service. Default to `./configs/vietnam-us.json`
 - **Effort:** S
 - **Dependencies:** none (can start during Phase 1)
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** PRIMARY EXTERNAL DEPENDENCY. Vietnam-specific risk: TWIN team may not have experience with Vietnam data model extensions.
 
 Coordinate with IOTA Foundation / TWIN team for Docker images, registry credentials, testnet configuration.
@@ -836,6 +891,7 @@ Coordinate with IOTA Foundation / TWIN team for Docker images, registry credenti
 - **Effort:** L
 - **Dependencies:** T-201
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Bootstrap with Vietnam corridor actor identities. Include origin composition test data.
 
 Set up `supply-chain-node` (Alpha) with identity, notarization, blob storage. Document config, ports, health checks.
@@ -850,6 +906,7 @@ Set up `supply-chain-node` (Alpha) with identity, notarization, blob storage. Do
 - **Effort:** M
 - **Dependencies:** T-201
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Second `supply-chain-node` (Beta) with identity and notarization.
@@ -864,6 +921,7 @@ Second `supply-chain-node` (Beta) with identity and notarization.
 - **Effort:** S
 - **Dependencies:** T-202, T-203
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Obtain testnet IOTA tokens for both wallets. Document faucet process and addresses.
@@ -882,6 +940,7 @@ Obtain testnet IOTA tokens for both wallets. Document faucet process and address
 - **Effort:** M
 - **Dependencies:** T-145
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Create `server/adapter/index.js` mirroring all `/api/*` routes. Initially pass-through to existing demo server.
@@ -896,6 +955,7 @@ Create `server/adapter/index.js` mirroring all `/api/*` routes. Initially pass-t
 - **Effort:** L
 - **Dependencies:** T-202
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `server/adapter/twin-client.js` with typed methods: `login()`, `createIdentity()`, `issueCredential()`, `createNotarization()`, `uploadBlob()`, `getAuditTrail()`.
@@ -910,6 +970,7 @@ Create `server/adapter/index.js` mirroring all `/api/*` routes. Initially pass-t
 - **Effort:** M
 - **Dependencies:** T-206
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `server/adapter/middleware/session.js`: JWT token management, refresh, mapping from demo auth to TWIN Node auth.
@@ -924,6 +985,7 @@ Create `server/adapter/index.js` mirroring all `/api/*` routes. Initially pass-t
 - **Effort:** S
 - **Dependencies:** T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `server/adapter/middleware/error.js`: translate TWIN Node errors to demo's expected format.
@@ -938,6 +1000,7 @@ Create `server/adapter/index.js` mirroring all `/api/*` routes. Initially pass-t
 - **Effort:** S
 - **Dependencies:** T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Extend with `GOV_INTEGRATION_MODE=mock|stub|live` for government system toggles (eCoSys, VNACCS available much later than IOTA testnet).
 
 `ADAPTER_MODE=real|simulated`. Simulated = fallback to demo server logic. Real = call TWIN Node.
@@ -956,6 +1019,7 @@ Create `server/adapter/index.js` mirroring all `/api/*` routes. Initially pass-t
 - **Effort:** M
 - **Dependencies:** T-207, T-209
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `POST /api/login`, `GET /api/node`. Real mode: call TWIN Node authentication. Simulated: current behavior.
@@ -970,6 +1034,7 @@ Create `server/adapter/index.js` mirroring all `/api/*` routes. Initially pass-t
 - **Effort:** L
 - **Dependencies:** T-206, T-210
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `POST /api/orgs/:id/register`: real IOTA Identity `did:iota:testnet:0x...` + W3C VC issuance with regNumber claim.
@@ -984,6 +1049,7 @@ Create `server/adapter/index.js` mirroring all `/api/*` routes. Initially pass-t
 - **Effort:** M
 - **Dependencies:** T-211
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `GET /api/orgs`, `GET /api/orgs/:id`. Enriches config orgs with real DID status from TWIN identity service.
@@ -998,6 +1064,7 @@ Create `server/adapter/index.js` mirroring all `/api/*` routes. Initially pass-t
 - **Effort:** S
 - **Dependencies:** T-211
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 End-to-end: created DIDs resolve on IOTA Explorer. Target round-trip < 8 seconds.
@@ -1016,6 +1083,7 @@ End-to-end: created DIDs resolve on IOTA Explorer. Target round-trip < 8 seconds
 - **Effort:** L
 - **Dependencies:** T-206, T-210
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Tangle log writes via `POST /notarization` (SHA-256 as Move object). Reads from `GET /notarization`.
@@ -1030,6 +1098,7 @@ Tangle log writes via `POST /notarization` (SHA-256 as Move object). Reads from 
 - **Effort:** L
 - **Dependencies:** T-214
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `POST /api/documents`: hash file, upload to Blob Storage, create UNECE record, notarize on-chain.
@@ -1044,6 +1113,7 @@ Tangle log writes via `POST /notarization` (SHA-256 as Move object). Reads from 
 - **Effort:** S
 - **Dependencies:** T-215
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Upload doc, verify SHA-256 matches on-chain. Target round-trip < 5 seconds.
@@ -1062,6 +1132,7 @@ Upload doc, verify SHA-256 matches on-chain. Target round-trip < 5 seconds.
 - **Effort:** M
 - **Dependencies:** T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** eCoSys API format unknown (Q6 topology-tracker.md). HIGH risk of unavailability (RV-01).
 
 Stub simulating MOIT C/O data flow. Three integration modes: push (webhook), poll (query), manual (upload). Designed for replaceability.
@@ -1076,6 +1147,7 @@ Stub simulating MOIT C/O data flow. Three integration modes: push (webhook), pol
 - **Effort:** M
 - **Dependencies:** T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** VNACCS API likely restricted (Q7 topology-tracker.md). Based on Japan's NACCS (S15). HIGH risk (RV-02).
 
 Stub simulating customs clearance data flow. Clearance status webhook pattern (pending -> cleared -> departed).
@@ -1090,6 +1162,7 @@ Stub simulating customs clearance data flow. Clearance status webhook pattern (p
 - **Effort:** M
 - **Dependencies:** T-1V03, T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Thresholds depend on T8 output. Make fully configurable.
 
 Calculator: input materials -> `IOriginComposition` output. Configurable per HS code (different rules for HS61 vs HS62). Value-based and weight-based methods.
@@ -1104,6 +1177,7 @@ Calculator: input materials -> `IOriginComposition` output. Configurable per HS 
 - **Effort:** M
 - **Dependencies:** T-205, T-214
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Signal types: `origin-verified-despatch`, `origin-pre-notification`, `co-issued`, `export-cleared`. Dummy endpoints for Phase 2.
@@ -1118,6 +1192,7 @@ Signal types: `origin-verified-despatch`, `origin-pre-notification`, `co-issued`
 - **Effort:** S
 - **Dependencies:** T-1V03, T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Boolean `uflpaAttestation` for US-bound consignments. Compliance indicator in UI. Include in ISN payloads to US CBP.
@@ -1132,6 +1207,7 @@ Boolean `uflpaAttestation` for US-bound consignments. Compliance indicator in UI
 - **Effort:** M
 - **Dependencies:** T-215, T-1V07
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Test: (1) origin composition crosses P2P, (2) MOIT C/O as immutable snapshot, (3) ODRL field restrictions, (4) Vietnamese diacritics survive round-trip.
@@ -1146,6 +1222,7 @@ Test: (1) origin composition crosses P2P, (2) MOIT C/O as immutable snapshot, (3
 - **Effort:** M
 - **Dependencies:** T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Use Vietnamese port codes VNSGN, VNHPH.
 
 Templates: US CBP origin verification, EU Customs read, MOIT monitoring, data sovereignty constraint (hashes only cross borders).
@@ -1164,6 +1241,7 @@ Templates: US CBP origin verification, EU Customs read, MOIT monitoring, data so
 - **Effort:** L
 - **Dependencies:** T-206, T-210
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 CRUD for consignments. Maps to TWIN supply chain service. Translates demo model to UNECE `ISupplyChainAppConsignment`.
@@ -1178,6 +1256,7 @@ CRUD for consignments. Maps to TWIN supply chain service. Translates demo model 
 - **Effort:** M
 - **Dependencies:** T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Permissions remain in-memory in Phase 2. Adapter generates ODRL policy stubs previewing Phase 3.
@@ -1192,6 +1271,7 @@ Permissions remain in-memory in Phase 2. Adapter generates ODRL policy stubs pre
 - **Effort:** S
 - **Dependencies:** T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Finance fully simulated in Phase 2. Pass-through from demo server logic.
@@ -1206,6 +1286,7 @@ Finance fully simulated in Phase 2. Pass-through from demo server logic.
 - **Effort:** M
 - **Dependencies:** T-214
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Merge real on-chain entries with simulated events. Real entries get on-chain indicator.
@@ -1220,6 +1301,7 @@ Merge real on-chain entries with simulated events. Real entries get on-chain ind
 - **Effort:** M
 - **Dependencies:** T-210, T-212, T-214, T-217, T-218, T-219
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `ADAPTER_MODE=simulated` must be identical to current demo. Test all 9 pages end-to-end.
@@ -1234,6 +1316,7 @@ Merge real on-chain entries with simulated events. Real entries get on-chain ind
 - **Effort:** L
 - **Dependencies:** T-221
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Full flow with real TWIN Nodes: login, register DID, upload + notarize doc, view real Tangle entries.
@@ -1248,6 +1331,7 @@ Full flow with real TWIN Nodes: login, register DID, upload + notarize doc, view
 - **Effort:** M
 - **Dependencies:** T-202, T-203, T-205
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Add adapter, TWIN Node Alpha, TWIN Node Beta services. Networking, env vars, health checks.
@@ -1266,6 +1350,7 @@ Add adapter, TWIN Node Alpha, TWIN Node Beta services. Networking, env vars, hea
 - **Effort:** L
 - **Dependencies:** T-222
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** HIGH risk: DSC config is complex. Two-channel architecture (ASW + TWIN) adds protocol design complexity.
 
 Work with TWIN team (Ian Clark) on DSC setup, authentication (JWT-VC), ODRL format for Vietnam.
@@ -1280,6 +1365,7 @@ Work with TWIN team (Ian Clark) on DSC setup, authentication (JWT-VC), ODRL form
 - **Effort:** L
 - **Dependencies:** T-301
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** DSC metadata must indicate Channel B (TWIN) and include eCoSys C/O reference for cross-channel correlation.
 
 Replace WebSocket P2P with DSC protocol (HTTPS). Map SHARE/REVOKE/HANDSHAKE to DSC equivalents.
@@ -1294,6 +1380,7 @@ Replace WebSocket P2P with DSC protocol (HTTPS). Map SHARE/REVOKE/HANDSHAKE to D
 - **Effort:** L
 - **Dependencies:** T-222
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace hybrid Tangle log with full AIG integration. Events as AIG entries with on-chain anchoring via AIS.
@@ -1308,6 +1395,7 @@ Replace hybrid Tangle log with full AIG integration. Events as AIG entries with 
 - **Effort:** L
 - **Dependencies:** T-301
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Share/revoke create real ODRL policies. Access checks via `GET /rights/policies`. Replaces in-memory permission system.
@@ -1322,6 +1410,7 @@ Share/revoke create real ODRL policies. Access checks via `GET /rights/policies`
 - **Effort:** L
 - **Dependencies:** T-217
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Must preserve origin composition data. Two-level structure (transport + included consignments). IOriginComposition extension must be approved by TWIN team.
 
 Map to `ISupplyChainAppConsignment` + `IUneceDocument`. Implement `IOriginComposition` extension.
@@ -1336,6 +1425,7 @@ Map to `ISupplyChainAppConsignment` + `IUneceDocument`. Implement `IOriginCompos
 - **Effort:** L
 - **Dependencies:** T-305, T-2V03
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Must support multiple calculation methods (value-based for US, different EVFTA thresholds for HS61 vs HS62). Single `totalVietnamContentPercent` is insufficient.
 
 Formal model extension: `calculationResults[]` per regulation (CPTPP, EVFTA, US tariff), each with method and determination. Coordinate with TWIN core team.
@@ -1350,6 +1440,7 @@ Formal model extension: `calculationResults[]` per regulation (CPTPP, EVFTA, US 
 - **Effort:** M
 - **Dependencies:** T-302
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Replace WebSocket `ORG_DIRECTORY` with DSC federated catalogue.
@@ -1364,6 +1455,7 @@ Replace WebSocket `ORG_DIRECTORY` with DSC federated catalogue.
 - **Effort:** L
 - **Dependencies:** T-302, T-304
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Blocked by T8 findings. Vietnam Cybersecurity Law may require this.
 
 Sovereign mode: full documents stay on Alpha, only hashes/proofs/summaries cross to Beta. ODRL auto-enforces data residency.
@@ -1378,6 +1470,7 @@ Sovereign mode: full documents stay on Alpha, only hashes/proofs/summaries cross
 - **Effort:** M
 - **Dependencies:** T-302, T-2V04
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Per-destination subscriber config: US CBP gets UFLPA fields, EU Customs gets EVFTA fields, Japan gets CPTPP data.
@@ -1392,6 +1485,7 @@ Per-destination subscriber config: US CBP gets UFLPA fields, EU Customs gets EVF
 - **Effort:** M
 - **Dependencies:** T-302
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Destination customs notification stubs.
@@ -1406,6 +1500,7 @@ Destination customs notification stubs.
 - **Effort:** M
 - **Dependencies:** T9 output
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Depends on T9 answering Q28/Q29. If NDATrace has no API, close this task.
 
 Assess NDATrace API availability. If available, create adapter stub for traceability cross-referencing.
@@ -1420,6 +1515,7 @@ Assess NDATrace API availability. If available, create adapter stub for traceabi
 - **Effort:** L
 - **Dependencies:** T-302, T-303, T-304
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Full corridor flow: create consignment, share via DSC, verify ODRL, verify AIG, revoke within 10s. Both Vietnam-US and Cambodia-EU configs.
@@ -1438,6 +1534,7 @@ Full corridor flow: create consignment, share via DSC, verify ODRL, verify AIG, 
 - **Effort:** L
 - **Dependencies:** T-308
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 OAuth2 or PIN-based auth. Update Login.jsx if flow changes.
@@ -1452,6 +1549,7 @@ OAuth2 or PIN-based auth. Update Login.jsx if flow changes.
 - **Effort:** M
 - **Dependencies:** T-401, T9 output
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Investigate Vietnam government SSO (SAML 2.0 / OIDC). If none exists, design PIN or certificate-based auth for MOIT/Customs users.
@@ -1466,6 +1564,7 @@ Investigate Vietnam government SSO (SAML 2.0 / OIDC). If none exists, design PIN
 - **Effort:** L
 - **Dependencies:** T-308
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** If data sovereignty requires Vietnam hosting, PostgreSQL must be on Vietnamese cloud (Viettel Cloud, VNPT, FPT).
 
 Migrate in-memory stores to managed PostgreSQL. Schema, migrations, adapter route updates.
@@ -1480,6 +1579,7 @@ Migrate in-memory stores to managed PostgreSQL. Schema, migrations, adapter rout
 - **Effort:** M
 - **Dependencies:** T-402
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 S3 or GCS. Upload docs, store references in PostgreSQL.
@@ -1494,6 +1594,7 @@ S3 or GCS. Upload docs, store references in PostgreSQL.
 - **Effort:** L
 - **Dependencies:** T-401
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Private keys to HashiCorp Vault or AWS KMS. No secrets in config or logs.
@@ -1508,6 +1609,7 @@ Private keys to HashiCorp Vault or AWS KMS. No secrets in config or logs.
 - **Effort:** M
 - **Dependencies:** T-402
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 `GET /health` with component status. JSON structured logging. Request IDs for tracing.
@@ -1522,6 +1624,7 @@ Private keys to HashiCorp Vault or AWS KMS. No secrets in config or logs.
 - **Effort:** L
 - **Dependencies:** T-405
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 K8s deployments, TLS termination, resource limits, probes, HPA.
@@ -1536,6 +1639,7 @@ K8s deployments, TLS termination, resource limits, probes, HPA.
 - **Effort:** L
 - **Dependencies:** T8 output, T-3V02
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:** Blocked by T8 findings on data sovereignty.
 
 Evaluate Viettel Cloud, VNPT, FPT Cloud. Manifests for Vietnamese provider. Hybrid option: Alpha in Vietnam, Beta in EU/US cloud.
@@ -1550,6 +1654,7 @@ Evaluate Viettel Cloud, VNPT, FPT Cloud. Manifests for Vietnamese provider. Hybr
 - **Effort:** L
 - **Dependencies:** T-401, T-402
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Input validation, CSRF, rate limiting, CSP, SQL injection prevention. No secrets in logs.
@@ -1564,6 +1669,7 @@ Input validation, CSRF, rate limiting, CSP, SQL injection prevention. No secrets
 - **Effort:** M
 - **Dependencies:** T-406
 - **Branch:**
+- **Assignee:** Valerio Mellini
 - **Notes:**
 
 Operator guide: deploy, configure, monitor, troubleshoot. Target: scratch to running in < 15 minutes.

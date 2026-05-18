@@ -108,6 +108,7 @@ Each task is a markdown section with structured fields:
 - **Effort:** M
 - **Dependencies:** none
 - **Branch:** (created when in_progress)
+- **Assignee:** (name of who is working on it)
 - **Notes:** (optional, used for blockers or context)
 
 Description of what needs to be done.
