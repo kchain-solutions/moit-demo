@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
 import { CreditCard, Plus, X, ChevronRight, CheckCircle, Clock, AlertCircle, Share2, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
 
@@ -43,6 +44,7 @@ function StatCard({ icon: Icon, label, value, sub, color }) {
 
 export default function Payments() {
   const { user, refreshKey, refresh } = useNode();
+  const config = useConfig();
   const [consignments, setConsignments] = useState([]);
   const [allOrgs, setAllOrgs] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -301,7 +303,7 @@ export default function Payments() {
                 <div className="fg">
                   <label>Currency</label>
                   <select value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                    <option>USD</option><option>EUR</option><option>KES</option>
+                    {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
                   </select>
                 </div>
               </div>
@@ -313,7 +315,7 @@ export default function Payments() {
                 <div className="fg">
                   <label>Payment Method</label>
                   <select value={form.paymentMethod} onChange={e => setForm(f => ({ ...f, paymentMethod: e.target.value }))}>
-                    <option>Bank Transfer</option><option>Letter of Credit</option><option>Open Account</option><option>Cash Against Documents</option>
+                    {(config?.finance?.paymentMethods || ['Bank Transfer', 'Letter of Credit', 'Open Account', 'Cash Against Documents']).map(m => <option key={m} value={m}>{m}</option>)}
                   </select>
                 </div>
               </div>

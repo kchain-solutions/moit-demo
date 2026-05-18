@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
 import TradeNetworkPanel from './TradeNetworkPanel';
-import { countryFromRole } from '../data/countries';
+import { countryFromRoleWithConfig } from '../data/countries';
 import { Server, Link2, Globe } from 'lucide-react';
 
 export default function Network() {
   const { user, nodeInfo, peerConnected, peerOrgs, tangleLog, refreshKey, refresh } = useNode();
+  const config = useConfig();
   const [orgs, setOrgs] = useState([]);
   const [consignments, setConsignments] = useState([]);
   const [discoverable, setDiscoverable] = useState([]);
@@ -35,7 +37,7 @@ export default function Network() {
   const peerNodeName = discoverable[0]?.name;
 
   const focusOrg = (org, side) => {
-    const country = countryFromRole(org.role);
+    const country = countryFromRoleWithConfig(org.role, config);
     if (!country) return;
     setSelection({ countryName: country, expandedOrgKey: `${side}-${org.id}`, nodeSide: null });
   };
@@ -96,7 +98,7 @@ export default function Network() {
           ) : (
             <div className="net-org-list">
               {orgs.map(o => {
-                const hasCountry = !!countryFromRole(o.role);
+                const hasCountry = !!countryFromRoleWithConfig(o.role, config);
                 const key = `local-${o.id}`;
                 const isActive = selection.expandedOrgKey === key;
                 return (
@@ -135,7 +137,7 @@ export default function Network() {
           ) : (
             <div className="net-org-list">
               {peerOrgs.map(o => {
-                const hasCountry = !!countryFromRole(o.role);
+                const hasCountry = !!countryFromRoleWithConfig(o.role, config);
                 const key = `peer-${o.id}`;
                 const isActive = selection.expandedOrgKey === key;
                 return (

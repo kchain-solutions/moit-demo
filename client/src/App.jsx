@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNode } from './context/NodeContext';
+import { useConfig } from './context/ConfigContext';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Network from './components/Network';
@@ -24,6 +25,7 @@ const PAGES = [
 
 export default function App() {
   const { user, nodeInfo, peerConnected, logout } = useNode();
+  const config = useConfig();
   const [page, setPage] = useState('dashboard');
   const [searchQ, setSearchQ] = useState('');
   const [targetConsignment, setTargetConsignment] = useState(null);
@@ -55,9 +57,9 @@ export default function App() {
 
       <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sb-brand">
-          <img src="/vietnam.png" alt="Vietnam" style={{ height: 22, width: 22, objectFit: 'contain', flexShrink: 0 }} />
+          <img src={config?.branding?.logo || '/logo.png'} alt="Logo" style={{ height: 22, width: 22, objectFit: 'contain', flexShrink: 0 }} />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25, minWidth: 0 }}>
-            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>TWIN Vietnam</span>
+            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>{config?.branding?.appName || 'TWIN'}</span>
 
           </div>
         </div>

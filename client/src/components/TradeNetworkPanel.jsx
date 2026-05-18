@@ -2,7 +2,8 @@ import React, { useMemo, useState, useEffect } from 'react';
 import { ComposableMap, Geographies, Geography, ZoomableGroup, useMapContext } from 'react-simple-maps';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Wifi, WifiOff, Unlink, Radio, Plus, Minus, Maximize2, X, ShieldCheck, Building2, MapPin, Server } from 'lucide-react';
-import { COUNTRY_COORDS, COUNTRY_SPREAD, ISO_TO_COUNTRY, countryFromRole } from '../data/countries';
+import { useConfig } from '../context/ConfigContext';
+import { getCountryData, countryFromRoleWithConfig } from '../data/countries';
 
 const GEO_URL = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 const COLOR_BY_SIDE = {
@@ -15,17 +16,18 @@ const ACTOR_LABEL_ZOOM = 3.5;  // labels appear
 
 // ── Data ──────────────────────────────────────────────────────────────────
 
-function aggregateOrgs(localOrgs, peerOrgs) {
+function aggregateOrgs(localOrgs, peerOrgs, config) {
+  const { countryCoords } = getCountryData(config);
   const byCountry = new Map();
   const add = (org, side) => {
-    const country = countryFromRole(org.role);
-    if (!country || !COUNTRY_COORDS[country]) return;
+    const country = countryFromRoleWithConfig(org.role, config);
+    if (!country || !countryCoords[country]) return;
     const existing = byCountry.get(country);
     if (existing) {
       existing.orgs.push({ ...org, side });
       if (existing.side !== side) existing.side = 'mixed';
     } else {
-      byCountry.set(country, { country, orgs: [{ ...org, side }], side, coords: COUNTRY_COORDS[country] });
+      byCountry.set(country, { country, orgs: [{ ...org, side }], side, coords: countryCoords[country] });
     }
   };
   localOrgs.forEach(o => add(o, 'local'));
@@ -36,11 +38,12 @@ function aggregateOrgs(localOrgs, peerOrgs) {
   return Array.from(byCountry.values());
 }
 
-function aggregateRoutes(consignments) {
+function aggregateRoutes(consignments, config) {
+  const { countryCoords } = getCountryData(config);
   const byPair = new Map();
   consignments.forEach(c => {
     if (!c.fromCountry || !c.toCountry) return;
-    if (!COUNTRY_COORDS[c.fromCountry] || !COUNTRY_COORDS[c.toCountry]) return;
+    if (!countryCoords[c.fromCountry] || !countryCoords[c.toCountry]) return;
     const key = `${c.fromCountry}→${c.toCountry}`;
     const existing = byPair.get(key);
     if (existing) existing.count++;
@@ -90,16 +93,17 @@ const COMPASS_POINTS = {
 const COMPASS_ORDER = ['S', 'E', 'N', 'W', 'SE', 'NE', 'NW', 'SW'];
 
 // Per-org compass overrides (by org id). Falls back to COMPASS_ORDER index.
+// Position hints are layout logic, not displayed content.
 const ORG_COMPASS_OVERRIDE = {
-  org1: 'S',  // TNG Investment & Trading JSC → south of Vietnam
-  org2: 'N',  // Vietnam Customs → north of Vietnam
-  org3: 'NW', // MOIT → north-west of Vietnam
+  org1: 'S',
+  org2: 'N',
+  org3: 'NW',
 };
 
-function orgPositions(entry) {
+function orgPositions(entry, countrySpread) {
   const [clng, clat] = entry.coords;
   const orgs = entry.orgs;
-  const spread = COUNTRY_SPREAD[entry.country] ?? 1.6;
+  const spread = (countrySpread && countrySpread[entry.country]) ?? 1.6;
   const cx = clng - spread * 0.05;
   const used = new Set();
   for (const o of orgs) {
@@ -139,14 +143,14 @@ function curvedPath(x1, y1, x2, y2, curvature = 0.4) {
 // Hub-and-spoke lines from each actor to its node's TWIN marker. Lines that
 // cross country borders are curved as elegant arcs; same-country lines stay
 // straight to keep the local cluster clean.
-function ActorConnections({ entries, localAnchor, peerAnchor, zoom, yLift }) {
+function ActorConnections({ entries, localAnchor, peerAnchor, zoom, yLift, countrySpread }) {
   const { projection } = useMapContext();
   if (!projection) return null;
   const localP = localAnchor ? projection(localAnchor.coords) : null;
   const peerP  = peerAnchor  ? projection(peerAnchor.coords)  : null;
   const paths = [];
   for (const entry of entries) {
-    for (const pos of orgPositions(entry)) {
+    for (const pos of orgPositions(entry, countrySpread)) {
       const ap = projection(pos.coords);
       if (!ap) continue;
       const isLocal = pos.org.side === 'local';
@@ -183,14 +187,14 @@ function ActorConnections({ entries, localAnchor, peerAnchor, zoom, yLift }) {
 
 // ── Map layers ────────────────────────────────────────────────────────────
 
-function TradeArcs({ routes }) {
+function TradeArcs({ routes, countryCoords }) {
   const { projection } = useMapContext();
   if (!projection) return null;
   return (
     <g style={{ pointerEvents: 'none' }}>
       {routes.map(r => {
-        const p1 = projection(COUNTRY_COORDS[r.from]);
-        const p2 = projection(COUNTRY_COORDS[r.to]);
+        const p1 = projection(countryCoords[r.from]);
+        const p2 = projection(countryCoords[r.to]);
         if (!p1 || !p2) return null;
         return (
           <path
@@ -385,10 +389,10 @@ function ActorMarker({ position, org, zoom, isSelected, onSelect }) {
   );
 }
 
-function ActorLayer({ entries, zoom, onSelectOrg, selectedOrgKey }) {
+function ActorLayer({ entries, zoom, onSelectOrg, selectedOrgKey, countrySpread }) {
   if (zoom < ACTOR_LAYER_ZOOM) return null;
   const all = entries.flatMap(entry =>
-    orgPositions(entry).map(pos => ({ pos, country: entry.country }))
+    orgPositions(entry, countrySpread).map(pos => ({ pos, country: entry.country }))
   );
   return (
     <g>
@@ -523,11 +527,11 @@ function CountryDetailPanel({ country, onClose, peerNodeName, nodeName, expanded
 
 // Node-detail side panel — opens when a TWIN marker is clicked.
 // Lists every org on that node grouped by country.
-function NodeDetailPanel({ side, nodeName, orgs, peerConnected, onClose }) {
+function NodeDetailPanel({ side, nodeName, orgs, peerConnected, onClose, config }) {
   if (!orgs) return null;
   const color = COLOR_BY_SIDE[side] || COLOR_BY_SIDE.local;
   const byCountry = orgs.reduce((acc, o) => {
-    const c = countryFromRole(o.role) || 'Unknown';
+    const c = countryFromRoleWithConfig(o.role, config) || 'Unknown';
     if (!acc[c]) acc[c] = [];
     acc[c].push(o);
     return acc;
@@ -606,8 +610,10 @@ export default function TradeNetworkPanel({
   selection = { countryName: null, expandedOrgKey: null },
   onSelectionChange,
 }) {
-  const countryEntries = useMemo(() => aggregateOrgs(localOrgs, peerOrgs), [localOrgs, peerOrgs]);
-  const routes = useMemo(() => aggregateRoutes(consignments), [consignments]);
+  const config = useConfig();
+  const { isoToCountry, countryCoords, countrySpread } = useMemo(() => getCountryData(config), [config]);
+  const countryEntries = useMemo(() => aggregateOrgs(localOrgs, peerOrgs, config), [localOrgs, peerOrgs, config]);
+  const routes = useMemo(() => aggregateRoutes(consignments, config), [consignments, config]);
   const localAnchor = useMemo(() => dominantCountry(countryEntries, 'local'), [countryEntries]);
   const peerAnchor  = useMemo(() => dominantCountry(countryEntries, 'peer'),  [countryEntries]);
 
@@ -696,7 +702,7 @@ export default function TradeNetworkPanel({
             <Geographies geography={GEO_URL}>
               {({ geographies }) =>
                 geographies.map(geo => {
-                  const countryName = ISO_TO_COUNTRY[geo.id];
+                  const countryName = isoToCountry[geo.id];
                   const entry = countryName ? countryEntries.find(e => e.country === countryName) : null;
                   const isSelected = entry && liveSelected?.country === entry.country;
                   const baseColor = entry ? COLOR_BY_SIDE[entry.side] : null;
@@ -734,6 +740,7 @@ export default function TradeNetworkPanel({
                 peerAnchor={peerAnchor}
                 zoom={zoom}
                 yLift={yLift}
+                countrySpread={countrySpread}
               />
             )}
 
@@ -746,6 +753,7 @@ export default function TradeNetworkPanel({
               zoom={zoom}
               onSelectOrg={handleSelectOrg}
               selectedOrgKey={selection.expandedOrgKey}
+              countrySpread={countrySpread}
             />
 
             {localAnchor && (
@@ -788,6 +796,7 @@ export default function TradeNetworkPanel({
               orgs={selection.nodeSide === 'local' ? localOrgs : peerOrgs}
               peerConnected={peerConnected}
               onClose={handleClose}
+              config={config}
             />
           ) : liveSelected && (
             <CountryDetailPanel

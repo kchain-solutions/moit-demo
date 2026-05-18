@@ -1,11 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
 import { Plus, ChevronRight, CheckCircle, Circle, Clock, Zap, Hash, RefreshCw, Share2, X } from 'lucide-react';
 
 /* ─── helpers ─── */
 const fmtVal = (n, cur = 'USD') => {
-  const symbols = { USD: '$', EUR: '€', VND: '₫' };
+  const symbols = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', CNY: '¥', KES: 'KES ', VND: '₫', KRW: '₩' };
   const s = symbols[cur] || cur + ' ';
   return `${s}${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 };
@@ -93,7 +94,7 @@ const ContractTimeline = ({ status }) => {
 /* ══════════════════════════════════════════════════════════
    LETTER OF CREDIT TAB
 ══════════════════════════════════════════════════════════ */
-function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
+function LCTab({ user, consignments, allOrgs, refresh, refreshKey, config }) {
   const [lcs, setLcs] = useState([]);
   const [selected, setSelected] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -311,11 +312,11 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Issuing Bank *</label>
-                <input className="input" placeholder="e.g. HSBC Vietnam" value={form.issuingBank} onChange={e => setForm(f => ({ ...f, issuingBank: e.target.value }))} />
+                <input className="input" placeholder="Issuing bank" value={form.issuingBank} onChange={e => setForm(f => ({ ...f, issuingBank: e.target.value }))} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Advising Bank</label>
-                <input className="input" placeholder="e.g. Vietcombank" value={form.advisingBank} onChange={e => setForm(f => ({ ...f, advisingBank: e.target.value }))} />
+                <input className="input" placeholder="Advising bank" value={form.advisingBank} onChange={e => setForm(f => ({ ...f, advisingBank: e.target.value }))} />
               </div>
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Beneficiary</label>
@@ -332,7 +333,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
                 <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                  <option>USD</option><option>EUR</option><option>VND</option>
+                  {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
             </div>
@@ -382,7 +383,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
 /* ══════════════════════════════════════════════════════════
    SMART CONTRACTS TAB
 ══════════════════════════════════════════════════════════ */
-function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
+function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey, config }) {
   const [contracts, setContracts] = useState([]);
   const [selected, setSelected] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -682,7 +683,7 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
               <div>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
                 <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                  <option>USD</option><option>EUR</option><option>VND</option>
+                  {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
                 </select>
               </div>
               <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', gap: 8 }}>
@@ -737,6 +738,7 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
 ══════════════════════════════════════════════════════════ */
 export default function TradeFinance() {
   const { user, refreshKey, refresh } = useNode();
+  const config = useConfig();
   const [tab, setTab] = useState('lc');
   const [consignments, setConsignments] = useState([]);
   const [allOrgs, setAllOrgs] = useState([]);
@@ -776,10 +778,10 @@ export default function TradeFinance() {
       </div>
 
       {tab === 'lc' && (
-        <LCTab user={user} consignments={consignments} allOrgs={allOrgs} refresh={refresh} refreshKey={refreshKey} />
+        <LCTab user={user} consignments={consignments} allOrgs={allOrgs} refresh={refresh} refreshKey={refreshKey} config={config} />
       )}
       {tab === 'contracts' && (
-        <ContractsTab user={user} consignments={consignments} allOrgs={allOrgs} refresh={refresh} refreshKey={refreshKey} />
+        <ContractsTab user={user} consignments={consignments} allOrgs={allOrgs} refresh={refresh} refreshKey={refreshKey} config={config} />
       )}
     </div>
   );
