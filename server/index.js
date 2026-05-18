@@ -502,6 +502,20 @@ const upload = multer({ storage: multer.memoryStorage(), limits: { fileSize: 20 
 const publicDir = path.join(__dirname, 'public');
 if (existsSync(publicDir)) app.use(express.static(publicDir));
 
+// Public config (excludes passwords, blacklists, seed data)
+app.get('/api/config', (req, res) => {
+  const c = getConfig();
+  if (!c) return res.json(null);
+  res.json({
+    corridor: c.corridor,
+    branding: c.branding,
+    theme: c.theme,
+    geography: c.geography,
+    credentials: { testCredentials: c.credentials?.testCredentials },
+    finance: { currencies: c.finance?.currencies, paymentMethods: c.finance?.paymentMethods },
+  });
+});
+
 // Auth
 app.post('/api/login', (req, res) => {
   const org = store.orgs.find(o => o.username === req.body.username && o.password === req.body.password);

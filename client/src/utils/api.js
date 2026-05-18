@@ -5,6 +5,7 @@ async function req(path, opts = {}) {
   return r.json();
 }
 export const api = {
+  getConfig: () => req('/api/config'),
   login: (u, p) => req('/api/login', { method: 'POST', body: JSON.stringify({ username: u, password: p }) }),
   getNode: () => req('/api/node'),
   discoverNodes: () => req('/api/node/discover'),
