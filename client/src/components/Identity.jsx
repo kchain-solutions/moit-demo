@@ -221,37 +221,71 @@ export default function Identity() {
               </div>
             </div>
             {filteredPeer.length === 0 ? <div className="empty">No matches.</div> : (
-              <table>
-                <thead><tr><th>Organisation</th><th>Role</th><th>Node</th><th>DID</th><th>Status</th><th></th></tr></thead>
-                <tbody>
-                  {filteredPeer.map(o => (
-                    <tr key={o.id}>
-                      <td style={{ fontWeight: 600 }}>{o.name}</td>
-                      <td>{o.role}</td>
-                      <td>{o.nodeName}</td>
-                      <td style={{ fontFamily: 'var(--mono)', fontSize: 10 }}>{o.did ? o.did.slice(0, 22) + '...' : '—'}</td>
-                      <td>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                          {o.verified ? <span className="pill pill-g">Verified</span> : <span className="pill pill-gr">Unverified</span>}
-                          {o.verified && o.attestedBy && (
-                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 20, padding: '2px 8px', width: 'fit-content' }}>
-                              <CheckCircle style={{ width: 10, height: 10, color: '#16a34a', flexShrink: 0 }} />
-                              <span style={{ fontSize: 10, color: '#166534', fontWeight: 600, whiteSpace: 'nowrap' }}>Attested by {o.attestedBy}</span>
+              <>
+                <div className="desktop-table">
+                  <table>
+                    <thead><tr><th>Organisation</th><th>Role</th><th>Node</th><th>DID</th><th>Status</th><th></th></tr></thead>
+                    <tbody>
+                      {filteredPeer.map(o => (
+                        <tr key={o.id}>
+                          <td style={{ fontWeight: 600 }}>{o.name}</td>
+                          <td>{o.role}</td>
+                          <td>{o.nodeName}</td>
+                          <td style={{ fontFamily: 'var(--mono)', fontSize: 10 }}>{o.did ? o.did.slice(0, 22) + '...' : '—'}</td>
+                          <td>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                              {o.verified ? <span className="pill pill-g">Verified</span> : <span className="pill pill-gr">Unverified</span>}
+                              {o.verified && o.attestedBy && (
+                                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 20, padding: '2px 8px', width: 'fit-content' }}>
+                                  <CheckCircle style={{ width: 10, height: 10, color: '#16a34a', flexShrink: 0 }} />
+                                  <span style={{ fontSize: 10, color: '#166534', fontWeight: 600, whiteSpace: 'nowrap' }}>Attested by {o.attestedBy}</span>
+                                </div>
+                              )}
                             </div>
-                          )}
+                          </td>
+                          <td>
+                            {o.verified && (
+                              <button className="btn btn-s btn-sm" style={{ fontSize: 10.5, padding: '4px 10px' }} onClick={() => setCredentialOrg(o)}>
+                                <ExternalLink style={{ width: 11, height: 11 }} /> View Credential
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mobile-cards" style={{ padding: 12 }}>
+                  {filteredPeer.map(o => (
+                    <div key={o.id} className="mobile-card">
+                      <div className="mobile-card-header">
+                        <div>
+                          <div className="mobile-card-title">{o.name}</div>
+                          <div className="mobile-card-sub">{o.role}</div>
                         </div>
-                      </td>
-                      <td>
-                        {o.verified && (
-                          <button className="btn btn-s btn-sm" style={{ fontSize: 10.5, padding: '4px 10px' }} onClick={() => setCredentialOrg(o)}>
+                        {o.verified ? <span className="pill pill-g">Verified</span> : <span className="pill pill-gr">Unverified</span>}
+                      </div>
+                      <div className="mobile-card-row">
+                        <span className="mobile-card-label">Node</span>
+                        <span className="mobile-card-value">{o.nodeName}</span>
+                      </div>
+                      {o.did && (
+                        <div className="mobile-card-row">
+                          <span className="mobile-card-label">DID</span>
+                          <span className="mobile-card-value" style={{ fontFamily: 'var(--mono)', fontSize: 10 }}>{o.did.slice(0, 22)}...</span>
+                        </div>
+                      )}
+                      {o.verified && (
+                        <div style={{ marginTop: 8 }}>
+                          <button className="btn btn-s btn-sm" style={{ fontSize: 10.5, padding: '4px 10px', width: '100%', justifyContent: 'center' }} onClick={() => setCredentialOrg(o)}>
                             <ExternalLink style={{ width: 11, height: 11 }} /> View Credential
                           </button>
-                        )}
-                      </td>
-                    </tr>
+                        </div>
+                      )}
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </>
             )}
           </>
         )}

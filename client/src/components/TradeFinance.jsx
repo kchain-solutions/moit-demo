@@ -174,29 +174,56 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
           </div>
         ) : (
           <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['LC Number', 'UCR', 'Issuing Bank', 'Amount', 'Expiry', 'Status', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {lcs.map(lc => (
-                  <tr key={lc.id} onClick={() => setSelected(lc.id === selected ? null : lc.id)}
-                    style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: lc.id === selected ? '#f0f9ff' : 'white' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{lc.lcNumber}</td>
-                    <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{lc.ucr}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 13 }}>{lc.issuingBank}</td>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(lc.amount, lc.currency)}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{lc.expiryDate ? new Date(lc.expiryDate).toLocaleDateString() : '—'}</td>
-                    <td style={{ padding: '12px 14px' }}><Pill label={lc.status} styles={lcPillStyle[lc.status] || {}} /></td>
-                    <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
+            <div className="desktop-table">
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    {['LC Number', 'UCR', 'Issuing Bank', 'Amount', 'Expiry', 'Status', ''].map(h => (
+                      <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {lcs.map(lc => (
+                    <tr key={lc.id} onClick={() => setSelected(lc.id === selected ? null : lc.id)}
+                      style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: lc.id === selected ? '#f0f9ff' : 'white' }}>
+                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{lc.lcNumber}</td>
+                      <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{lc.ucr}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 13 }}>{lc.issuingBank}</td>
+                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(lc.amount, lc.currency)}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{lc.expiryDate ? new Date(lc.expiryDate).toLocaleDateString() : '—'}</td>
+                      <td style={{ padding: '12px 14px' }}><Pill label={lc.status} styles={lcPillStyle[lc.status] || {}} /></td>
+                      <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mobile-cards" style={{ padding: 12 }}>
+              {lcs.map(lc => (
+                <div key={lc.id} className="mobile-card" onClick={() => setSelected(lc.id === selected ? null : lc.id)} style={{ cursor: 'pointer', background: lc.id === selected ? '#f0f9ff' : undefined }}>
+                  <div className="mobile-card-header">
+                    <div>
+                      <div className="mobile-card-title">{lc.lcNumber}</div>
+                      <div className="mobile-card-sub">{lc.ucr}</div>
+                    </div>
+                    <Pill label={lc.status} styles={lcPillStyle[lc.status] || {}} />
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Issuing Bank</span>
+                    <span className="mobile-card-value">{lc.issuingBank}</span>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Amount</span>
+                    <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtVal(lc.amount, lc.currency)}</span>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Expiry</span>
+                    <span className="mobile-card-value">{lc.expiryDate ? new Date(lc.expiryDate).toLocaleDateString() : '—'}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -438,44 +465,75 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
           </div>
         ) : (
           <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['Contract Ref', 'UCR', 'Amount', 'Conditions', 'Auto-Release', 'Status', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {contracts.map(c => {
-                  const met = c.conditions.filter(x => x.met).length;
-                  const total = c.conditions.length;
-                  return (
-                    <tr key={c.id} onClick={() => setSelected(c.id === selected ? null : c.id)}
-                      style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: c.id === selected ? '#f0f9ff' : 'white' }}>
-                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{c.contractRef}</td>
-                      <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{c.ucr}</td>
-                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(c.amount, c.currency)}</td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <div style={{ flex: 1, height: 4, borderRadius: 2, background: '#e2e8f0', overflow: 'hidden', minWidth: 60 }}>
-                            <div style={{ height: '100%', background: met === total ? '#16a34a' : '#3b82f6', width: `${total ? (met / total) * 100 : 0}%` }} />
+            <div className="desktop-table">
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    {['Contract Ref', 'UCR', 'Amount', 'Conditions', 'Auto-Release', 'Status', ''].map(h => (
+                      <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {contracts.map(c => {
+                    const met = c.conditions.filter(x => x.met).length;
+                    const total = c.conditions.length;
+                    return (
+                      <tr key={c.id} onClick={() => setSelected(c.id === selected ? null : c.id)}
+                        style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: c.id === selected ? '#f0f9ff' : 'white' }}>
+                        <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{c.contractRef}</td>
+                        <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{c.ucr}</td>
+                        <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(c.amount, c.currency)}</td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <div style={{ flex: 1, height: 4, borderRadius: 2, background: '#e2e8f0', overflow: 'hidden', minWidth: 60 }}>
+                              <div style={{ height: '100%', background: met === total ? '#16a34a' : '#3b82f6', width: `${total ? (met / total) * 100 : 0}%` }} />
+                            </div>
+                            <span style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{met}/{total}</span>
                           </div>
-                          <span style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{met}/{total}</span>
-                        </div>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <span style={{ fontSize: 11, color: c.autoRelease ? '#16a34a' : '#94a3b8', fontWeight: 600 }}>
-                          {c.autoRelease ? '⚡ On' : 'Off'}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}><Pill label={c.status} styles={contractPillStyle[c.status] || {}} /></td>
-                      <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <span style={{ fontSize: 11, color: c.autoRelease ? '#16a34a' : '#94a3b8', fontWeight: 600 }}>
+                            {c.autoRelease ? '⚡ On' : 'Off'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 14px' }}><Pill label={c.status} styles={contractPillStyle[c.status] || {}} /></td>
+                        <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="mobile-cards" style={{ padding: 12 }}>
+              {contracts.map(c => {
+                const met = c.conditions.filter(x => x.met).length;
+                const total = c.conditions.length;
+                return (
+                  <div key={c.id} className="mobile-card" onClick={() => setSelected(c.id === selected ? null : c.id)} style={{ cursor: 'pointer', background: c.id === selected ? '#f0f9ff' : undefined }}>
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{c.contractRef}</div>
+                        <div className="mobile-card-sub">{c.ucr}</div>
+                      </div>
+                      <Pill label={c.status} styles={contractPillStyle[c.status] || {}} />
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Amount</span>
+                      <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtVal(c.amount, c.currency)}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Conditions</span>
+                      <span className="mobile-card-value">{met}/{total} met</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Auto-Release</span>
+                      <span className="mobile-card-value" style={{ color: c.autoRelease ? '#16a34a' : '#94a3b8' }}>{c.autoRelease ? '⚡ On' : 'Off'}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>

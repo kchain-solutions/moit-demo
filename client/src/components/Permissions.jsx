@@ -52,45 +52,77 @@ export default function Permissions() {
           Click cells to grant or revoke access. <Crown style={{ width: 12, height: 12, color: '#f59e0b', display: 'inline', verticalAlign: 'middle' }} /> = owner. All changes are anchored on ledger.
         </div>
         {consignments.length === 0 ? <div className="empty">No consignments to show permissions for.</div> : (
-          <div style={{ overflowX: 'auto' }}>
-            <table>
-              <thead>
-                <tr>
-                  <th style={{ minWidth: 200 }}>Consignment</th>
-                  {allOrgs.map(o => <th key={o.id} style={{ textAlign: 'center', minWidth: 110, fontSize: 9.5 }}>{o.name}</th>)}
-                </tr>
-              </thead>
-              <tbody>
-                {consignments.map(c => {
-                  const p = permsMap[c.id] || {};
-                  return (
-                    <tr key={c.id}>
-                      <td>
-                        <div style={{ fontWeight: 600, fontSize: 12, fontFamily: 'var(--mono)' }}>{c.ucr}</div>
-                        {c.product && <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font)' }}>{c.product.slice(0, 30)}</div>}
-                      </td>
-                      {allOrgs.map(o => {
-                        const isOwner = p[o.id] === 'owner';
-                        const hasAccess = isOwner || p[o.id] === 'viewer';
-                        return (
-                          <td key={o.id} className="perm-cell" onClick={() => toggle(c.id, o.id, o.name, p[o.id], c.creatorOrgId)} style={{ cursor: isOwner ? 'default' : 'pointer' }}>
-                            {isOwner
-                              ? <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
-                                  <Crown style={{ width: 12, height: 12, color: '#f59e0b' }} />
-                                  <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span>
-                                </span>
-                              : hasAccess
-                                ? <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span>
-                                : <span style={{ color: '#d1d5db' }}>✗</span>}
-                          </td>
-                        );
-                      })}
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+          <>
+            <div className="desktop-table" style={{ overflowX: 'auto' }}>
+              <table>
+                <thead>
+                  <tr>
+                    <th style={{ minWidth: 200 }}>Consignment</th>
+                    {allOrgs.map(o => <th key={o.id} style={{ textAlign: 'center', minWidth: 110, fontSize: 9.5 }}>{o.name}</th>)}
+                  </tr>
+                </thead>
+                <tbody>
+                  {consignments.map(c => {
+                    const p = permsMap[c.id] || {};
+                    return (
+                      <tr key={c.id}>
+                        <td>
+                          <div style={{ fontWeight: 600, fontSize: 12, fontFamily: 'var(--mono)' }}>{c.ucr}</div>
+                          {c.product && <div style={{ fontSize: 11, color: 'var(--text-muted)', fontFamily: 'var(--font)' }}>{c.product.slice(0, 30)}</div>}
+                        </td>
+                        {allOrgs.map(o => {
+                          const isOwner = p[o.id] === 'owner';
+                          const hasAccess = isOwner || p[o.id] === 'viewer';
+                          return (
+                            <td key={o.id} className="perm-cell" onClick={() => toggle(c.id, o.id, o.name, p[o.id], c.creatorOrgId)} style={{ cursor: isOwner ? 'default' : 'pointer' }}>
+                              {isOwner
+                                ? <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 3 }}>
+                                    <Crown style={{ width: 12, height: 12, color: '#f59e0b' }} />
+                                    <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span>
+                                  </span>
+                                : hasAccess
+                                  ? <span style={{ color: '#16a34a', fontWeight: 700 }}>✓</span>
+                                  : <span style={{ color: '#d1d5db' }}>✗</span>}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="mobile-cards" style={{ padding: 12 }}>
+              {consignments.map(c => {
+                const p = permsMap[c.id] || {};
+                return (
+                  <div key={c.id} className="perm-mobile-card">
+                    <div style={{ marginBottom: 10 }}>
+                      <div style={{ fontWeight: 700, fontSize: 12, fontFamily: 'var(--mono)', color: 'var(--text-primary)' }}>{c.ucr}</div>
+                      {c.product && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.product.slice(0, 30)}</div>}
+                    </div>
+                    {allOrgs.map(o => {
+                      const isOwner = p[o.id] === 'owner';
+                      const hasAccess = isOwner || p[o.id] === 'viewer';
+                      return (
+                        <div key={o.id} className="perm-org-row" onClick={() => toggle(c.id, o.id, o.name, p[o.id], c.creatorOrgId)} style={{ cursor: isOwner ? 'default' : 'pointer' }}>
+                          <span style={{ fontWeight: 500 }}>{o.name}</span>
+                          {isOwner
+                            ? <span style={{ display: 'flex', alignItems: 'center', gap: 3 }}>
+                                <Crown style={{ width: 12, height: 12, color: '#f59e0b' }} />
+                                <span style={{ color: '#16a34a', fontWeight: 700, fontSize: 11 }}>Owner</span>
+                              </span>
+                            : hasAccess
+                              ? <span style={{ color: '#16a34a', fontWeight: 700, fontSize: 11 }}>✓ Access</span>
+                              : <span style={{ color: '#d1d5db', fontSize: 11 }}>✗ No access</span>}
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })}
+            </div>
+          </>
         )}
       </div>
 

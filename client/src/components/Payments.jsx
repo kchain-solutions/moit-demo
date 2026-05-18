@@ -161,28 +161,57 @@ export default function Payments() {
               <div>Create a payment record to track invoice settlements.</div>
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
-              <thead>
-                <tr style={{ background: '#f8fafc' }}>
-                  {['UCR', 'Invoice Ref', 'Amount', 'Due Date', 'Status', 'Method', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px', borderBottom: '1px solid var(--card-border)' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              <div className="desktop-table">
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
+                  <thead>
+                    <tr style={{ background: '#f8fafc' }}>
+                      {['UCR', 'Invoice Ref', 'Amount', 'Due Date', 'Status', 'Method', ''].map(h => (
+                        <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px', borderBottom: '1px solid var(--card-border)' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {payments.map(p => (
+                      <tr key={p.id} onClick={() => setSelected(selected?.id === p.id ? null : p)} style={{ cursor: 'pointer', background: selected?.id === p.id ? '#fff4eb' : 'transparent', borderBottom: '1px solid var(--card-border)' }}>
+                        <td style={{ padding: '11px 14px', fontWeight: 600, color: 'var(--accent)', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.ucr}</td>
+                        <td style={{ padding: '11px 14px', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.invoiceRef}</td>
+                        <td style={{ padding: '11px 14px', fontWeight: 600 }}>{fmtVal(p.amount, p.currency)}</td>
+                        <td style={{ padding: '11px 14px', color: p.status === 'Overdue' ? '#ef4444' : 'var(--text-secondary)' }}>{p.dueDate}</td>
+                        <td style={{ padding: '11px 14px' }}><StatusPill status={p.status} /></td>
+                        <td style={{ padding: '11px 14px', color: 'var(--text-muted)' }}>{p.paymentMethod}</td>
+                        <td style={{ padding: '11px 14px' }}><ChevronRight style={{ width: 14, height: 14, color: 'var(--text-muted)' }} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mobile-cards" style={{ padding: 12 }}>
                 {payments.map(p => (
-                  <tr key={p.id} onClick={() => setSelected(selected?.id === p.id ? null : p)} style={{ cursor: 'pointer', background: selected?.id === p.id ? '#fff4eb' : 'transparent', borderBottom: '1px solid var(--card-border)' }}>
-                    <td style={{ padding: '11px 14px', fontWeight: 600, color: 'var(--accent)', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.ucr}</td>
-                    <td style={{ padding: '11px 14px', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.invoiceRef}</td>
-                    <td style={{ padding: '11px 14px', fontWeight: 600 }}>{fmtVal(p.amount, p.currency)}</td>
-                    <td style={{ padding: '11px 14px', color: p.status === 'Overdue' ? '#ef4444' : 'var(--text-secondary)' }}>{p.dueDate}</td>
-                    <td style={{ padding: '11px 14px' }}><StatusPill status={p.status} /></td>
-                    <td style={{ padding: '11px 14px', color: 'var(--text-muted)' }}>{p.paymentMethod}</td>
-                    <td style={{ padding: '11px 14px' }}><ChevronRight style={{ width: 14, height: 14, color: 'var(--text-muted)' }} /></td>
-                  </tr>
+                  <div key={p.id} className="mobile-card" onClick={() => setSelected(selected?.id === p.id ? null : p)} style={{ cursor: 'pointer', background: selected?.id === p.id ? '#fff4eb' : undefined }}>
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{p.invoiceRef}</div>
+                        <div className="mobile-card-sub">{p.ucr}</div>
+                      </div>
+                      <StatusPill status={p.status} />
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Amount</span>
+                      <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtVal(p.amount, p.currency)}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Due Date</span>
+                      <span className="mobile-card-value" style={{ color: p.status === 'Overdue' ? '#ef4444' : undefined }}>{p.dueDate || '—'}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Method</span>
+                      <span className="mobile-card-value">{p.paymentMethod}</span>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
 
