@@ -351,3 +351,20 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
 .net-org-info{flex:1;min-width:0}
 .net-org-name{font-size:13px;font-weight:600;color:var(--text-primary)}
 .net-org-role{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+/* ── Extracted grid classes (from inline styles, for responsive override) ── */
+.dash-grid{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
+.tf-grid{display:grid;gap:20px}
+.tf-grid--detail{grid-template-columns:1fr 360px}
+.tf-grid--detail-lg{grid-template-columns:1fr 380px}
+.tf-grid--single{grid-template-columns:1fr}
+.lc-stepper{display:flex;align-items:flex-start;margin-bottom:16px;width:100%}
+.lc-step{display:flex;align-items:center;flex:1;min-width:0}
+.lc-step-node{display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto}
+.lc-connector{flex:1;height:2px;min-width:4px;margin-bottom:14px}
+.pay-grid{display:grid;gap:18px}
+.pay-grid--detail{grid-template-columns:1fr 380px}
+.pay-form-amount{display:grid;grid-template-columns:1fr 100px;gap:10px}
+.pay-form-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tf-form-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.analytics-filters{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}

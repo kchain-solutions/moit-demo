@@ -42,10 +42,10 @@ const Pill = ({ label, styles }) => (
 const LCStepper = ({ status }) => {
   const idx = LC_STATUSES.indexOf(status);
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 16, width: '100%' }}>
+    <div className="lc-stepper">
       {LC_STATUSES.map((s, i) => (
-        <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, flex: '0 0 auto' }}>
+        <div key={s} className="lc-step">
+          <div className="lc-step-node">
             <div style={{
               width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: i < idx ? '#16a34a' : i === idx ? '#3b82f6' : '#e2e8f0',
@@ -56,7 +56,7 @@ const LCStepper = ({ status }) => {
             <span style={{ fontSize: 8, color: i === idx ? '#3b82f6' : '#94a3b8', fontWeight: i === idx ? 700 : 400, whiteSpace: 'nowrap' }}>{s}</span>
           </div>
           {i < LC_STATUSES.length - 1 && (
-            <div style={{ flex: 1, height: 2, minWidth: 4, background: i < idx ? '#16a34a' : '#e2e8f0', marginBottom: 14 }} />
+            <div className="lc-connector" style={{ background: i < idx ? '#16a34a' : '#e2e8f0' }} />
           )}
         </div>
       ))}
@@ -152,7 +152,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: selectedLC ? '1fr 360px' : '1fr', gap: 20 }}>
+    <div className={`tf-grid${selectedLC ? ' tf-grid--detail' : ' tf-grid--single'}`}>
       {/* Left: list */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -214,7 +214,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
 
           <LCStepper status={selectedLC.status} />
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+          <div className="g2" style={{ marginBottom: 16 }}>
             {[
               ['Issuing Bank', selectedLC.issuingBank],
               ['Advising Bank', selectedLC.advisingBank || '—'],
@@ -266,7 +266,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
               <h3 style={{ margin: 0, fontSize: 17 }}>New Letter of Credit</h3>
               <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div className="tf-form-2col">
               <div style={{ gridColumn: '1/-1' }}>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
                 <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
@@ -421,7 +421,7 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
   }));
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: selectedContract ? '1fr 380px' : '1fr', gap: 20 }}>
+    <div className={`tf-grid${selectedContract ? ' tf-grid--detail-lg' : ' tf-grid--single'}`}>
       {/* Left: list */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -595,7 +595,7 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
               <h3 style={{ margin: 0, fontSize: 17 }}>New Smart Contract</h3>
               <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div className="tf-form-2col">
               <div style={{ gridColumn: '1/-1' }}>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
                 <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>

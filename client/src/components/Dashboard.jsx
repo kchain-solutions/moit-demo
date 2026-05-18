@@ -182,7 +182,7 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
       </div>
 
       {/* Two-column layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 18, alignItems: 'start' }}>
+      <div className="dash-grid">
 
         {/* Recent Consignments table */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>

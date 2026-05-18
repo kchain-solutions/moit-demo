@@ -39,7 +39,7 @@ export default function TangleExplorer() {
       </div>
 
       {/* Stat cards */}
-      <div className="g4" style={{ gridTemplateColumns: 'repeat(5, 1fr)' }}>
+      <div className="analytics-filters">
         {filterButtons.map(f => (
           <div
             key={f.k}

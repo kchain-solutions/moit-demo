@@ -139,7 +139,7 @@ export default function Payments() {
         <StatCard icon={CreditCard} label="Total Payments" value={payments.length || '—'} sub={`across ${[...new Set(payments.map(p => p.consignmentId))].length} consignments`} color="blue" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 380px' : '1fr', gap: 18 }}>
+      <div className={`pay-grid${selected ? ' pay-grid--detail' : ''}`}>
         {/* Payments table */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '16px 20px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--card-border)' }}>
@@ -264,7 +264,7 @@ export default function Payments() {
                 <label>Invoice Reference</label>
                 <input value={form.invoiceRef} onChange={e => setForm(f => ({ ...f, invoiceRef: e.target.value }))} placeholder="e.g. INV-APM-2026-0821" required />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: 10 }}>
+              <div className="pay-form-amount">
                 <div className="fg">
                   <label>Amount</label>
                   <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="0.00" required />
@@ -276,7 +276,7 @@ export default function Payments() {
                   </select>
                 </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div className="pay-form-2col">
                 <div className="fg">
                   <label>Due Date</label>
                   <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))} required />
