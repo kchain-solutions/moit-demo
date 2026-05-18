@@ -182,7 +182,7 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
       </div>
 
       {/* Two-column layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 18, alignItems: 'start' }}>
+      <div className="dash-grid">
 
         {/* Recent Consignments table */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -196,51 +196,84 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
           {recent.length === 0 ? (
             <div className="empty">No consignments visible. Create one or connect to a peer node.</div>
           ) : (
-            <table style={{ tableLayout: 'fixed' }}>
-              <thead>
-                <tr>
-                  <th style={{ width: '28%' }}>Reference</th>
-                  <th style={{ width: '28%' }}>Route & Product</th>
-                  <th style={{ width: '12%' }}>Docs</th>
-                  <th style={{ width: '16%' }}>Status</th>
-                  <th style={{ width: '16%', textAlign: 'right' }}>Value</th>
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              <div className="desktop-table">
+                <table style={{ tableLayout: 'fixed' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ width: '28%' }}>Reference</th>
+                      <th style={{ width: '28%' }}>Route & Product</th>
+                      <th style={{ width: '12%' }}>Docs</th>
+                      <th style={{ width: '16%' }}>Status</th>
+                      <th style={{ width: '16%', textAlign: 'right' }}>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recent.map(c => (
+                      <tr
+                        key={c.id}
+                        onClick={() => setSelectedC(selectedC?.id === c.id ? null : c)}
+                        style={{ background: selectedC?.id === c.id ? 'var(--accent-light)' : undefined, cursor: 'pointer' }}
+                      >
+                        <td>
+                          <button className="ucr-link" onClick={e => { e.stopPropagation(); onViewDocs?.(c); }}>{c.ucr}</button>
+                          <div className="ucr-date">{c.shipDate || new Date(c.createdAt).toLocaleDateString()}</div>
+                        </td>
+                        <td>
+                          {c.fromCountry && c.toCountry ? (
+                            <div className="route-display">
+                              <span>{c.fromCountry}</span>
+                              <span className="route-arrow">→</span>
+                              <span>{c.toCountry}</span>
+                            </div>
+                          ) : (
+                            <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', fontWeight: 500 }}>{c.creatorOrgName}</div>
+                          )}
+                          <div className="route-product">{(c.product || c.description || '—').slice(0, 38)}</div>
+                        </td>
+                        <td><DocsPill count={c.documentCount || 0} total={6} /></td>
+                        <td>
+                          <StatusPill status={c.status} />
+                          {c.errorType && <span title={c.errorDescription} style={{ marginLeft: 5 }}><AlertTriangle style={{ width: 12, height: 12, color: '#b91c1c', verticalAlign: 'middle' }} /></span>}
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <span className="value-cell">{fmtValue(c.totalValue, c.currency)}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mobile-cards" style={{ padding: '0 12px 12px' }}>
                 {recent.map(c => (
-                  <tr
-                    key={c.id}
-                    onClick={() => setSelectedC(selectedC?.id === c.id ? null : c)}
-                    style={{ background: selectedC?.id === c.id ? 'var(--accent-light)' : undefined, cursor: 'pointer' }}
-                  >
-                    <td>
-                      <button className="ucr-link" onClick={e => { e.stopPropagation(); onViewDocs?.(c); }}>{c.ucr}</button>
-                      <div className="ucr-date">{c.shipDate || new Date(c.createdAt).toLocaleDateString()}</div>
-                    </td>
-                    <td>
-                      {c.fromCountry && c.toCountry ? (
-                        <div className="route-display">
-                          <span>{c.fromCountry}</span>
-                          <span className="route-arrow">→</span>
-                          <span>{c.toCountry}</span>
-                        </div>
-                      ) : (
-                        <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', fontWeight: 500 }}>{c.creatorOrgName}</div>
-                      )}
-                      <div className="route-product">{(c.product || c.description || '—').slice(0, 38)}</div>
-                    </td>
-                    <td><DocsPill count={c.documentCount || 0} total={6} /></td>
-                    <td>
+                  <div key={c.id} className="mobile-card" onClick={() => onViewDocs?.(c)} style={{ cursor: 'pointer' }}>
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{c.ucr}</div>
+                        <div className="mobile-card-sub">{c.shipDate || new Date(c.createdAt).toLocaleDateString()}</div>
+                      </div>
                       <StatusPill status={c.status} />
-                      {c.errorType && <span title={c.errorDescription} style={{ marginLeft: 5 }}><AlertTriangle style={{ width: 12, height: 12, color: '#b91c1c', verticalAlign: 'middle' }} /></span>}
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <span className="value-cell">{fmtValue(c.totalValue, c.currency)}</span>
-                    </td>
-                  </tr>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Route</span>
+                      <span className="mobile-card-value">{c.fromCountry && c.toCountry ? `${c.fromCountry} → ${c.toCountry}` : c.creatorOrgName}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Product</span>
+                      <span className="mobile-card-value">{(c.product || c.description || '—').slice(0, 30)}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Docs</span>
+                      <span className="mobile-card-value"><DocsPill count={c.documentCount || 0} total={6} /></span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Value</span>
+                      <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtValue(c.totalValue, c.currency)}</span>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
 

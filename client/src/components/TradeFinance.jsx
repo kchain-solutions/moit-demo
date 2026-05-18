@@ -42,10 +42,10 @@ const Pill = ({ label, styles }) => (
 const LCStepper = ({ status }) => {
   const idx = LC_STATUSES.indexOf(status);
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 16, width: '100%' }}>
+    <div className="lc-stepper">
       {LC_STATUSES.map((s, i) => (
-        <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, flex: '0 0 auto' }}>
+        <div key={s} className="lc-step">
+          <div className="lc-step-node">
             <div style={{
               width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: i < idx ? '#16a34a' : i === idx ? '#3b82f6' : '#e2e8f0',
@@ -56,7 +56,7 @@ const LCStepper = ({ status }) => {
             <span style={{ fontSize: 8, color: i === idx ? '#3b82f6' : '#94a3b8', fontWeight: i === idx ? 700 : 400, whiteSpace: 'nowrap' }}>{s}</span>
           </div>
           {i < LC_STATUSES.length - 1 && (
-            <div style={{ flex: 1, height: 2, minWidth: 4, background: i < idx ? '#16a34a' : '#e2e8f0', marginBottom: 14 }} />
+            <div className="lc-connector" style={{ background: i < idx ? '#16a34a' : '#e2e8f0' }} />
           )}
         </div>
       ))}
@@ -152,7 +152,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: selectedLC ? '1fr 360px' : '1fr', gap: 20 }}>
+    <div className={`tf-grid${selectedLC ? ' tf-grid--detail' : ' tf-grid--single'}`}>
       {/* Left: list */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -174,29 +174,56 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
           </div>
         ) : (
           <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['LC Number', 'UCR', 'Issuing Bank', 'Amount', 'Expiry', 'Status', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {lcs.map(lc => (
-                  <tr key={lc.id} onClick={() => setSelected(lc.id === selected ? null : lc.id)}
-                    style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: lc.id === selected ? '#f0f9ff' : 'white' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{lc.lcNumber}</td>
-                    <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{lc.ucr}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 13 }}>{lc.issuingBank}</td>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(lc.amount, lc.currency)}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{lc.expiryDate ? new Date(lc.expiryDate).toLocaleDateString() : '—'}</td>
-                    <td style={{ padding: '12px 14px' }}><Pill label={lc.status} styles={lcPillStyle[lc.status] || {}} /></td>
-                    <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
+            <div className="desktop-table">
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    {['LC Number', 'UCR', 'Issuing Bank', 'Amount', 'Expiry', 'Status', ''].map(h => (
+                      <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {lcs.map(lc => (
+                    <tr key={lc.id} onClick={() => setSelected(lc.id === selected ? null : lc.id)}
+                      style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: lc.id === selected ? '#f0f9ff' : 'white' }}>
+                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{lc.lcNumber}</td>
+                      <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{lc.ucr}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 13 }}>{lc.issuingBank}</td>
+                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(lc.amount, lc.currency)}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{lc.expiryDate ? new Date(lc.expiryDate).toLocaleDateString() : '—'}</td>
+                      <td style={{ padding: '12px 14px' }}><Pill label={lc.status} styles={lcPillStyle[lc.status] || {}} /></td>
+                      <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mobile-cards" style={{ padding: 12 }}>
+              {lcs.map(lc => (
+                <div key={lc.id} className="mobile-card" onClick={() => setSelected(lc.id === selected ? null : lc.id)} style={{ cursor: 'pointer', background: lc.id === selected ? '#f0f9ff' : undefined }}>
+                  <div className="mobile-card-header">
+                    <div>
+                      <div className="mobile-card-title">{lc.lcNumber}</div>
+                      <div className="mobile-card-sub">{lc.ucr}</div>
+                    </div>
+                    <Pill label={lc.status} styles={lcPillStyle[lc.status] || {}} />
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Issuing Bank</span>
+                    <span className="mobile-card-value">{lc.issuingBank}</span>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Amount</span>
+                    <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtVal(lc.amount, lc.currency)}</span>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Expiry</span>
+                    <span className="mobile-card-value">{lc.expiryDate ? new Date(lc.expiryDate).toLocaleDateString() : '—'}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -214,7 +241,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
 
           <LCStepper status={selectedLC.status} />
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+          <div className="g2" style={{ marginBottom: 16 }}>
             {[
               ['Issuing Bank', selectedLC.issuingBank],
               ['Advising Bank', selectedLC.advisingBank || '—'],
@@ -261,12 +288,12 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
       {/* Create LC Modal */}
       {showCreate && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card" style={{ width: 520, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
+          <div className="card modal-card" style={{ width: 520, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ margin: 0, fontSize: 17 }}>New Letter of Credit</h3>
               <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div className="tf-form-2col">
               <div style={{ gridColumn: '1/-1' }}>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
                 <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
@@ -320,7 +347,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
       {/* Share Finance Modal */}
       {showShare && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card" style={{ width: 400, padding: 28 }}>
+          <div className="card modal-card" style={{ width: 400, padding: 28 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ margin: 0, fontSize: 17 }}>Share Finance Access</h3>
               <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
@@ -421,7 +448,7 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
   }));
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: selectedContract ? '1fr 380px' : '1fr', gap: 20 }}>
+    <div className={`tf-grid${selectedContract ? ' tf-grid--detail-lg' : ' tf-grid--single'}`}>
       {/* Left: list */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -438,44 +465,75 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
           </div>
         ) : (
           <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['Contract Ref', 'UCR', 'Amount', 'Conditions', 'Auto-Release', 'Status', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {contracts.map(c => {
-                  const met = c.conditions.filter(x => x.met).length;
-                  const total = c.conditions.length;
-                  return (
-                    <tr key={c.id} onClick={() => setSelected(c.id === selected ? null : c.id)}
-                      style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: c.id === selected ? '#f0f9ff' : 'white' }}>
-                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{c.contractRef}</td>
-                      <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{c.ucr}</td>
-                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(c.amount, c.currency)}</td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <div style={{ flex: 1, height: 4, borderRadius: 2, background: '#e2e8f0', overflow: 'hidden', minWidth: 60 }}>
-                            <div style={{ height: '100%', background: met === total ? '#16a34a' : '#3b82f6', width: `${total ? (met / total) * 100 : 0}%` }} />
+            <div className="desktop-table">
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    {['Contract Ref', 'UCR', 'Amount', 'Conditions', 'Auto-Release', 'Status', ''].map(h => (
+                      <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {contracts.map(c => {
+                    const met = c.conditions.filter(x => x.met).length;
+                    const total = c.conditions.length;
+                    return (
+                      <tr key={c.id} onClick={() => setSelected(c.id === selected ? null : c.id)}
+                        style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: c.id === selected ? '#f0f9ff' : 'white' }}>
+                        <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{c.contractRef}</td>
+                        <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{c.ucr}</td>
+                        <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(c.amount, c.currency)}</td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <div style={{ flex: 1, height: 4, borderRadius: 2, background: '#e2e8f0', overflow: 'hidden', minWidth: 60 }}>
+                              <div style={{ height: '100%', background: met === total ? '#16a34a' : '#3b82f6', width: `${total ? (met / total) * 100 : 0}%` }} />
+                            </div>
+                            <span style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{met}/{total}</span>
                           </div>
-                          <span style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{met}/{total}</span>
-                        </div>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <span style={{ fontSize: 11, color: c.autoRelease ? '#16a34a' : '#94a3b8', fontWeight: 600 }}>
-                          {c.autoRelease ? '⚡ On' : 'Off'}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}><Pill label={c.status} styles={contractPillStyle[c.status] || {}} /></td>
-                      <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <span style={{ fontSize: 11, color: c.autoRelease ? '#16a34a' : '#94a3b8', fontWeight: 600 }}>
+                            {c.autoRelease ? '⚡ On' : 'Off'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 14px' }}><Pill label={c.status} styles={contractPillStyle[c.status] || {}} /></td>
+                        <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="mobile-cards" style={{ padding: 12 }}>
+              {contracts.map(c => {
+                const met = c.conditions.filter(x => x.met).length;
+                const total = c.conditions.length;
+                return (
+                  <div key={c.id} className="mobile-card" onClick={() => setSelected(c.id === selected ? null : c.id)} style={{ cursor: 'pointer', background: c.id === selected ? '#f0f9ff' : undefined }}>
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{c.contractRef}</div>
+                        <div className="mobile-card-sub">{c.ucr}</div>
+                      </div>
+                      <Pill label={c.status} styles={contractPillStyle[c.status] || {}} />
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Amount</span>
+                      <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtVal(c.amount, c.currency)}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Conditions</span>
+                      <span className="mobile-card-value">{met}/{total} met</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Auto-Release</span>
+                      <span className="mobile-card-value" style={{ color: c.autoRelease ? '#16a34a' : '#94a3b8' }}>{c.autoRelease ? '⚡ On' : 'Off'}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
@@ -590,12 +648,12 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
       {/* Create Contract Modal */}
       {showCreate && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card" style={{ width: 560, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
+          <div className="card modal-card" style={{ width: 560, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ margin: 0, fontSize: 17 }}>New Smart Contract</h3>
               <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+            <div className="tf-form-2col">
               <div style={{ gridColumn: '1/-1' }}>
                 <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
                 <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>

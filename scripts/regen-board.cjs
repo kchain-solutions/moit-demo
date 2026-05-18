@@ -11,17 +11,30 @@ const path = require('path');
 
 const TASKS_DIR = path.join(__dirname, '..', '.claude', 'tasks');
 const BOARD_PATH = path.join(__dirname, '..', '.claude', 'board.md');
+const STATUS_DIRS = ['backlog', 'in-progress', 'done', 'blocked', 'cancelled'];
 
-// Parse all task files
-const files = fs.readdirSync(TASKS_DIR).filter(f => f.endsWith('.md')).sort();
+// Parse all task files from status subdirectories
+const allFiles = [];
+for (const dir of STATUS_DIRS) {
+  const dirPath = path.join(TASKS_DIR, dir);
+  if (!fs.existsSync(dirPath)) continue;
+  const dirFiles = fs.readdirSync(dirPath).filter(f => f.endsWith('.md'));
+  for (const f of dirFiles) allFiles.push({ file: f, subdir: dir });
+}
+// Also pick up any .md files left at root level (backwards compat)
+const rootFiles = fs.readdirSync(TASKS_DIR).filter(f => f.endsWith('.md') && !STATUS_DIRS.includes(f));
+for (const f of rootFiles) allFiles.push({ file: f, subdir: null });
+allFiles.sort((a, b) => a.file.localeCompare(b.file));
+
 const tasks = [];
 
-for (const file of files) {
-  const content = fs.readFileSync(path.join(TASKS_DIR, file), 'utf-8');
+for (const { file, subdir } of allFiles) {
+  const filePath = subdir ? path.join(TASKS_DIR, subdir, file) : path.join(TASKS_DIR, file);
+  const content = fs.readFileSync(filePath, 'utf-8');
   const titleMatch = content.match(/^# (T-\S+)\s*\|\s*(.+)$/m);
   if (!titleMatch) continue;
 
-  const task = { id: titleMatch[1], title: titleMatch[2].trim(), fields: {} };
+  const task = { id: titleMatch[1], title: titleMatch[2].trim(), subdir: subdir, fields: {} };
   const fieldRegex = /^- \*\*(\w[\w\s]*):\*\*\s*(.*)$/gm;
   let match;
   while ((match = fieldRegex.exec(content)) !== null) {
@@ -54,8 +67,9 @@ const phaseTitles = {
 const board = [];
 board.push('# TWIN Vietnam Demo: Task Board');
 board.push('');
-board.push('> This file is the index. Each task has its own file in `.claude/tasks/{id}.md`.');
-board.push('> Agents update individual task files for concurrency safety. Regenerate with `node scripts/regen-board.cjs`.');
+board.push('> This file is the index. Tasks are organized in `.claude/tasks/{status}/{id}.md`.');
+board.push('> Status folders: `backlog/`, `in-progress/`, `done/`, `blocked/`, `cancelled/`.');
+board.push('> Agents move task files between folders to change status. Regenerate with `node scripts/regen-board.cjs`.');
 board.push('');
 board.push('## Quick Summary');
 board.push('');
@@ -101,7 +115,8 @@ for (const phase of phaseOrder) {
       const deps = t.fields['Dependencies'] || 'none';
       const status = t.fields['Status'] || 'backlog';
       const priority = t.fields['Priority'] || '?';
-      board.push(`| [${t.id}](tasks/${t.id}.md) | ${t.title} | ${priority} | ${status} | ${deps} |`);
+      const taskPath = t.subdir ? `tasks/${t.subdir}/${t.id}.md` : `tasks/${t.id}.md`;
+      board.push(`| [${t.id}](${taskPath}) | ${t.title} | ${priority} | ${status} | ${deps} |`);
     }
     board.push('');
   }

@@ -168,7 +168,9 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
 
 /* ── Modals ── */
 .modal-bg{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:100}
-.modal{background:white;border-radius:16px;padding:28px;width:540px;max-width:94vw;box-shadow:0 24px 80px rgba(0,0,0,0.2)}
+.modal{background:white;border-radius:16px;padding:28px;width:540px;max-width:94vw;box-shadow:0 24px 80px rgba(0,0,0,0.2);box-sizing:border-box}
+.modal-sm{width:400px}.modal-md{width:480px}.modal-lg{width:560px}
+.modal-card{max-width:94vw;box-sizing:border-box}
 .modal h3{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:18px}
 .modal-act{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
 
@@ -351,3 +353,140 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
 .net-org-info{flex:1;min-width:0}
 .net-org-name{font-size:13px;font-weight:600;color:var(--text-primary)}
 .net-org-role{font-size:11px;color:var(--text-muted);margin-top:1px}
+
+/* ── Extracted grid classes (from inline styles, for responsive override) ── */
+.dash-grid{display:grid;grid-template-columns:1fr 360px;gap:18px;align-items:start}
+.tf-grid{display:grid;gap:20px}
+.tf-grid--detail{grid-template-columns:1fr 360px}
+.tf-grid--detail-lg{grid-template-columns:1fr 380px}
+.tf-grid--single{grid-template-columns:1fr}
+.lc-stepper{display:flex;align-items:flex-start;margin-bottom:16px;width:100%}
+.lc-step{display:flex;align-items:center;flex:1;min-width:0}
+.lc-step-node{display:flex;flex-direction:column;align-items:center;gap:3px;flex:0 0 auto}
+.lc-connector{flex:1;height:2px;min-width:4px;margin-bottom:14px}
+.pay-grid{display:grid;gap:18px}
+.pay-grid--detail{grid-template-columns:1fr 380px}
+.pay-form-amount{display:grid;grid-template-columns:1fr 100px;gap:10px}
+.pay-form-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tf-form-2col{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.analytics-filters{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+
+/* ── Hamburger button (hidden on desktop) ── */
+.hamburger{display:none;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;width:36px;height:36px;border-radius:var(--radius-sm);color:var(--text-secondary);flex-shrink:0}
+.hamburger:hover{background:#f1f5f9}
+
+/* ── Sidebar overlay ── */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:9}
+
+/* ── Mobile search overlay ── */
+.search-btn-mobile{display:none;align-items:center;justify-content:center;background:none;border:none;cursor:pointer;width:34px;height:34px;border-radius:50%;color:var(--text-secondary)}
+.search-btn-mobile:hover{background:#f1f5f9}
+.search-overlay{display:none;position:fixed;inset:0;background:#fff;z-index:20;flex-direction:column;padding:16px}
+.search-overlay.open{display:flex}
+.search-overlay-bar{display:flex;align-items:center;gap:10px}
+.search-overlay-bar input{flex:1;font-family:var(--font);font-size:16px;border:1px solid #e2e8f0;border-radius:20px;padding:10px 16px;color:var(--text-primary)}
+.search-overlay-bar input:focus{outline:none;border-color:var(--accent)}
+.search-overlay-close{background:none;border:none;cursor:pointer;color:var(--text-muted);padding:8px}
+
+/* ── Bottom tab bar ── */
+.bottom-tabs{display:none;position:fixed;bottom:0;left:0;right:0;height:56px;background:#fff;border-top:1px solid var(--card-border);z-index:15;justify-content:space-around;align-items:center}
+.bottom-tab{display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;color:var(--text-muted);font-family:var(--font);font-size:10px;font-weight:500;padding:6px 0;min-width:0;flex:1}
+.bottom-tab svg{width:20px;height:20px}
+.bottom-tab.active{color:var(--accent)}
+.bottom-tab.active svg{color:var(--accent)}
+
+/* ── Mobile card list (hidden on desktop, shown on mobile) ── */
+.mobile-cards{display:none;flex-direction:column;gap:10px}
+.mobile-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:14px 16px}
+.mobile-card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px}
+.mobile-card-title{font-size:13px;font-weight:700;color:var(--text-primary)}
+.mobile-card-sub{font-size:11px;color:var(--text-muted);margin-top:2px}
+.mobile-card-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;font-size:12px}
+.mobile-card-label{color:var(--text-muted);font-weight:600;font-size:10px;text-transform:uppercase;letter-spacing:0.04em}
+.mobile-card-value{color:var(--text-secondary);font-weight:500}
+.desktop-table{display:block}
+/* Permissions mobile card */
+.perm-mobile-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:var(--radius);padding:14px 16px}
+.perm-org-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #f1f5f9;font-size:12px}
+.perm-org-row:last-child{border-bottom:none}
+
+/* ══════════════════════════════════════════════════════════
+   RESPONSIVE BREAKPOINTS
+══════════════════════════════════════════════════════════ */
+
+/* ── Tablet (≤1023px) ── */
+@media(max-width:1023px){
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .dash-grid{grid-template-columns:1fr}
+  .tf-grid--detail,.tf-grid--detail-lg{grid-template-columns:1fr}
+  .pay-grid--detail{grid-template-columns:1fr}
+  .net-bottom-grid{grid-template-columns:1fr}
+  .analytics-filters{grid-template-columns:repeat(3,1fr)}
+  /* Navigation: sidebar becomes slide-out drawer */
+  .sidebar{transform:translateX(-100%);transition:transform 0.25s ease}
+  .sidebar.open{transform:translateX(0)}
+  .sidebar-overlay.open{display:block}
+  .main{margin-left:0}
+  .hamburger{display:flex}
+  /* Network: hero stats wrap to 2x2 grid */
+  .net-hero-stats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .net-map-wrap .tn-map-wrap{height:380px}
+}
+
+/* ── Mobile (≤767px) ── */
+@media(max-width:767px){
+  .g4{grid-template-columns:1fr 1fr}
+  .g3{grid-template-columns:1fr}
+  .g2{grid-template-columns:1fr}
+  .cnt{padding:16px;padding-bottom:72px}
+  .tf-form-2col{grid-template-columns:1fr}
+  .pay-form-2col{grid-template-columns:1fr}
+  .pay-form-amount{grid-template-columns:1fr}
+  .analytics-filters{grid-template-columns:1fr 1fr}
+  .lc-stepper{gap:2px}
+  /* Navigation: hide desktop search, show mobile triggers */
+  .hdr-search{display:none}
+  .hdr-user-info{display:none}
+  .search-btn-mobile{display:flex}
+  .bottom-tabs{display:flex}
+  /* Table-to-card conversion */
+  .desktop-table{display:none}
+  .mobile-cards{display:flex}
+  /* Network: map shorter, detail panel becomes bottom sheet */
+  .net-map-wrap .tn-map-wrap{height:280px}
+  .net-hero{flex-direction:column;gap:14px}
+  .net-hero-left{min-width:0}
+  .tn-detail{position:fixed;top:auto;right:0;bottom:0;left:0;width:100%;max-height:55vh;border-radius:16px 16px 0 0;box-shadow:0 -4px 24px rgba(15,23,42,0.15)}
+  /* Touch targets: 44px minimum */
+  .sb-nav button,.bottom-tab,.btn,.btn-primary,.btn-secondary,.btn-sm,.hamburger,.hdr-bell,.search-btn-mobile{min-height:44px}
+  .mobile-card{min-height:44px}
+  .perm-org-row{min-height:44px}
+  /* Modals: bottom-sheet on mobile */
+  .modal-bg{align-items:flex-end}
+  .modal,.modal-card{width:100%!important;max-width:100%!important;border-radius:16px 16px 0 0;max-height:90vh;overflow-y:auto}
+}
+
+/* ── Small Mobile (≤479px) ── */
+@media(max-width:479px){
+  .g4{grid-template-columns:1fr}
+  .stat-value{font-size:22px}
+  .cnt{padding:12px;padding-bottom:72px}
+  .analytics-filters{grid-template-columns:1fr}
+}
+
+/* ── Hover: disable sticky hover on touch-only devices ── */
+@media(hover:none){
+  .sb-nav button:hover{background:transparent;color:var(--nav-text)}
+  .sb-nav button.active:hover{background:var(--accent);color:#ffffff}
+  tbody tr:hover td{background:transparent}
+  .btn-p:hover{background:var(--accent)}
+  .btn-s:hover{background:white}
+  .btn-primary:hover{background:#3b82f6;border-color:#3b82f6}
+  .btn-secondary:hover{background:white}
+  .perm-cell:hover{background:transparent}
+  .tn-org-card:hover{background:white;border-color:#f1f5f9}
+  .net-org-row--clickable:hover{background:transparent}
+  .hdr-bell:hover{background:transparent}
+  .hamburger:hover{background:transparent}
+}

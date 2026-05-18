@@ -139,7 +139,7 @@ export default function Payments() {
         <StatCard icon={CreditCard} label="Total Payments" value={payments.length || '—'} sub={`across ${[...new Set(payments.map(p => p.consignmentId))].length} consignments`} color="blue" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 380px' : '1fr', gap: 18 }}>
+      <div className={`pay-grid${selected ? ' pay-grid--detail' : ''}`}>
         {/* Payments table */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '16px 20px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--card-border)' }}>
@@ -161,28 +161,57 @@ export default function Payments() {
               <div>Create a payment record to track invoice settlements.</div>
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
-              <thead>
-                <tr style={{ background: '#f8fafc' }}>
-                  {['UCR', 'Invoice Ref', 'Amount', 'Due Date', 'Status', 'Method', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px', borderBottom: '1px solid var(--card-border)' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              <div className="desktop-table">
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
+                  <thead>
+                    <tr style={{ background: '#f8fafc' }}>
+                      {['UCR', 'Invoice Ref', 'Amount', 'Due Date', 'Status', 'Method', ''].map(h => (
+                        <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px', borderBottom: '1px solid var(--card-border)' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {payments.map(p => (
+                      <tr key={p.id} onClick={() => setSelected(selected?.id === p.id ? null : p)} style={{ cursor: 'pointer', background: selected?.id === p.id ? '#fff4eb' : 'transparent', borderBottom: '1px solid var(--card-border)' }}>
+                        <td style={{ padding: '11px 14px', fontWeight: 600, color: 'var(--accent)', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.ucr}</td>
+                        <td style={{ padding: '11px 14px', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.invoiceRef}</td>
+                        <td style={{ padding: '11px 14px', fontWeight: 600 }}>{fmtVal(p.amount, p.currency)}</td>
+                        <td style={{ padding: '11px 14px', color: p.status === 'Overdue' ? '#ef4444' : 'var(--text-secondary)' }}>{p.dueDate}</td>
+                        <td style={{ padding: '11px 14px' }}><StatusPill status={p.status} /></td>
+                        <td style={{ padding: '11px 14px', color: 'var(--text-muted)' }}>{p.paymentMethod}</td>
+                        <td style={{ padding: '11px 14px' }}><ChevronRight style={{ width: 14, height: 14, color: 'var(--text-muted)' }} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mobile-cards" style={{ padding: 12 }}>
                 {payments.map(p => (
-                  <tr key={p.id} onClick={() => setSelected(selected?.id === p.id ? null : p)} style={{ cursor: 'pointer', background: selected?.id === p.id ? '#fff4eb' : 'transparent', borderBottom: '1px solid var(--card-border)' }}>
-                    <td style={{ padding: '11px 14px', fontWeight: 600, color: 'var(--accent)', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.ucr}</td>
-                    <td style={{ padding: '11px 14px', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.invoiceRef}</td>
-                    <td style={{ padding: '11px 14px', fontWeight: 600 }}>{fmtVal(p.amount, p.currency)}</td>
-                    <td style={{ padding: '11px 14px', color: p.status === 'Overdue' ? '#ef4444' : 'var(--text-secondary)' }}>{p.dueDate}</td>
-                    <td style={{ padding: '11px 14px' }}><StatusPill status={p.status} /></td>
-                    <td style={{ padding: '11px 14px', color: 'var(--text-muted)' }}>{p.paymentMethod}</td>
-                    <td style={{ padding: '11px 14px' }}><ChevronRight style={{ width: 14, height: 14, color: 'var(--text-muted)' }} /></td>
-                  </tr>
+                  <div key={p.id} className="mobile-card" onClick={() => setSelected(selected?.id === p.id ? null : p)} style={{ cursor: 'pointer', background: selected?.id === p.id ? '#fff4eb' : undefined }}>
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{p.invoiceRef}</div>
+                        <div className="mobile-card-sub">{p.ucr}</div>
+                      </div>
+                      <StatusPill status={p.status} />
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Amount</span>
+                      <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtVal(p.amount, p.currency)}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Due Date</span>
+                      <span className="mobile-card-value" style={{ color: p.status === 'Overdue' ? '#ef4444' : undefined }}>{p.dueDate || '—'}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Method</span>
+                      <span className="mobile-card-value">{p.paymentMethod}</span>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
 
@@ -247,7 +276,7 @@ export default function Payments() {
       {/* New Payment Modal */}
       {showNew && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card" style={{ width: 480, maxHeight: '90vh', overflow: 'auto', padding: 24 }}>
+          <div className="card modal-card" style={{ width: 480, maxHeight: '90vh', overflow: 'auto', padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ fontSize: 15, fontWeight: 700 }}>New Payment Record</h3>
               <button onClick={() => setShowNew(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X style={{ width: 18, height: 18 }} /></button>
@@ -264,7 +293,7 @@ export default function Payments() {
                 <label>Invoice Reference</label>
                 <input value={form.invoiceRef} onChange={e => setForm(f => ({ ...f, invoiceRef: e.target.value }))} placeholder="e.g. INV-APM-2026-0821" required />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: 10 }}>
+              <div className="pay-form-amount">
                 <div className="fg">
                   <label>Amount</label>
                   <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="0.00" required />
@@ -276,7 +305,7 @@ export default function Payments() {
                   </select>
                 </div>
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
+              <div className="pay-form-2col">
                 <div className="fg">
                   <label>Due Date</label>
                   <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))} required />
@@ -304,7 +333,7 @@ export default function Payments() {
       {/* Finance Share Modal */}
       {showShare && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card" style={{ width: 400, padding: 24 }}>
+          <div className="card modal-card" style={{ width: 400, padding: 24 }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
               <h3 style={{ fontSize: 15, fontWeight: 700 }}>Share Finance Access</h3>
               <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X style={{ width: 18, height: 18 }} /></button>

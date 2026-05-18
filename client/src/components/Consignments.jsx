@@ -167,56 +167,89 @@ export default function Consignments({ searchQ = '', targetConsignment = null, o
         {filtered.length === 0 ? (
           <div className="empty">No consignments match your filter.</div>
         ) : (
-          <table>
-            <thead>
-              <tr>
-                <th>Reference</th>
-                <th>Route & Product</th>
-                <th>Parties</th>
-                <th>Docs</th>
-                <th>Status</th>
-                <th style={{ textAlign: 'right' }}>Value</th>
-              </tr>
-            </thead>
-            <tbody>
+          <>
+            <div className="desktop-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Reference</th>
+                    <th>Route & Product</th>
+                    <th>Parties</th>
+                    <th>Docs</th>
+                    <th>Status</th>
+                    <th style={{ textAlign: 'right' }}>Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filtered.map(c => (
+                    <tr key={c.id} onClick={() => setSelectedC(selectedC?.id === c.id ? null : c)} style={{ background: selectedC?.id === c.id ? 'var(--accent-light)' : undefined }}>
+                      <td>
+                        <button className="ucr-link" onClick={e => { e.stopPropagation(); setSelectedC(selectedC?.id === c.id ? null : c); setTimeout(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80); }}>{c.ucr}</button>
+                        <div className="ucr-date">{c.shipDate || new Date(c.createdAt || Date.now()).toLocaleDateString()}</div>
+                      </td>
+                      <td>
+                        {c.fromCountry && c.toCountry ? (
+                          <div className="route-display">
+                            <span>{c.fromCountry}</span>
+                            <span className="route-arrow">→</span>
+                            <span>{c.toCountry}</span>
+                          </div>
+                        ) : (
+                          <div style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{c.creatorOrgName}</div>
+                        )}
+                        <div className="route-product">{c.product || c.description || '—'}</div>
+                      </td>
+                      <td>
+                        <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{c.exporter || c.creatorOrgName}</div>
+                        {c.importer && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.importer}</div>}
+                      </td>
+                      <td><DocsPill count={c.documentCount || 0} total={6} /></td>
+                      <td>
+                        <StatusPill status={c.status} />
+                        {c.errorType && (
+                          <span title={c.errorDescription} style={{ marginLeft: 5 }}>
+                            <AlertTriangle style={{ width: 12, height: 12, color: '#a16207', verticalAlign: 'middle' }} />
+                          </span>
+                        )}
+                      </td>
+                      <td style={{ textAlign: 'right' }}>
+                        <span className="value-cell">{fmtValue(c.totalValue, c.currency)}</span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mobile-cards" style={{ padding: 12 }}>
               {filtered.map(c => (
-                <tr key={c.id} onClick={() => setSelectedC(selectedC?.id === c.id ? null : c)} style={{ background: selectedC?.id === c.id ? 'var(--accent-light)' : undefined }}>
-                  <td>
-                    <button className="ucr-link" onClick={e => { e.stopPropagation(); setSelectedC(selectedC?.id === c.id ? null : c); setTimeout(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80); }}>{c.ucr}</button>
-                    <div className="ucr-date">{c.shipDate || new Date(c.createdAt || Date.now()).toLocaleDateString()}</div>
-                  </td>
-                  <td>
-                    {c.fromCountry && c.toCountry ? (
-                      <div className="route-display">
-                        <span>{c.fromCountry}</span>
-                        <span className="route-arrow">→</span>
-                        <span>{c.toCountry}</span>
-                      </div>
-                    ) : (
-                      <div style={{ fontSize: 12.5, color: 'var(--text-secondary)' }}>{c.creatorOrgName}</div>
-                    )}
-                    <div className="route-product">{c.product || c.description || '—'}</div>
-                  </td>
-                  <td>
-                    <div style={{ fontSize: 12, color: 'var(--text-secondary)' }}>{c.exporter || c.creatorOrgName}</div>
-                    {c.importer && <div style={{ fontSize: 11, color: 'var(--text-muted)' }}>{c.importer}</div>}
-                  </td>
-                  <td><DocsPill count={c.documentCount || 0} total={6} /></td>
-                  <td>
+                <div key={c.id} className="mobile-card" onClick={() => { setSelectedC(selectedC?.id === c.id ? null : c); setTimeout(() => detailRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80); }} style={{ cursor: 'pointer', background: selectedC?.id === c.id ? 'var(--accent-light)' : undefined }}>
+                  <div className="mobile-card-header">
+                    <div>
+                      <div className="mobile-card-title">{c.ucr}</div>
+                      <div className="mobile-card-sub">{c.shipDate || new Date(c.createdAt || Date.now()).toLocaleDateString()}</div>
+                    </div>
                     <StatusPill status={c.status} />
-                    {c.errorType && (
-                      <span title={c.errorDescription} style={{ marginLeft: 5 }}>
-                        <AlertTriangle style={{ width: 12, height: 12, color: '#a16207', verticalAlign: 'middle' }} />
-                      </span>
-                    )}
-                  </td>
-                  <td style={{ textAlign: 'right' }}>
-                    <span className="value-cell">{fmtValue(c.totalValue, c.currency)}</span>
-                  </td>
-                </tr>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Route</span>
+                    <span className="mobile-card-value">{c.fromCountry && c.toCountry ? `${c.fromCountry} → ${c.toCountry}` : (c.creatorOrgName || '—')}</span>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Product</span>
+                    <span className="mobile-card-value">{(c.product || c.description || '—').slice(0, 30)}</span>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Docs</span>
+                    <span className="mobile-card-value"><DocsPill count={c.documentCount || 0} total={6} /></span>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Value</span>
+                    <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtValue(c.totalValue, c.currency)}</span>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+          </>
         )}
       </div>
 
@@ -420,7 +453,7 @@ function ShareModal({ consignment, user, allOrgs, peerOrgs, peerConnected, onClo
 
   return (
     <div className="modal-bg" onClick={onClose}>
-      <div className="modal" style={{ width: 560 }} onClick={e => e.stopPropagation()}>
+      <div className="modal modal-lg" onClick={e => e.stopPropagation()}>
         <h3>Share — {consignment.ucr}</h3>
         {docs.length > 0 && (
           <div style={{ marginBottom: 16 }}>
