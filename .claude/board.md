@@ -7,11 +7,11 @@
 
 | Phase | Total | Backlog | In Progress | Blocked | Done |
 |-------|-------|---------|-------------|---------|------|
-| 1     | 54    | 54      | 0           | 0       | 0    |
+| 1     | 56    | 56      | 0           | 0       | 0    |
 | 2     | 30    | 30      | 0           | 0       | 0    |
 | 3     | 12    | 12      | 0           | 0       | 0    |
 | 4     | 10    | 10      | 0           | 0       | 0    |
-| **Total** | **106** | **106** | **0** | **0** | **0** |
+| **Total** | **108** | **108** | **0** | **0** | **0** |
 
 ---
 
@@ -62,6 +62,8 @@
 | [T-145](tasks/T-145.md) | End-to-end testing: config system | P0 | backlog | T-143, T-144 |
 | [T-146](tasks/T-146.md) | End-to-end testing: mobile responsiveness | P0 | backlog | T-128, T-129, T-131, T-132 |
 | [T-147](tasks/T-147.md) | Update Docker Compose for CONFIG_FILE env var | P1 | backlog | T-104 |
+| [T-148](tasks/T-148.md) | Fix duplicate fontSize key in Payments.jsx | P2 | backlog | none |
+| [T-149](tasks/T-149.md) | Reduce Vite bundle size below 500 kB warning | P2 | backlog | none |
 | [T-1V01](tasks/T-1V01.md) | Add Vietnam government actor types to config schema | P1 | backlog | none |
 | [T-1V02](tasks/T-1V02.md) | Add document type registry to config schema | P2 | backlog | none |
 | [T-1V04](tasks/T-1V04.md) | Create vietnam-eu.json corridor config | P2 | backlog | T-1V03, T-143 |
