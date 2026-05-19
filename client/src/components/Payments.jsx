@@ -2,16 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
 import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
+import { fmtValue as fmtVal } from '../utils/format';
 import { CreditCard, Plus, X, ChevronRight, CheckCircle, Clock, AlertCircle, Share2, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
-
-function fmtVal(n, cur = 'USD') {
-  if (!n || isNaN(Number(n))) return '—';
-  const v = Number(n);
-  const sym = cur === 'KES' ? 'KES ' : cur === 'EUR' ? '€' : '$';
-  if (v >= 1_000_000) return `${sym}${(v / 1_000_000).toFixed(2)}M`;
-  if (v >= 1_000) return `${sym}${(v / 1_000).toFixed(1)}K`;
-  return `${sym}${v.toLocaleString()}`;
-}
 
 const STATUS_STYLES = {
   'Unpaid':          { bg: '#fff4eb', color: '#c2410c', dot: '#FF7200' },

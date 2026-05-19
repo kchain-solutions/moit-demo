@@ -2,14 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { useNode } from '../context/NodeContext';
 import { useConfig } from '../context/ConfigContext';
+import { fmtCurrency as fmtVal } from '../utils/format';
 import { Plus, ChevronRight, CheckCircle, Circle, Clock, Zap, Hash, RefreshCw, Share2, X } from 'lucide-react';
-
-/* ─── helpers ─── */
-const fmtVal = (n, cur = 'USD') => {
-  const symbols = { USD: '$', EUR: '€', GBP: '£', JPY: '¥', CNY: '¥', KES: 'KES ', VND: '₫', KRW: '₩' };
-  const s = symbols[cur] || cur + ' ';
-  return `${s}${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-};
 
 const LC_STATUSES = ['Draft', 'Issued', 'Advised', 'Confirmed', 'Presented', 'Drawn'];
 const CONTRACT_STATUSES = ['Draft', 'Active', 'Conditions Met', 'Released', 'Settled'];
