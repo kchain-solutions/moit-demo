@@ -27,7 +27,17 @@ const LEDGER_FILE = path.join(DATA_DIR, `ledger-${NODE_ID}.json`);
 
 function loadLedgerLog() {
   try {
-    if (existsSync(LEDGER_FILE)) return JSON.parse(readFileSync(LEDGER_FILE, 'utf-8'));
+    if (existsSync(LEDGER_FILE)) {
+      const raw = JSON.parse(readFileSync(LEDGER_FILE, 'utf-8'));
+      // Ledger files include a _corridorId marker. If the corridor changed, discard stale data.
+      const savedCorridor = raw?._corridorId;
+      const currentCorridor = getConfig()?.corridor?.id;
+      if (savedCorridor && currentCorridor && savedCorridor !== currentCorridor) {
+        console.log(`[${NODE_NAME}] Corridor changed (${savedCorridor} → ${currentCorridor}), resetting ledger`);
+        return [];
+      }
+      return raw?.entries ?? (Array.isArray(raw) ? raw : []);
+    }
   } catch (e) { console.error(`[${NODE_NAME}] Failed to load ledger log:`, e.message); }
   return [];
 }
@@ -35,7 +45,9 @@ function loadLedgerLog() {
 function saveLedgerLog() {
   try {
     if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-    writeFileSync(LEDGER_FILE, JSON.stringify(store.ledgerLog, null, 2));
+    const corridorId = getConfig()?.corridor?.id;
+    const wrapper = { _corridorId: corridorId || null, entries: store.ledgerLog };
+    writeFileSync(LEDGER_FILE, JSON.stringify(wrapper, null, 2));
   } catch (e) { console.error(`[${NODE_NAME}] Failed to save ledger log:`, e.message); }
 }
 
