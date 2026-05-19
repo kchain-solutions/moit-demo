@@ -31,8 +31,8 @@
       "orgs": [
         { "id": "org1", "name": "OCP Group", "role": "Phosphate Exporter - Morocco", "username": "ocp", "password": "demo", "orgType": "private" },
         { "id": "org2", "name": "Kenya Trade Hub Ltd", "role": "Agricultural Exporter - Kenya", "username": "ktrade", "password": "demo", "orgType": "private" },
-        { "id": "org3", "name": "Office des Changes", "role": "Customs Authority - Morocco", "username": "moroccocustoms", "password": "demo", "orgType": "public" },
-        { "id": "org4", "name": "Kenya Revenue Authority", "role": "Customs Authority - Kenya", "username": "kenyacustoms", "password": "demo", "orgType": "public" },
+        { "id": "org3", "name": "Office des Changes", "role": "Customs Authority - Morocco", "username": "moroccocustoms", "password": "demo", "orgType": "public", "regulatoryAuthority": "Office des Changes", "governmentSystem": "BADR", "digitalSignatureCapability": true },
+        { "id": "org4", "name": "Kenya Revenue Authority", "role": "Customs Authority - Kenya", "username": "kenyacustoms", "password": "demo", "orgType": "public", "regulatoryAuthority": "Kenya Revenue Authority", "governmentSystem": "iCMS", "digitalSignatureCapability": true },
         { "id": "org7", "name": "AfriTrade Bank", "role": "Financier - Morocco", "username": "afribank", "password": "demo", "orgType": "private" },
         { "id": "org8", "name": "Afreximbank", "role": "Financier - Kenya", "username": "afrexim", "password": "demo", "orgType": "private" }
       ]
@@ -41,8 +41,8 @@
       "orgs": [
         { "id": "org5", "name": "PrimeFert Industries", "role": "Fertilizer Importer - Nigeria", "username": "primefert", "password": "demo", "orgType": "private" },
         { "id": "org6", "name": "EuroFresh Imports B.V.", "role": "Agricultural Importer - Netherlands", "username": "eurofresh", "password": "demo", "orgType": "private" },
-        { "id": "org13", "name": "Nigeria Customs Service", "role": "Customs Authority - Nigeria", "username": "nigeriacustoms", "password": "demo", "orgType": "public" },
-        { "id": "org14", "name": "EU Customs (Netherlands)", "role": "Customs Authority - Netherlands", "username": "eucustoms", "password": "demo", "orgType": "public" }
+        { "id": "org13", "name": "Nigeria Customs Service", "role": "Customs Authority - Nigeria", "username": "nigeriacustoms", "password": "demo", "orgType": "public", "regulatoryAuthority": "Nigeria Customs Service", "governmentSystem": "NICIS II", "digitalSignatureCapability": true },
+        { "id": "org14", "name": "EU Customs (Netherlands)", "role": "Customs Authority - Netherlands", "username": "eucustoms", "password": "demo", "orgType": "public", "regulatoryAuthority": "Netherlands Customs Administration", "governmentSystem": "AGS", "digitalSignatureCapability": true }
       ]
     }
   },

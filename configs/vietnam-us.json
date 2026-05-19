@@ -43,7 +43,10 @@
           "role": "Customs Authority - Vietnam",
           "username": "vncustoms",
           "password": "demo",
-          "orgType": "public"
+          "orgType": "public",
+          "regulatoryAuthority": "General Department of Vietnam Customs",
+          "governmentSystem": "VNACCS",
+          "digitalSignatureCapability": true
         },
         {
           "id": "org3",
@@ -51,7 +54,10 @@
           "role": "Certificate of Origin Authority - Vietnam",
           "username": "moit",
           "password": "demo",
-          "orgType": "public"
+          "orgType": "public",
+          "regulatoryAuthority": "Ministry of Industry and Trade",
+          "governmentSystem": "eCoSys",
+          "digitalSignatureCapability": true
         },
         {
           "id": "org4",
@@ -91,7 +97,10 @@
           "role": "Port Authority - Ho Chi Minh City",
           "username": "catlaiport",
           "password": "demo",
-          "orgType": "public"
+          "orgType": "public",
+          "regulatoryAuthority": "Vietnam Maritime Administration",
+          "governmentSystem": "VNDCS",
+          "digitalSignatureCapability": false
         },
         {
           "id": "org11",
@@ -135,7 +144,10 @@
           "role": "Customs Authority - United States",
           "username": "uscbp",
           "password": "demo",
-          "orgType": "public"
+          "orgType": "public",
+          "regulatoryAuthority": "US Customs and Border Protection",
+          "governmentSystem": "ACE",
+          "digitalSignatureCapability": true
         },
         {
           "id": "org14",
@@ -143,7 +155,10 @@
           "role": "Customs Authority - EU",
           "username": "eucustoms",
           "password": "demo",
-          "orgType": "public"
+          "orgType": "public",
+          "regulatoryAuthority": "Netherlands Customs Administration",
+          "governmentSystem": "AGS",
+          "digitalSignatureCapability": true
         }
       ]
     }

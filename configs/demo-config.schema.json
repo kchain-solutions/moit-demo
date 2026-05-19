@@ -272,6 +272,20 @@
         "orgType": {
           "type": "string", "enum": ["public", "private"],
           "description": "'public' for government/regulatory bodies (customs, ministries). 'private' for companies (manufacturers, buyers, banks, carriers). Affects UI badge styling."
+        },
+        "regulatoryAuthority": {
+          "type": "string",
+          "description": "For government orgs: the regulatory body this org represents. Used for attestation display and credential verification flows.",
+          "examples": ["General Department of Vietnam Customs", "Ministry of Industry and Trade"]
+        },
+        "governmentSystem": {
+          "type": "string",
+          "description": "For government orgs: the IT system they operate (e.g., VNACCS, eCoSys, ASYCUDA). Shown in document templates and export declarations.",
+          "examples": ["VNACCS", "eCoSys", "ASYCUDA World"]
+        },
+        "digitalSignatureCapability": {
+          "type": "boolean",
+          "description": "Whether this org has digital signature capability for electronic documents. Relevant for government orgs issuing certificates."
         }
       }
     },
