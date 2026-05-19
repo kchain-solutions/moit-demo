@@ -317,6 +317,47 @@
             "Origin composition shows 38% local value-added content (below 40% threshold). Non-FTA supplier materials exceed allowable limits.",
             null
           ]
+        },
+        "originComposition": {
+          "type": ["object", "null"],
+          "description": "Origin composition data for rules-of-origin compliance. Required for corridors with FTA preferential tariff (CPTPP, EVFTA, AfCFTA). Null or omitted for consignments where origin tracking is not applicable.",
+          "properties": {
+            "localContentPercent": {
+              "type": "number", "minimum": 0, "maximum": 100,
+              "description": "Percentage of value added in the exporting country.",
+              "examples": [65.5, 38.0]
+            },
+            "calculationMethod": {
+              "type": "string",
+              "enum": ["RVC", "CTC", "SP", "BUILD_DOWN", "BUILD_UP"],
+              "description": "Rules of origin calculation method. RVC = Regional Value Content, CTC = Change in Tariff Classification, SP = Specific Process, BUILD_DOWN/BUILD_UP = alternative RVC formulas.",
+              "examples": ["RVC"]
+            },
+            "threshold": {
+              "type": "number", "minimum": 0, "maximum": 100,
+              "description": "Minimum local content percentage required for FTA eligibility.",
+              "examples": [40, 55]
+            },
+            "cptppCumulationApplied": {
+              "type": "boolean",
+              "description": "Whether FTA cumulation (e.g., CPTPP, EVFTA) with partner countries is applied."
+            },
+            "inputMaterials": {
+              "type": "array",
+              "description": "Breakdown of input materials by origin country and value share.",
+              "items": {
+                "type": "object",
+                "required": ["material", "supplierCountry", "valuePercent"],
+                "additionalProperties": false,
+                "properties": {
+                  "material": { "type": "string", "description": "Material name.", "examples": ["Fabric", "Thread", "Labor"] },
+                  "supplierCountry": { "type": "string", "description": "ISO 2-letter country code of the supplier.", "examples": ["VN", "KR", "CN"] },
+                  "valuePercent": { "type": "number", "minimum": 0, "maximum": 100, "description": "Percentage of total value." },
+                  "ftaMember": { "type": "boolean", "description": "Whether the supplier country is a member of the applicable FTA." }
+                }
+              }
+            }
+          }
         }
       }
     },
