@@ -4,6 +4,7 @@
       "Edit(.claude/**)",
       "Write(.claude/**)",
       "Read(.claude/**)",
+      "Bash(mv .claude/tasks/**)",
       "Bash(node scripts/regen-board.cjs)"
     ]
   }
