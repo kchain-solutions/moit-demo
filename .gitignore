@@ -10,4 +10,5 @@ server/public/
 !.claude/CLAUDE.md
 !.claude/board.md
 !.claude/tasks/
+!.claude/agents/
 !.claude/settings.json
