@@ -8,7 +8,7 @@ export function NodeProvider({ children }) {
   const [nodeInfo, setNodeInfo] = useState(null);
   const [peerConnected, setPeerConnected] = useState(false);
   const [peerOrgs, setPeerOrgs] = useState([]);
-  const [tangleLog, setTangleLog] = useState([]);
+  const [ledgerLog, setLedgerLog] = useState([]);
   const [refreshKey, setRefreshKey] = useState(0);
   const wsRef = useRef(null);
 
@@ -40,11 +40,11 @@ export function NodeProvider({ children }) {
         const msg = JSON.parse(e.data);
         if (msg.type === 'PEER_STATUS') { setPeerConnected(msg.connected); if (msg.peerOrgs) setPeerOrgs(msg.peerOrgs); if (!msg.connected) setPeerOrgs([]); }
         else if (msg.type === 'PEER_ORGS') setPeerOrgs(msg.peerOrgs);
-        else if (msg.type === 'TANGLE_UPDATE') setTangleLog(msg.log);
+        else if (msg.type === 'LEDGER_UPDATE') setLedgerLog(msg.log);
         else if (msg.type === 'DATA_SYNC') refresh();
       };
     } catch (e) { /* serverless — polling only */ }
-    api.getTangle().then(setTangleLog).catch(() => {});
+    api.getLedger().then(setLedgerLog).catch(() => {});
     api.getNode().then(info => { setPeerConnected(info.peerConnected); setNodeInfo(prev => ({ ...prev, ...info })); }).catch(() => {});
     return () => ws?.close();
   }, [user, refresh]);
@@ -60,7 +60,7 @@ export function NodeProvider({ children }) {
   }, [user]);
 
   return (
-    <Ctx.Provider value={{ user, nodeInfo, peerConnected, peerOrgs, tangleLog, refreshKey, login, logout, refresh }}>
+    <Ctx.Provider value={{ user, nodeInfo, peerConnected, peerOrgs, ledgerLog, refreshKey, login, logout, refresh }}>
       {children}
     </Ctx.Provider>
   );

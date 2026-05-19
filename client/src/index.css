@@ -174,7 +174,7 @@ tbody tr:hover td{background:#f8fafc;cursor:pointer}
 .modal h3{font-size:16px;font-weight:700;color:var(--text-primary);margin-bottom:18px}
 .modal-act{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
 
-/* ── Tangle entries ── */
+/* ── Ledger entries ── */
 .te{display:flex;gap:12px;padding:12px 16px;border-left:3px solid var(--green);background:white;margin-bottom:6px;border-radius:0 8px 8px 0;font-size:12.5px}
 .te.perm{border-left-color:var(--nav-bg)}
 .te.id{border-left-color:var(--accent)}
