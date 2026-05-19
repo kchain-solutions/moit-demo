@@ -57,6 +57,23 @@ export default function Login() {
     setPassword('demo');
   };
 
+  const [collapsed, setCollapsed] = useState({});
+
+  // Group orgs by role category (text before the dash)
+  const groupByCategory = (list) => {
+    const groups = {};
+    for (const c of list) {
+      const cat = c.role.includes(' - ') ? c.role.split(' - ')[0].trim() : 'Other';
+      if (!groups[cat]) groups[cat] = [];
+      groups[cat].push(c);
+    }
+    return groups;
+  };
+
+  const toggleGroup = (cat) => {
+    setCollapsed(prev => ({ ...prev, [cat]: !prev[cat] }));
+  };
+
   const creds = orgs;
 
   const logoSrc = config?.branding?.logo || '/logo.png';
@@ -99,13 +116,48 @@ export default function Login() {
 
         <div className="demo-creds">
           <div className="dc-title">Quick Sign-In</div>
-          {creds.map(c => (
-            <div key={c.username} className="cred-row" style={{ cursor: 'pointer', padding: '5px 0' }} onClick={() => handleQuick(c.username)}>
-              <span className="role">{c.role}</span>
-              <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 11.5 }}>{c.label}</span>
-              <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 10.5 }}>{c.username} / demo</span>
+          {creds.length <= 8 ? (
+            /* Simple list for small org counts */
+            creds.map(c => (
+              <div key={c.username} className="cred-row" style={{ cursor: 'pointer', padding: '5px 0' }} onClick={() => handleQuick(c.username)}>
+                <span className="role">{c.role}</span>
+                <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 11.5 }}>{c.label}</span>
+                <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 10.5 }}>{c.username} / demo</span>
+              </div>
+            ))
+          ) : creds.length <= 12 ? (
+            /* Scrollable list for medium org counts */
+            <div style={{ maxHeight: 280, overflowY: 'auto', paddingRight: 4 }}>
+              {creds.map(c => (
+                <div key={c.username} className="cred-row" style={{ cursor: 'pointer', padding: '5px 0' }} onClick={() => handleQuick(c.username)}>
+                  <span className="role">{c.role}</span>
+                  <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 11.5 }}>{c.label}</span>
+                  <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 10.5 }}>{c.username} / demo</span>
+                </div>
+              ))}
             </div>
-          ))}
+          ) : (
+            /* Grouped collapsible sections for large org counts */
+            <div style={{ maxHeight: 320, overflowY: 'auto', paddingRight: 4 }}>
+              {Object.entries(groupByCategory(creds)).map(([cat, items]) => (
+                <div key={cat}>
+                  <div
+                    style={{ cursor: 'pointer', padding: '6px 0 4px', fontSize: 11, fontWeight: 700, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 4, borderBottom: '1px solid var(--border)' }}
+                    onClick={() => toggleGroup(cat)}
+                  >
+                    <span style={{ fontSize: 9, transform: collapsed[cat] ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.15s', display: 'inline-block' }}>&#9660;</span>
+                    {cat} ({items.length})
+                  </div>
+                  {!collapsed[cat] && items.map(c => (
+                    <div key={c.username} className="cred-row" style={{ cursor: 'pointer', padding: '4px 0 4px 12px' }} onClick={() => handleQuick(c.username)}>
+                      <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 11.5 }}>{c.label}</span>
+                      <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 10.5 }}>{c.username} / demo</span>
+                    </div>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
