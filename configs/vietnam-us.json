@@ -1070,5 +1070,21 @@
         "Forced Labor Screening": "consignment.originComposition.inputMaterials"
       }
     }
+  ],
+  "channels": [
+    {
+      "id": "A",
+      "label": "Government NSW/ASW",
+      "description": "Official customs declarations, C/O applications, and regulatory filings processed through Vietnam National Single Window (VNSW) and ASEAN Single Window (ASW)",
+      "documentTypes": ["Export Declaration", "MOIT Certificate of Origin"],
+      "systems": ["VNACCS", "eCoSys", "VNSW", "ASW"]
+    },
+    {
+      "id": "B",
+      "label": "TWIN Network",
+      "description": "Commercial trade documents, notarized copies, supply chain data, and cross-border verification exchanged peer-to-peer via TWIN nodes",
+      "documentTypes": ["Commercial Invoice", "Bill of Material", "Inspection Report", "Packing List", "Bill of Lading"],
+      "systems": ["TWIN Node", "IOTA Ledger"]
+    }
   ]
 }
