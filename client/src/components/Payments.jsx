@@ -4,6 +4,7 @@ import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
 import { fmtValue as fmtVal } from '../utils/format';
 import { CreditCard, Plus, X, ChevronRight, CheckCircle, Clock, AlertCircle, Share2, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
+import Modal from './shared/Modal';
 
 const STATUS_STYLES = {
   'Unpaid':          { bg: '#fff4eb', color: '#c2410c', dot: '#FF7200' },
@@ -268,96 +269,80 @@ export default function Payments() {
       </div>
 
       {/* New Payment Modal */}
-      {showNew && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card modal-card" style={{ width: 480, maxHeight: '90vh', overflow: 'auto', padding: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700 }}>New Payment Record</h3>
-              <button onClick={() => setShowNew(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X style={{ width: 18, height: 18 }} /></button>
-            </div>
-            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="fg">
-                <label>Consignment</label>
-                <select value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))} required>
-                  <option value="">Select consignment…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.product}</option>)}
-                </select>
-              </div>
-              <div className="fg">
-                <label>Invoice Reference</label>
-                <input value={form.invoiceRef} onChange={e => setForm(f => ({ ...f, invoiceRef: e.target.value }))} placeholder="e.g. INV-APM-2026-0821" required />
-              </div>
-              <div className="pay-form-amount">
-                <div className="fg">
-                  <label>Amount</label>
-                  <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="0.00" required />
-                </div>
-                <div className="fg">
-                  <label>Currency</label>
-                  <select value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                    {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="pay-form-2col">
-                <div className="fg">
-                  <label>Due Date</label>
-                  <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))} required />
-                </div>
-                <div className="fg">
-                  <label>Payment Method</label>
-                  <select value={form.paymentMethod} onChange={e => setForm(f => ({ ...f, paymentMethod: e.target.value }))}>
-                    {(config?.finance?.paymentMethods || ['Bank Transfer', 'Letter of Credit', 'Open Account', 'Cash Against Documents']).map(m => <option key={m} value={m}>{m}</option>)}
-                  </select>
-                </div>
-              </div>
-              <div className="fg">
-                <label>Notes</label>
-                <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Optional notes…" />
-              </div>
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
-                <button type="button" className="btn btn-s" onClick={() => setShowNew(false)}>Cancel</button>
-                <button type="submit" className="btn btn-p">Create Payment</button>
-              </div>
-            </form>
+      <Modal open={showNew} onClose={() => setShowNew(false)} title="New Payment Record" width={480}>
+        <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="fg">
+            <label>Consignment</label>
+            <select value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))} required>
+              <option value="">Select consignment…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.product}</option>)}
+            </select>
           </div>
-        </div>
-      )}
+          <div className="fg">
+            <label>Invoice Reference</label>
+            <input value={form.invoiceRef} onChange={e => setForm(f => ({ ...f, invoiceRef: e.target.value }))} placeholder="e.g. INV-APM-2026-0821" required />
+          </div>
+          <div className="pay-form-amount">
+            <div className="fg">
+              <label>Amount</label>
+              <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="0.00" required />
+            </div>
+            <div className="fg">
+              <label>Currency</label>
+              <select value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
+                {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="pay-form-2col">
+            <div className="fg">
+              <label>Due Date</label>
+              <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))} required />
+            </div>
+            <div className="fg">
+              <label>Payment Method</label>
+              <select value={form.paymentMethod} onChange={e => setForm(f => ({ ...f, paymentMethod: e.target.value }))}>
+                {(config?.finance?.paymentMethods || ['Bank Transfer', 'Letter of Credit', 'Open Account', 'Cash Against Documents']).map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="fg">
+            <label>Notes</label>
+            <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Optional notes…" />
+          </div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
+            <button type="button" className="btn btn-s" onClick={() => setShowNew(false)}>Cancel</button>
+            <button type="submit" className="btn btn-p">Create Payment</button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Finance Share Modal */}
-      {showShare && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card modal-card" style={{ width: 400, padding: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700 }}>Share Finance Access</h3>
-              <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X style={{ width: 18, height: 18 }} /></button>
-            </div>
-            <form onSubmit={handleShare} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="fg">
-                <label>Consignment</label>
-                <select value={shareConsignment} onChange={e => setShareConsignment(e.target.value)} required>
-                  <option value="">Select…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr}</option>)}
-                </select>
-              </div>
-              <div className="fg">
-                <label>Share With</label>
-                <select value={shareOrgId} onChange={e => setShareOrgId(e.target.value)} required>
-                  <option value="">Select organisation…</option>
-                  {sharable.map(o => <option key={o.id} value={o.id}>{o.name} ({o.role})</option>)}
-                </select>
-              </div>
-              <p style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                The selected organisation will gain viewer access to payment records, letters of credit, and smart contracts for this consignment.
-              </p>
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                <button type="button" className="btn btn-s" onClick={() => setShowShare(false)}>Cancel</button>
-                <button type="submit" className="btn btn-p"><Share2 style={{ width: 13, height: 13 }} /> Grant Access</button>
-              </div>
-            </form>
+      <Modal open={showShare} onClose={() => setShowShare(false)} title="Share Finance Access" width={400}>
+        <form onSubmit={handleShare} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="fg">
+            <label>Consignment</label>
+            <select value={shareConsignment} onChange={e => setShareConsignment(e.target.value)} required>
+              <option value="">Select…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr}</option>)}
+            </select>
           </div>
-        </div>
-      )}
+          <div className="fg">
+            <label>Share With</label>
+            <select value={shareOrgId} onChange={e => setShareOrgId(e.target.value)} required>
+              <option value="">Select organisation…</option>
+              {sharable.map(o => <option key={o.id} value={o.id}>{o.name} ({o.role})</option>)}
+            </select>
+          </div>
+          <p style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            The selected organisation will gain viewer access to payment records, letters of credit, and smart contracts for this consignment.
+          </p>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <button type="button" className="btn btn-s" onClick={() => setShowShare(false)}>Cancel</button>
+            <button type="submit" className="btn btn-p"><Share2 style={{ width: 13, height: 13 }} /> Grant Access</button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }
