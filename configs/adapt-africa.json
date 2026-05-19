@@ -11,11 +11,11 @@
     "logo": "/adapt.png",
     "alpha": {
       "label": "Alpha",
-      "description": "Africa Exporters & Authorities"
+      "description": "Sub-Saharan Africa (Nigeria & Kenya)"
     },
     "beta": {
       "label": "Beta",
-      "description": "Africa Importers"
+      "description": "North Africa (Morocco)"
     }
   },
   "theme": {
@@ -29,18 +29,18 @@
   "nodes": {
     "alpha": {
       "orgs": [
-        { "id": "org1", "name": "AtlasPhosphate Export Co.", "role": "Exporter - Morocco", "username": "atlas", "password": "atlas123", "orgType": "private" },
-        { "id": "org2", "name": "Morocco Customs Authority", "role": "Customs Authority - Morocco", "username": "moroccocustoms", "password": "morocco123", "orgType": "public" },
-        { "id": "org3", "name": "Nigeria Customs Service", "role": "Customs Authority - Nigeria", "username": "nigeriacustoms", "password": "nigeria123", "orgType": "public" },
-        { "id": "org4", "name": "Kenya Revenue Authority", "role": "Customs Authority - Kenya", "username": "kenyacustoms", "password": "kenya123", "orgType": "public" },
-        { "id": "org7", "name": "AfriTrade Bank", "role": "Financier - Pan-African", "username": "afribank", "password": "afribank123", "orgType": "private" },
-        { "id": "org8", "name": "Sahara Trade Finance", "role": "Financier - North Africa", "username": "saharafin", "password": "sahara123", "orgType": "private" }
+        { "id": "org5", "name": "PrimeFert Industries", "role": "Trader - Nigeria", "username": "primefert", "password": "demo", "orgType": "private" },
+        { "id": "org3", "name": "Nigeria Customs Service", "role": "Customs Authority - Nigeria", "username": "nigeriacustoms", "password": "demo", "orgType": "public" },
+        { "id": "org4", "name": "Kenya Revenue Authority", "role": "Customs Authority - Kenya", "username": "kenyacustoms", "password": "demo", "orgType": "public" },
+        { "id": "org7", "name": "AfriTrade Bank", "role": "Financier - Pan-African", "username": "afribank", "password": "demo", "orgType": "private" }
       ]
     },
     "beta": {
       "orgs": [
-        { "id": "org5", "name": "PrimeFert Industries", "role": "Importer - Nigeria", "username": "primefert", "password": "prime123", "orgType": "private" },
-        { "id": "org6", "name": "TradeLink Commodities", "role": "Importer - Morocco", "username": "tradelink", "password": "trade123", "orgType": "private" }
+        { "id": "org1", "name": "AtlasPhosphate Export Co.", "role": "Exporter - Morocco", "username": "atlas", "password": "demo", "orgType": "private" },
+        { "id": "org2", "name": "Morocco Customs Authority", "role": "Customs Authority - Morocco", "username": "moroccocustoms", "password": "demo", "orgType": "public" },
+        { "id": "org6", "name": "TradeLink Commodities", "role": "Importer - Morocco", "username": "tradelink", "password": "demo", "orgType": "private" },
+        { "id": "org8", "name": "Sahara Trade Finance", "role": "Financier - North Africa", "username": "saharafin", "password": "demo", "orgType": "private" }
       ]
     }
   },
@@ -85,6 +85,120 @@
   },
   "consignments": {
     "alpha": [
+      {
+        "ucr": "NG-2024-EXP-00001",
+        "product": "Raw Sesame Seeds (Hulled)",
+        "hsCode": "1207.40",
+        "quantity": "30,000 kg",
+        "totalValue": 165000,
+        "currency": "USD",
+        "exporter": "Olam Nigeria Ltd",
+        "importer": "TradeLink Commodities",
+        "fromCountry": "Nigeria",
+        "toCountry": "Morocco",
+        "originPort": "Port of Lagos (Apapa)",
+        "destinationPort": "Port of Casablanca",
+        "vessel": "MV Mediterranean Bridge",
+        "shipDate": "2024-12-10",
+        "incoterms": "FOB",
+        "invoiceRef": "INV-2024-OLM-001",
+        "declRef": "NG-EXP-2024-001",
+        "status": "In Transit",
+        "creatorOrgId": "org5",
+        "creatorOrgName": "PrimeFert Industries"
+      },
+      {
+        "ucr": "NG-2024-EXP-00002",
+        "product": "Premium Cocoa Beans (Grade 1)",
+        "hsCode": "1801.00",
+        "quantity": "45,000 kg",
+        "totalValue": 312000,
+        "currency": "USD",
+        "exporter": "Dangote Industries",
+        "importer": "TradeLink Commodities",
+        "fromCountry": "Nigeria",
+        "toCountry": "Morocco",
+        "originPort": "Port of Lagos (Apapa)",
+        "destinationPort": "Port of Tangier Med",
+        "vessel": "MV Marrakech Star",
+        "shipDate": "2024-11-20",
+        "incoterms": "CIF",
+        "invoiceRef": "INV-2024-DAN-002",
+        "declRef": "NG-EXP-2024-002",
+        "status": "Customs",
+        "creatorOrgId": "org5",
+        "creatorOrgName": "PrimeFert Industries"
+      },
+      {
+        "ucr": "NG-2024-EXP-00003",
+        "product": "Palm Kernel Oil (Refined)",
+        "hsCode": "1513.29",
+        "quantity": "50,000 litres",
+        "totalValue": 228000,
+        "currency": "USD",
+        "exporter": "PZ Cussons Nigeria",
+        "importer": "TradeLink Commodities",
+        "fromCountry": "Nigeria",
+        "toCountry": "Morocco",
+        "originPort": "Port of Onne",
+        "destinationPort": "Port of Casablanca",
+        "vessel": "MV African Dawn",
+        "shipDate": "2024-10-15",
+        "incoterms": "FOB",
+        "invoiceRef": "INV-2024-PZC-003",
+        "declRef": "NG-EXP-2024-003",
+        "status": "Delivered",
+        "creatorOrgId": "org5",
+        "creatorOrgName": "PrimeFert Industries"
+      },
+      {
+        "ucr": "NG-2024-EXP-00004",
+        "product": "Organic Cashew Nuts (Raw, In-Shell)",
+        "hsCode": "0801.31",
+        "quantity": "20,000 kg",
+        "totalValue": 145000,
+        "currency": "USD",
+        "exporter": "Olam Nigeria Ltd",
+        "importer": "TradeLink Commodities",
+        "fromCountry": "Nigeria",
+        "toCountry": "Morocco",
+        "originPort": "Port of Lagos (Apapa)",
+        "destinationPort": "Port of Casablanca",
+        "vessel": "MV Sahel Trader",
+        "shipDate": "2025-01-15",
+        "incoterms": "CFR",
+        "invoiceRef": "INV-2025-OLM-004",
+        "declRef": "NG-EXP-2025-004",
+        "status": "Submitted",
+        "creatorOrgId": "org5",
+        "creatorOrgName": "PrimeFert Industries"
+      },
+      {
+        "ucr": "NG-2024-EXP-E001",
+        "product": "Shea Butter (Unrefined, Grade A)",
+        "hsCode": "1515.90",
+        "quantity": "12,000 kg",
+        "totalValue": 89500,
+        "currency": "USD",
+        "exporter": "PZ Cussons Nigeria",
+        "importer": "TradeLink Commodities",
+        "fromCountry": "Nigeria",
+        "toCountry": "Morocco",
+        "originPort": "Port of Lagos (Tin Can Island)",
+        "destinationPort": "Port of Casablanca",
+        "vessel": "MV West Africa Express",
+        "shipDate": "2025-01-20",
+        "incoterms": "FOB",
+        "invoiceRef": "INV-2025-PZC-E01",
+        "declRef": "NG-EXP-2025-E01",
+        "status": "Under Review",
+        "creatorOrgId": "org5",
+        "creatorOrgName": "PrimeFert Industries",
+        "errorType": "Phytosanitary Failure",
+        "errorDescription": "Shea butter samples failed aflatoxin testing at Morocco Customs. NAFDAC export certificate references batch SB-2025-A12 but shipping documents show SB-2025-A13. Import held pending re-testing."
+      }
+    ],
+    "beta": [
       {
         "ucr": "MA-2024-EXP-00001",
         "product": "DAP Fertilizer (Diammonium Phosphate)",
@@ -287,120 +401,6 @@
         "errorType": "HS Code Mismatch",
         "errorDescription": "Export Declaration filed under HS 3105.51 (containing nitrates and phosphates) but Commercial Invoice declares HS 3105.20 (NPK blend). Nigeria Customs Service has flagged the shipment for tariff reconciliation."
       }
-    ],
-    "beta": [
-      {
-        "ucr": "NG-2024-EXP-00001",
-        "product": "Raw Sesame Seeds (Hulled)",
-        "hsCode": "1207.40",
-        "quantity": "30,000 kg",
-        "totalValue": 165000,
-        "currency": "USD",
-        "exporter": "Olam Nigeria Ltd",
-        "importer": "TradeLink Commodities",
-        "fromCountry": "Nigeria",
-        "toCountry": "Morocco",
-        "originPort": "Port of Lagos (Apapa)",
-        "destinationPort": "Port of Casablanca",
-        "vessel": "MV Mediterranean Bridge",
-        "shipDate": "2024-12-10",
-        "incoterms": "FOB",
-        "invoiceRef": "INV-2024-OLM-001",
-        "declRef": "NG-EXP-2024-001",
-        "status": "In Transit",
-        "creatorOrgId": "org5",
-        "creatorOrgName": "PrimeFert Industries"
-      },
-      {
-        "ucr": "NG-2024-EXP-00002",
-        "product": "Premium Cocoa Beans (Grade 1)",
-        "hsCode": "1801.00",
-        "quantity": "45,000 kg",
-        "totalValue": 312000,
-        "currency": "USD",
-        "exporter": "Dangote Industries",
-        "importer": "TradeLink Commodities",
-        "fromCountry": "Nigeria",
-        "toCountry": "Morocco",
-        "originPort": "Port of Lagos (Apapa)",
-        "destinationPort": "Port of Tangier Med",
-        "vessel": "MV Marrakech Star",
-        "shipDate": "2024-11-20",
-        "incoterms": "CIF",
-        "invoiceRef": "INV-2024-DAN-002",
-        "declRef": "NG-EXP-2024-002",
-        "status": "Customs",
-        "creatorOrgId": "org6",
-        "creatorOrgName": "TradeLink Commodities"
-      },
-      {
-        "ucr": "NG-2024-EXP-00003",
-        "product": "Palm Kernel Oil (Refined)",
-        "hsCode": "1513.29",
-        "quantity": "50,000 litres",
-        "totalValue": 228000,
-        "currency": "USD",
-        "exporter": "PZ Cussons Nigeria",
-        "importer": "TradeLink Commodities",
-        "fromCountry": "Nigeria",
-        "toCountry": "Morocco",
-        "originPort": "Port of Onne",
-        "destinationPort": "Port of Casablanca",
-        "vessel": "MV African Dawn",
-        "shipDate": "2024-10-15",
-        "incoterms": "FOB",
-        "invoiceRef": "INV-2024-PZC-003",
-        "declRef": "NG-EXP-2024-003",
-        "status": "Delivered",
-        "creatorOrgId": "org5",
-        "creatorOrgName": "PrimeFert Industries"
-      },
-      {
-        "ucr": "NG-2024-EXP-00004",
-        "product": "Organic Cashew Nuts (Raw, In-Shell)",
-        "hsCode": "0801.31",
-        "quantity": "20,000 kg",
-        "totalValue": 145000,
-        "currency": "USD",
-        "exporter": "Olam Nigeria Ltd",
-        "importer": "TradeLink Commodities",
-        "fromCountry": "Nigeria",
-        "toCountry": "Morocco",
-        "originPort": "Port of Lagos (Apapa)",
-        "destinationPort": "Port of Casablanca",
-        "vessel": "MV Sahel Trader",
-        "shipDate": "2025-01-15",
-        "incoterms": "CFR",
-        "invoiceRef": "INV-2025-OLM-004",
-        "declRef": "NG-EXP-2025-004",
-        "status": "Submitted",
-        "creatorOrgId": "org5",
-        "creatorOrgName": "PrimeFert Industries"
-      },
-      {
-        "ucr": "NG-2024-EXP-E001",
-        "product": "Shea Butter (Unrefined, Grade A)",
-        "hsCode": "1515.90",
-        "quantity": "12,000 kg",
-        "totalValue": 89500,
-        "currency": "USD",
-        "exporter": "PZ Cussons Nigeria",
-        "importer": "TradeLink Commodities",
-        "fromCountry": "Nigeria",
-        "toCountry": "Morocco",
-        "originPort": "Port of Lagos (Tin Can Island)",
-        "destinationPort": "Port of Casablanca",
-        "vessel": "MV West Africa Express",
-        "shipDate": "2025-01-20",
-        "incoterms": "FOB",
-        "invoiceRef": "INV-2025-PZC-E01",
-        "declRef": "NG-EXP-2025-E01",
-        "status": "Under Review",
-        "creatorOrgId": "org6",
-        "creatorOrgName": "TradeLink Commodities",
-        "errorType": "Phytosanitary Failure",
-        "errorDescription": "Shea butter samples failed aflatoxin testing at Morocco Customs. NAFDAC export certificate references batch SB-2025-A12 but shipping documents show SB-2025-A13. Import held pending re-testing."
-      }
     ]
   },
   "documents": {
@@ -408,15 +408,15 @@
       { "name": "Commercial Invoice", "docType": "Commercial Invoice", "issuerOrgId": "creator", "issuerName": null, "suffix": "INV" },
       { "name": "Packing List", "docType": "Packing List", "issuerOrgId": "creator", "issuerName": null, "suffix": "PL" },
       { "name": "Bill of Lading", "docType": "Bill of Lading", "issuerOrgId": null, "issuerName": "Mediterranean Shipping Company", "suffix": "BL" },
-      { "name": "Certificate of Origin", "docType": "Certificate of Origin", "issuerOrgId": null, "issuerName": "Morocco Customs Authority", "suffix": "CO" },
-      { "name": "Export Declaration", "docType": "Export Declaration", "issuerOrgId": null, "issuerName": "Morocco Customs Authority", "suffix": "ED" }
+      { "name": "Certificate of Origin", "docType": "Certificate of Origin", "issuerOrgId": null, "issuerName": "Nigeria Customs Service", "suffix": "CO" },
+      { "name": "Export Declaration", "docType": "Export Declaration", "issuerOrgId": null, "issuerName": "Nigeria Customs Service", "suffix": "ED" }
     ],
     "beta": [
       { "name": "Commercial Invoice", "docType": "Commercial Invoice", "issuerOrgId": "creator", "issuerName": null, "suffix": "INV" },
       { "name": "Packing List", "docType": "Packing List", "issuerOrgId": "creator", "issuerName": null, "suffix": "PL" },
       { "name": "Bill of Lading", "docType": "Bill of Lading", "issuerOrgId": null, "issuerName": "Mediterranean Shipping Company", "suffix": "BL" },
-      { "name": "Certificate of Origin", "docType": "Certificate of Origin", "issuerOrgId": null, "issuerName": "Nigeria Customs Service", "suffix": "CO" },
-      { "name": "Export Declaration", "docType": "Export Declaration", "issuerOrgId": null, "issuerName": "Nigeria Customs Service", "suffix": "ED" }
+      { "name": "Certificate of Origin", "docType": "Certificate of Origin", "issuerOrgId": null, "issuerName": "Morocco Customs Authority", "suffix": "CO" },
+      { "name": "Export Declaration", "docType": "Export Declaration", "issuerOrgId": null, "issuerName": "Morocco Customs Authority", "suffix": "ED" }
     ]
   },
   "documentTemplates": {
