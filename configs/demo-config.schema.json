@@ -278,6 +278,44 @@
           }
         }
       }
+    },
+    "channels": {
+      "type": "array",
+      "description": "Optional two-channel architecture indicator. Declares data channels (e.g., Channel A = Government NSW/ASW, Channel B = TWIN). Shows how TWIN complements existing government systems rather than replacing them.",
+      "items": {
+        "type": "object",
+        "required": ["id", "label", "description"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Channel identifier (e.g., 'A', 'B').",
+            "examples": ["A", "B"]
+          },
+          "label": {
+            "type": "string",
+            "description": "Short channel label.",
+            "examples": ["Government NSW/ASW", "TWIN Network"]
+          },
+          "description": {
+            "type": "string",
+            "description": "Explanation of what flows through this channel.",
+            "examples": ["Official customs declarations, C/O applications, regulatory filings"]
+          },
+          "documentTypes": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Document type names that flow through this channel.",
+            "examples": [["Export Declaration", "MOIT Certificate of Origin"]]
+          },
+          "systems": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "IT systems associated with this channel.",
+            "examples": [["VNACCS", "eCoSys", "VNSW"]]
+          }
+        }
+      }
     }
   },
   "definitions": {
