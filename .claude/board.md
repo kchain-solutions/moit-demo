@@ -8,11 +8,11 @@
 
 | Phase | Total | Backlog | In Progress | Blocked | Done |
 |-------|-------|---------|-------------|---------|------|
-| 1     | 63    | 12      | 0           | 0       | 51    |
+| 1     | 62    | 0      | 0           | 0       | 62    |
 | 2     | 36    | 27      | 0           | 0       | 0    |
 | 3     | 15    | 15      | 0           | 0       | 0    |
 | 4     | 10    | 10      | 0           | 0       | 0    |
-| **Total** | **124** | **64** | **0** | **0** | **51** |
+| **Total** | **123** | **52** | **0** | **0** | **62** |
 
 ---
 
@@ -32,7 +32,7 @@
 | [T-112](tasks/done/T-112.md) | Add getConfig() and getOrgs() to api.js | P0 | Done | T-109, T-110 |
 | [T-113](tasks/done/T-113.md) | Wrap App with ConfigProvider | P0 | Done | T-111 |
 | [T-114](tasks/done/T-114.md) | Refactor Login.jsx to use config-driven orgs | P0 | Done | T-111, T-112 |
-| [T-115](tasks/backlog/T-115.md) | Implement adaptive login credential list layout | P2 | backlog | T-114 |
+| [T-115](tasks/done/T-115.md) | Implement adaptive login credential list layout | P2 | done | T-114 |
 | [T-116](tasks/done/T-116.md) | Refactor App.jsx sidebar branding to use config | P0 | Done | T-111 |
 | [T-117](tasks/done/T-117.md) | Refactor countries.js to accept config overrides | P1 | Done | T-111 |
 | [T-118](tasks/done/T-118.md) | Expand CSS custom properties for corridor theming | P0 | Done | none |
@@ -60,25 +60,25 @@
 | [T-140](tasks/done/T-140.md) | Wrap hover states in @media (hover: hover) | P3 | Done | T-125 |
 | [T-141](tasks/done/T-141.md) | Increase touch targets to WCAG 2.1 AA (44x44px) | P1 | Done | T-125 |
 | [T-142](tasks/done/T-142.md) | Convert modals to bottom sheets on mobile | P1 | Done | T-125 |
-| [T-145](tasks/backlog/T-145.md) | End-to-end testing: config system | P0 | backlog | T-143, T-144 |
+| [T-145](tasks/done/T-145.md) | End-to-end testing: config system | P0 | done | T-143, T-144 |
 | [T-146](tasks/done/T-146.md) | End-to-end testing: mobile responsiveness | P0 | Done | T-128, T-129, T-131, T-132 |
-| [T-147](tasks/backlog/T-147.md) | Update Docker Compose for CONFIG_FILE env var | P1 | backlog | T-104 |
+| [T-147](tasks/done/T-147.md) | Update Docker Compose for CONFIG_FILE env var | P1 | done | T-104 |
 | [T-148](tasks/done/T-148.md) | Fix duplicate fontSize key in Payments.jsx | P2 | done | none |
 | [T-149](tasks/done/T-149.md) | Reduce Vite bundle size below 500 kB warning | P2 | done | none |
 | [T-150](tasks/done/T-150.md) | Rename all "tangle" references to "IOTA Mainnet" / "ledger" | P1 | done | none |
 | [T-151](tasks/done/T-151.md) | Make demo corridor-agnostic and update all documentation | P1 | done | T-150 |
-| [T-1V01](tasks/backlog/T-1V01.md) | Add Vietnam government actor types to config schema | P1 | backlog | none |
-| [T-1V02](tasks/backlog/T-1V02.md) | Add document type registry to config schema | P2 | backlog | none |
-| [T-1V04](tasks/backlog/T-1V04.md) | Create vietnam-eu.json corridor config | P2 | backlog | T-1V03, T-143 |
-| [T-1V05](tasks/backlog/T-1V05.md) | Add regulatory metadata to config schema | P2 | backlog | T-1V03 |
+| [T-1V01](tasks/done/T-1V01.md) | Add Vietnam government actor types to config schema | P1 | done | none |
+| [T-1V02](tasks/done/T-1V02.md) | Add document type registry to config schema | P2 | done | none |
+| [T-1V04](tasks/done/T-1V04.md) | Create vietnam-eu.json corridor config | P2 | done | T-1V03, T-143 |
+| [T-1V05](tasks/done/T-1V05.md) | Add regulatory metadata to config schema | P2 | done | T-1V03 |
 
 ### 1A. Configuration Schema and Infrastructure
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
 | [T-102](tasks/done/T-102.md) | Extract Vietnam corridor data into config JSON | P0 | Done | T-101 |
-| [T-1V03](tasks/backlog/T-1V03.md) | Add origin composition fields to config schema | P0 | backlog | none |
-| [T-1V06](tasks/backlog/T-1V06.md) | Add two-channel architecture indicator to config | P3 | backlog | none |
+| [T-1V03](tasks/done/T-1V03.md) | Add origin composition fields to config schema | P0 | done | none |
+| [T-1V06](tasks/done/T-1V06.md) | Add two-channel architecture indicator to config | P3 | done | none |
 
 ### 1B. Server-Side Config Integration
 
@@ -90,7 +90,7 @@
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
-| [T-143](tasks/backlog/T-143.md) | Create Cambodia-EU corridor config for validation | P1 | backlog | T-101, T-116, T-114 |
+| [T-143](tasks/done/T-143.md) | Create Cambodia-EU corridor config for validation | P1 | done | T-101, T-116, T-114 |
 | [T-144](tasks/done/T-144.md) | Remove hardcoded fallback arrays from server | P1 | Done | T-143 |
 
 ### 1J. Code Quality and Refactoring
@@ -98,7 +98,6 @@
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
 | [T-160](tasks/done/T-160.md) | Extract server/index.js into modular route files | P0 | done | none |
-| [T-161](tasks/backlog/T-161.md) | Extract shared frontend utilities and components | P1 | backlog | none |
 | [T-161](tasks/done/T-161.md) | Extract shared frontend utilities and components | P1 | done | none |
 | [T-162](tasks/done/T-162.md) | Add Vitest and baseline server API tests | P0 | done | T-160 |
 | [T-164](tasks/done/T-164.md) | Standardize modal patterns across all components | P2 | done | T-161 |
@@ -107,7 +106,7 @@
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
-| [T-1V07](tasks/backlog/T-1V07.md) | Support Vietnamese diacritics in config and UI | P1 | backlog | none |
+| [T-1V07](tasks/done/T-1V07.md) | Support Vietnamese diacritics in config and UI | P1 | done | none |
 
 ---
 
