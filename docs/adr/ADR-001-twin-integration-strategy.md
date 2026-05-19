@@ -9,7 +9,7 @@
 
 ## 1. Context
 
-The moit-demo is a corridor-agnostic trade corridor simulation for Vietnam garment exports. Phase 1 is substantially complete (48/62 tasks): config-driven corridors, mobile responsiveness, modular server architecture. Phase 2 must replace simulated blockchain operations with real IOTA testnet operations (DIDs, notarization, credential verification) to demonstrate production viability to MOIT stakeholders.
+The moit-demo is a corridor-agnostic trade corridor simulation for Vietnam garment exports. Phase 1 is complete (62/62 tasks): config-driven corridors (4 configs), mobile responsiveness, modular server architecture, 132 tests passing. Phase 2 must replace simulated blockchain operations with real IOTA testnet operations (DIDs, notarization, credential verification) to demonstrate production viability to MOIT stakeholders.
 
 ### Business constraints
 
