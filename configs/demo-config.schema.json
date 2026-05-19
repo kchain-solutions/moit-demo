@@ -240,6 +240,44 @@
           }
         }
       }
+    },
+    "regulations": {
+      "type": "array",
+      "description": "Optional array of trade regulations applicable to this corridor. Each regulation specifies which destinations it applies to, a display label, and which config fields map to compliance requirements.",
+      "items": {
+        "type": "object",
+        "required": ["id", "name", "displayLabel"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique kebab-case identifier for the regulation.",
+            "examples": ["uflpa", "evfta", "cptpp", "afcfta"]
+          },
+          "name": {
+            "type": "string",
+            "description": "Full official name of the regulation or trade agreement.",
+            "examples": ["Uyghur Forced Labor Prevention Act", "EU-Vietnam Free Trade Agreement", "Comprehensive and Progressive Agreement for Trans-Pacific Partnership"]
+          },
+          "displayLabel": {
+            "type": "string",
+            "description": "Short label for UI badges and status indicators.",
+            "examples": ["UFLPA", "EVFTA", "CPTPP", "AfCFTA"]
+          },
+          "applicableToDestinations": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Country names (matching geography.countries keys) where this regulation applies. Empty = applies to all.",
+            "examples": [["United States"], ["Netherlands", "Germany"]]
+          },
+          "complianceFieldMapping": {
+            "type": "object",
+            "description": "Maps regulation requirements to config fields. Keys are requirement labels, values are dot-path references to config data.",
+            "additionalProperties": { "type": "string" },
+            "examples": [{ "Origin Content": "consignment.originComposition.localContentPercent", "Forced Labor Attestation": "consignment.originComposition.inputMaterials" }]
+          }
+        }
+      }
     }
   },
   "definitions": {
