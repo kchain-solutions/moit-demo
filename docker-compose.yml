@@ -7,7 +7,7 @@ services:
       - NODE_ID=alpha
       - NODE_NAME=Node Alpha
       - PEER_URL=ws://twin-beta:4000
-      - CONFIG_FILE=configs/vietnam-us.json
+      - CONFIG_FILE=${CONFIG_FILE:-configs/vietnam-us.json}
     ports:
       - "4000:4000"
 
@@ -19,7 +19,7 @@ services:
       - NODE_ID=beta
       - NODE_NAME=Node Beta
       - PEER_URL=ws://twin-alpha:4000
-      - CONFIG_FILE=configs/vietnam-us.json
+      - CONFIG_FILE=${CONFIG_FILE:-configs/vietnam-us.json}
     ports:
       - "4001:4000"
 
