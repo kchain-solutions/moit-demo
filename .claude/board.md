@@ -8,11 +8,11 @@
 
 | Phase | Total | Backlog | In Progress | Blocked | Done |
 |-------|-------|---------|-------------|---------|------|
-| 1     | 58    | 11      | 0           | 0       | 47    |
+| 1     | 62    | 15      | 0           | 0       | 47    |
 | 2     | 30    | 30      | 0           | 0       | 0    |
 | 3     | 12    | 12      | 0           | 0       | 0    |
 | 4     | 10    | 10      | 0           | 0       | 0    |
-| **Total** | **110** | **63** | **0** | **0** | **47** |
+| **Total** | **114** | **67** | **0** | **0** | **47** |
 
 ---
 
@@ -92,6 +92,15 @@
 |----|-------|----------|--------|--------------|
 | [T-143](tasks/backlog/T-143.md) | Create Cambodia-EU corridor config for validation | P1 | backlog | T-101, T-116, T-114 |
 | [T-144](tasks/done/T-144.md) | Remove hardcoded fallback arrays from server | P1 | Done | T-143 |
+
+### 1J. Code Quality and Refactoring
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-160](tasks/backlog/T-160.md) | Extract server/index.js into modular route files | P0 | backlog | none |
+| [T-161](tasks/backlog/T-161.md) | Extract shared frontend utilities and components | P1 | backlog | none |
+| [T-162](tasks/backlog/T-162.md) | Add Vitest and baseline server API tests | P0 | backlog | T-160 |
+| [T-164](tasks/backlog/T-164.md) | Standardize modal patterns across all components | P2 | backlog | T-161 |
 
 ### 1H. Touch and Accessibility
 
