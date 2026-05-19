@@ -1037,5 +1037,38 @@
       "issuingAuthority": null,
       "requiresNotarization": false
     }
-  }
+  },
+  "regulations": [
+    {
+      "id": "cptpp",
+      "name": "Comprehensive and Progressive Agreement for Trans-Pacific Partnership",
+      "displayLabel": "CPTPP",
+      "applicableToDestinations": ["United States", "Japan"],
+      "complianceFieldMapping": {
+        "Origin Content": "consignment.originComposition.localContentPercent",
+        "Cumulation Applied": "consignment.originComposition.cptppCumulationApplied",
+        "Calculation Method": "consignment.originComposition.calculationMethod"
+      }
+    },
+    {
+      "id": "evfta",
+      "name": "EU-Vietnam Free Trade Agreement",
+      "displayLabel": "EVFTA",
+      "applicableToDestinations": ["Netherlands", "Germany"],
+      "complianceFieldMapping": {
+        "Origin Content": "consignment.originComposition.localContentPercent",
+        "Certificate of Origin": "documents.MOIT Certificate of Origin"
+      }
+    },
+    {
+      "id": "uflpa",
+      "name": "Uyghur Forced Labor Prevention Act",
+      "displayLabel": "UFLPA",
+      "applicableToDestinations": ["United States"],
+      "complianceFieldMapping": {
+        "Supply Chain Attestation": "consignment.originComposition.inputMaterials",
+        "Forced Labor Screening": "consignment.originComposition.inputMaterials"
+      }
+    }
+  ]
 }
