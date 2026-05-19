@@ -4,6 +4,7 @@ import { useNode } from '../context/NodeContext';
 import { useConfig } from '../context/ConfigContext';
 import { fmtCurrency as fmtVal } from '../utils/format';
 import { Plus, ChevronRight, CheckCircle, Circle, Clock, Zap, Hash, RefreshCw, Share2, X } from 'lucide-react';
+import Modal from './shared/Modal';
 
 const LC_STATUSES = ['Draft', 'Issued', 'Advised', 'Confirmed', 'Presented', 'Drawn'];
 const CONTRACT_STATUSES = ['Draft', 'Active', 'Conditions Met', 'Released', 'Settled'];
@@ -281,95 +282,79 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey, config }) {
       )}
 
       {/* Create LC Modal */}
-      {showCreate && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card modal-card" style={{ width: 520, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: 17 }}>New Letter of Credit</h3>
-              <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
-            </div>
-            <div className="tf-form-2col">
-              <div style={{ gridColumn: '1/-1' }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
-                <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
-                  <option value="">Select consignment…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.description}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>LC Number *</label>
-                <input className="input" placeholder="LC-2026-001" value={form.lcNumber} onChange={e => setForm(f => ({ ...f, lcNumber: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Expiry Date</label>
-                <input className="input" type="date" value={form.expiryDate} onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Issuing Bank *</label>
-                <input className="input" placeholder="Issuing bank" value={form.issuingBank} onChange={e => setForm(f => ({ ...f, issuingBank: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Advising Bank</label>
-                <input className="input" placeholder="Advising bank" value={form.advisingBank} onChange={e => setForm(f => ({ ...f, advisingBank: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Beneficiary</label>
-                <input className="input" placeholder="Exporter name" value={form.beneficiary} onChange={e => setForm(f => ({ ...f, beneficiary: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Applicant</label>
-                <input className="input" placeholder="Importer name" value={form.applicant} onChange={e => setForm(f => ({ ...f, applicant: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Amount *</label>
-                <input className="input" type="number" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
-                <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                  {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowCreate(false)}>Cancel</button>
-              <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreate}>Create LC</button>
-            </div>
+      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="New Letter of Credit" width={520}>
+        <div className="tf-form-2col">
+          <div style={{ gridColumn: '1/-1' }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
+            <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
+              <option value="">Select consignment…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.description}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>LC Number *</label>
+            <input className="input" placeholder="LC-2026-001" value={form.lcNumber} onChange={e => setForm(f => ({ ...f, lcNumber: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Expiry Date</label>
+            <input className="input" type="date" value={form.expiryDate} onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Issuing Bank *</label>
+            <input className="input" placeholder="Issuing bank" value={form.issuingBank} onChange={e => setForm(f => ({ ...f, issuingBank: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Advising Bank</label>
+            <input className="input" placeholder="Advising bank" value={form.advisingBank} onChange={e => setForm(f => ({ ...f, advisingBank: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Beneficiary</label>
+            <input className="input" placeholder="Exporter name" value={form.beneficiary} onChange={e => setForm(f => ({ ...f, beneficiary: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Applicant</label>
+            <input className="input" placeholder="Importer name" value={form.applicant} onChange={e => setForm(f => ({ ...f, applicant: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Amount *</label>
+            <input className="input" type="number" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
+            <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
+              {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </div>
         </div>
-      )}
+        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+          <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowCreate(false)}>Cancel</button>
+          <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreate}>Create LC</button>
+        </div>
+      </Modal>
 
       {/* Share Finance Modal */}
-      {showShare && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card modal-card" style={{ width: 400, padding: 28 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: 17 }}>Share Finance Access</h3>
-              <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment</label>
-                <select className="input" value={shareConsId} onChange={e => setShareConsId(e.target.value)}>
-                  <option value="">Select consignment…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Organisation</label>
-                <select className="input" value={shareOrgId} onChange={e => setShareOrgId(e.target.value)}>
-                  <option value="">Select org…</option>
-                  {allOrgs.filter(o => o.id !== user.id).map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowShare(false)}>Cancel</button>
-              <button className="btn-primary" style={{ flex: 1 }} onClick={handleShare}>Share</button>
-            </div>
+      <Modal open={showShare} onClose={() => setShowShare(false)} title="Share Finance Access" width={400}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment</label>
+            <select className="input" value={shareConsId} onChange={e => setShareConsId(e.target.value)}>
+              <option value="">Select consignment…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Organisation</label>
+            <select className="input" value={shareOrgId} onChange={e => setShareOrgId(e.target.value)}>
+              <option value="">Select org…</option>
+              {allOrgs.filter(o => o.id !== user.id).map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+            </select>
           </div>
         </div>
-      )}
+        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+          <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowShare(false)}>Cancel</button>
+          <button className="btn-primary" style={{ flex: 1 }} onClick={handleShare}>Share</button>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -641,88 +626,80 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey, config
       })()}
 
       {/* Create Contract Modal */}
-      {showCreate && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card modal-card" style={{ width: 560, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: 17 }}>New Smart Contract</h3>
-              <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
-            </div>
-            <div className="tf-form-2col">
-              <div style={{ gridColumn: '1/-1' }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
-                <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
-                  <option value="">Select consignment…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.description}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Payor Org</label>
-                <select className="input" value={form.payorOrgId} onChange={e => setForm(f => ({ ...f, payorOrgId: e.target.value }))}>
-                  <option value="">Select…</option>
-                  {allOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Payee Org</label>
-                <select className="input" value={form.payeeOrgId} onChange={e => setForm(f => ({ ...f, payeeOrgId: e.target.value }))}>
-                  <option value="">Select…</option>
-                  {allOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Amount *</label>
-                <input className="input" type="number" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
-                <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                  {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <input type="checkbox" id="autoRelease" checked={form.autoRelease} onChange={e => setForm(f => ({ ...f, autoRelease: e.target.checked }))} />
-                <label htmlFor="autoRelease" style={{ fontSize: 13, color: '#1e293b', cursor: 'pointer' }}>
-                  <Zap size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4, color: '#f97316' }} />
-                  Auto-release when all conditions met
-                </label>
-              </div>
-            </div>
-
-            {/* Conditions */}
-            <div style={{ marginTop: 18 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Conditions *</label>
-                <button type="button" style={{ fontSize: 12, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }} onClick={addCondition}>
-                  + Add Condition
-                </button>
-              </div>
-              {form.conditions.map((cond, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
-                  <div style={{ flex: 2 }}>
-                    <input className="input" placeholder="Condition description *" value={cond.description}
-                      onChange={e => updateCondition(i, 'description', e.target.value)} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <input className="input" placeholder="Doc type (optional)" value={cond.docType}
-                      onChange={e => updateCondition(i, 'docType', e.target.value)} />
-                  </div>
-                  {form.conditions.length > 1 && (
-                    <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px 4px' }} onClick={() => removeCondition(i)}>
-                      <X size={14} color="#ef4444" />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowCreate(false)}>Cancel</button>
-              <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreate}>Create Contract</button>
-            </div>
+      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="New Smart Contract" width={560}>
+        <div className="tf-form-2col">
+          <div style={{ gridColumn: '1/-1' }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
+            <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
+              <option value="">Select consignment…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.description}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Payor Org</label>
+            <select className="input" value={form.payorOrgId} onChange={e => setForm(f => ({ ...f, payorOrgId: e.target.value }))}>
+              <option value="">Select…</option>
+              {allOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Payee Org</label>
+            <select className="input" value={form.payeeOrgId} onChange={e => setForm(f => ({ ...f, payeeOrgId: e.target.value }))}>
+              <option value="">Select…</option>
+              {allOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Amount *</label>
+            <input className="input" type="number" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
+            <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
+              {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <input type="checkbox" id="autoRelease" checked={form.autoRelease} onChange={e => setForm(f => ({ ...f, autoRelease: e.target.checked }))} />
+            <label htmlFor="autoRelease" style={{ fontSize: 13, color: '#1e293b', cursor: 'pointer' }}>
+              <Zap size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4, color: '#f97316' }} />
+              Auto-release when all conditions met
+            </label>
           </div>
         </div>
-      )}
+
+        {/* Conditions */}
+        <div style={{ marginTop: 18 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Conditions *</label>
+            <button type="button" style={{ fontSize: 12, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }} onClick={addCondition}>
+              + Add Condition
+            </button>
+          </div>
+          {form.conditions.map((cond, i) => (
+            <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
+              <div style={{ flex: 2 }}>
+                <input className="input" placeholder="Condition description *" value={cond.description}
+                  onChange={e => updateCondition(i, 'description', e.target.value)} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <input className="input" placeholder="Doc type (optional)" value={cond.docType}
+                  onChange={e => updateCondition(i, 'docType', e.target.value)} />
+              </div>
+              {form.conditions.length > 1 && (
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px 4px' }} onClick={() => removeCondition(i)}>
+                  <X size={14} color="#ef4444" />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+          <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowCreate(false)}>Cancel</button>
+          <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreate}>Create Contract</button>
+        </div>
+      </Modal>
     </div>
   );
 }
