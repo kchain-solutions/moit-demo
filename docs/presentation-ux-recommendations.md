@@ -1,9 +1,11 @@
-# TWIN Vietnam Demo Briefing: Presentation UX/Visual Improvement Recommendations
+# Trade Corridor Demo Briefing: Presentation UX/Visual Improvement Recommendations
 
-**Document:** UX/Visual design guidance for `TWIN_Vietnam_Demo_Briefing.pptx`
+> **Note:** This document was originally written for the Vietnam-US corridor presentation. The recommendations are broadly applicable to any corridor presentation, with Vietnam-specific examples inline.
+
+**Document:** UX/Visual design guidance for corridor demo briefing presentations
 **Author:** UX/UI Designer Agent
 **Date:** 2026-05-14
-**Target audience:** Vietnamese Ministry of Industry and Trade (MOIT), customs authorities, IOTA Foundation stakeholders
+**Original target audience:** Vietnamese Ministry of Industry and Trade (MOIT), customs authorities, IOTA Foundation stakeholders
 **Presentation format:** 5 slides (original) + 1 new slide (Vietnam User Journey) = 6 slides total
 **Brand colors:** Primary Purple #37326E, Secondary Teal #14B8A6
 **Logo asset:** Vietnam map silhouette at `client/public/vietnam.png`

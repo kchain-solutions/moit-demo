@@ -1,8 +1,8 @@
-# CLAUDE.md - TWIN Vietnam Demo
+# CLAUDE.md - Trade Corridor Demo
 
 ## Project Overview
 
-TWIN Vietnam Demo: two-node trade corridor simulation (Alpha = Vietnam Export, Beta = US/EU Import) with Express backend, React SPA frontend, WebSocket P2P peering. Demonstrates DID registration, document notarization, consignment management, permission control, and trade finance for the Vietnam garment export corridor.
+Corridor-agnostic two-node trade corridor simulation (Alpha = Export, Beta = Import) with Express backend, React SPA frontend, WebSocket P2P peering. All corridor-specific data (orgs, documents, geography, branding) is driven by a JSON config in `configs/`. Demonstrates DID registration, document notarization, consignment management, permission control, and trade finance. Default config: `configs/vietnam-us.json`.
 
 ## Commands
 
@@ -43,13 +43,13 @@ client/
       Identity.jsx    # DID registration + credential validation
       Permissions.jsx # Access control matrix
       Payments.jsx    # Payment tracking
-      TangleExplorer.jsx # Immutable ledger event log
+      LedgerExplorer.jsx # Immutable ledger event log
     data/
       countries.js    # Geographic data for map rendering
     utils/
       api.js          # REST API client
   public/
-    vietnam.png       # Corridor logo
+    vietnam.png       # Corridor logo (config-driven)
 configs/              # Corridor configuration files (Phase 1+)
 docs/                 # Internal documentation
 docker-compose.yml
