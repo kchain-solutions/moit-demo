@@ -268,10 +268,51 @@ When a set of features on `develop` is ready for release:
 - **Integration Analysis:** `docs/technical/partners/twin-vietnam/twin-vietnam-integration-analysis.md` (in parent repo)
 - **Topology Tracker:** `docs/technical/partners/twin-vietnam/topology-tracker.md` (in parent repo)
 
+## TWIN Node Integration
+
+**Status:** Phase 1 complete (48/62 tasks). Phase 2 (real TWIN Node integration) ready to start.
+
+**Analysis document:** `docs/twin-node-integration-analysis.md` contains:
+- Completed work summary (config system, mobile, server modularization)
+- Remaining Phase 1 blockers (T-1V03, T-143/T-145, T-162)
+- Phase 2/3/4 task coherence check against current TWIN Node knowledge
+- Task board corrections and suggested new tasks
+- Architecture decision: two independent TWIN Nodes from day one
+
+**Decision: Two TWIN Nodes (Scenario 1)**
+
+The demo deploys two independent TWIN Nodes (Alpha + Beta) for realistic two-country simulation. Each has its own MySQL, DID identity, and storage.
+
+```
+Demo Server Alpha (:4000)  -->  TWIN Node Alpha (:3000)  -->  IOTA Testnet
+Demo Server Beta  (:4001)  -->  TWIN Node Beta  (:3001)  -->  IOTA Testnet
+Proxy (:4002)
+```
+
+`ADAPTER_MODE` env var controls per-demo-server behavior:
+- `simulated` = current demo logic (no TWIN Node needed)
+- `entity-storage` = TWIN Node with mock connectors (no DLT, fast for dev)
+- `real` = TWIN Node with IOTA connectors (on-chain DID + notarization)
+
+**To start Phase 2 integration:**
+1. Read `docs/twin-node-integration-analysis.md` for full context
+2. Check `.claude/board.md` for current task status
+3. Resolve Phase 1 blockers first: T-1V03 (origin composition), T-143 (Cambodia config), T-145 (E2E test), T-162 (Vitest)
+4. Then: T-163 (local TWIN Nodes via Docker), T-205 (adapter scaffold), T-206 (REST client)
+
+**RAG knowledge sources (in parent kchain-website repo):**
+- `docs/technical/twin-node/twin-node-reference.mdx` (v0.0.3-next.37, REST API, connectors, DSP, env vars)
+- `docs/technical/twin-node/twin-supply-chain-reference.mdx` (IConsignmentView, ODRL, Events Manager)
+- `docs/technical/twin-community/tutorials.101-reference.mdx` (Docker deployment guide)
+- `docs/technical/twin-node/twin-node-docker-reference.md` (Docker Compose reference)
+- `docs/technical/kchain-projects/moit-demo-reference.mdx` (current demo architecture)
+
 ## Key Constants
 
-- Alpha port: 4000, WS: 4010
-- Beta port: 4001, WS: 4011
+- Alpha port: 4000
+- Beta port: 4001
 - Proxy port: 4002
+- TWIN Node Alpha port: 3000
+- TWIN Node Beta port: 3001
 - All passwords in demo mode: `demo`
 - Node identity determined by `--id` flag or `?node=` query parameter

@@ -9,10 +9,10 @@
 | Phase | Total | Backlog | In Progress | Blocked | Done |
 |-------|-------|---------|-------------|---------|------|
 | 1     | 63    | 12      | 0           | 0       | 51    |
-| 2     | 30    | 30      | 0           | 0       | 0    |
-| 3     | 12    | 12      | 0           | 0       | 0    |
+| 2     | 33    | 33      | 0           | 0       | 0    |
+| 3     | 14    | 14      | 0           | 0       | 0    |
 | 4     | 10    | 10      | 0           | 0       | 0    |
-| **Total** | **115** | **64** | **0** | **0** | **51** |
+| **Total** | **120** | **69** | **0** | **0** | **51** |
 
 ---
 
@@ -117,8 +117,11 @@
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
+| [T-163](tasks/backlog/T-163.md) | Set up two local TWIN Nodes via tutorials.101 Docker | P0 | backlog | none |
 | [T-201](tasks/backlog/T-201.md) | Request TWIN Node staging/testnet access | P0 | backlog | none (can start during Phase 1) |
 | [T-202](tasks/backlog/T-202.md) | Deploy TWIN Node Alpha on testnet | P0 | backlog | T-201 |
+| [T-224](tasks/backlog/T-224.md) | Configure Gas Station for testnet transactions | P1 | backlog | T-202, T-203 |
+| [T-225](tasks/backlog/T-225.md) | Evaluate multi-tenant TWIN Node for dev/test | P3 | backlog | T-163 |
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
@@ -172,6 +175,8 @@
 | [T-301](tasks/backlog/T-301.md) | Research and document DSC protocol configuration | P0 | backlog | T-222 |
 | [T-302](tasks/backlog/T-302.md) | Implement DSC-based cross-border data exchange | P0 | backlog | T-301 |
 | [T-305](tasks/backlog/T-305.md) | Migrate consignment model to UNECE D23B | P1 | backlog | T-217 |
+| [T-309](tasks/backlog/T-309.md) | Design TWIN Adaptor deployment model for government systems | P1 | backlog | T-301, T-2V01, T-2V02 |
+| [T-310](tasks/backlog/T-310.md) | Implement W3C Activity Streams data plane | P1 | backlog | T-302 |
 | [T-3V01](tasks/backlog/T-3V01.md) | Formalize IOriginComposition as TWIN model extension | P0 | backlog | T-305, T-2V03 |
 | [T-3V02](tasks/backlog/T-3V02.md) | Implement data sovereignty enforcement mode | P1 | backlog | T-302, T-304 |
 | [T-3V04](tasks/backlog/T-3V04.md) | NDATrace integration assessment | P2 | backlog | T9 output |
