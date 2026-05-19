@@ -1,8 +1,8 @@
-# TWIN Vietnam — Trade & Logistics Platform
+# Trade Corridor Demo Platform
 
-TWIN Vietnam is a two-node interactive demo showcasing cross-border trade infrastructure for the Vietnam garment and footwear export corridor. It demonstrates how digital identity, document exchange, and trade finance can interoperate across organisations and jurisdictions without replacing existing systems.
+A two-node interactive demo showcasing cross-border trade infrastructure for configurable trade corridors. It demonstrates how digital identity, document exchange, and trade finance can interoperate across organisations and jurisdictions without replacing existing systems.
 
-Built for stakeholder presentations to the Vietnamese Ministry of Industry and Trade (MOIT).
+The platform is **corridor-agnostic**: all organisations, documents, credentials, geography, and branding are driven by a JSON configuration file. Switch corridors by changing the config.
 
 ---
 
@@ -10,45 +10,64 @@ Built for stakeholder presentations to the Vietnamese Ministry of Industry and T
 
 ```bash
 npm install
-npm run dev
+npm run demo
 ```
 
-Builds the React client and starts two live nodes:
+Builds the React client and starts two live nodes plus a routing proxy:
 
 | Node | URL | Description |
 |------|-----|-------------|
-| Alpha | http://localhost:4000 | Vietnam Export Corridor (manufacturers, customs, authorities, logistics, financiers) |
-| Beta | http://localhost:4001 | Importers / Destination Markets (buyers, destination customs) |
+| Alpha | http://localhost:4000 | Export corridor (manufacturers, customs, authorities, logistics, financiers) |
+| Beta | http://localhost:4001 | Import corridor (buyers, destination customs) |
+| Proxy | http://localhost:4002 | Single-URL access with `?node=alpha` or `?node=beta` |
 
-Open both URLs in separate browser windows and sign in with the credentials shown on each login page (password is `demo` for all accounts).
+Open both node URLs in separate browser windows and sign in with the credentials shown on each login page (password is `demo` for all accounts).
+
+### Switching corridors
+
+The default config is `configs/vietnam-us.json`. To use a different corridor:
+
+```bash
+CONFIG_FILE=configs/adapt-africa.json npm run demo
+```
+
+Available configs:
+- `configs/vietnam-us.json` — Vietnam garment/footwear export to US/EU
+- `configs/adapt-africa.json` — ADAPT Africa trade corridor
 
 ---
 
 ## Demo Credentials
 
-### Node Alpha — Vietnam Export Corridor (http://localhost:4000)
+Credentials are defined in the active corridor config file. The password is `demo` for all accounts.
+
+To see which organisations are available, check the `nodes.alpha.orgs` and `nodes.beta.orgs` arrays in the active config file, or simply open the login page which shows quick-login buttons for all configured organisations.
+
+### Example: Vietnam-US corridor (`configs/vietnam-us.json`)
+
+**Node Alpha — Export Corridor (http://localhost:4000)**
 
 | Organisation | Username | Role |
 |---|---|---|
-| TNG Investment & Trading JSC | `tng` | Manufacturer · Vietnam |
-| General Department of Vietnam Customs | `vncustoms` | Customs Authority · Vietnam |
-| Ministry of Industry and Trade (MOIT) | `moit` | Certificate of Origin Authority · Vietnam |
-| Hyosung TNS Co., Ltd | `hyosung` | Input Supplier · South Korea |
-| Bureau Veritas Vietnam | `bvinspector` | Quality Inspector · Vietnam |
-| Cat Lai Port Authority | `catlaiport` | Port Authority · Ho Chi Minh City |
-| Gemadept Logistics | `gemadept` | Freight Forwarder · Vietnam |
-| Maersk Vietnam | `maersk` | Carrier · Vietnam |
-| Vietcombank | `financier1` | Financier · Vietnam |
-| HSBC Vietnam | `financier2` | Financier · International |
+| TNG Investment & Trading JSC | `tng` | Manufacturer |
+| General Department of Vietnam Customs | `vncustoms` | Customs Authority |
+| Ministry of Industry and Trade (MOIT) | `moit` | Certificate of Origin Authority |
+| Hyosung TNS Co., Ltd | `hyosung` | Input Supplier |
+| Bureau Veritas Vietnam | `bvinspector` | Quality Inspector |
+| Cat Lai Port Authority | `catlaiport` | Port Authority |
+| Gemadept Logistics | `gemadept` | Freight Forwarder |
+| Maersk Vietnam | `maersk` | Carrier |
+| Vietcombank | `financier1` | Financier |
+| HSBC Vietnam | `financier2` | Financier |
 
-### Node Beta — Importers / Destination Markets (http://localhost:4001)
+**Node Beta — Import Corridor (http://localhost:4001)**
 
 | Organisation | Username | Role |
 |---|---|---|
-| Nike Inc. | `nike` | Importing Buyer · United States |
-| Nike Europe B.V. | `nikeeu` | Importing Buyer · EU |
-| US Customs and Border Protection | `uscbp` | Customs Authority · United States |
-| EU Customs (Netherlands) | `eucustoms` | Customs Authority · EU |
+| Nike Inc. | `nike` | Importing Buyer |
+| Nike Europe B.V. | `nikeeu` | Importing Buyer |
+| US Customs and Border Protection | `uscbp` | Customs Authority |
+| EU Customs (Netherlands) | `eucustoms` | Customs Authority |
 
 ---
 
@@ -59,84 +78,72 @@ Open both URLs in separate browser windows and sign in with the credentials show
 │     Node Alpha      │◄──────────────────►│     Node Beta       │
 │   localhost:4000    │   ws://4010 ↔ 4011  │   localhost:4001    │
 │                     │                     │                     │
-│  Manufacturers      │                     │  Importing Buyers   │
-│  Customs (VN)       │                     │  Customs (US/EU)    │
-│  MOIT (CoO)         │                     │                     │
-│  Input Suppliers    │                     │                     │
-│  Logistics & Port   │                     │                     │
-│  Financiers         │                     │                     │
+│  Export orgs        │                     │  Import orgs        │
+│  (from config)      │                     │  (from config)      │
 └─────────────────────┘                     └─────────────────────┘
           │                                           │
-          └──────── Distributed Ledger (simulated) ───┘
+          └──────── IOTA Mainnet (simulated) ─────────┘
 ```
 
 Each node is a standalone Express server with:
-- In-memory store (orgs, consignments, documents, permissions, tangle log)
+- In-memory store (orgs, consignments, documents, permissions, ledger log)
 - WebSocket server for real-time client push
 - P2P WebSocket to the peer node for cross-border data sync
+- All corridor-specific data loaded from the JSON config file
 
 ---
 
-## Trade Scenario
+## Configuration System
 
-The demo simulates a Vietnam garment/footwear export corridor:
+The platform uses a JSON Schema-validated configuration to define every corridor-specific aspect:
 
-- **Commodity:** HS 61 (knitted garments), HS 62 (woven garments), HS 64 (footwear)
-- **Origin:** Vietnam (with Korean input materials from Hyosung TNS and YKK Vietnam)
-- **Destinations:** United States, European Union (Netherlands)
-- **Preferential trade:** CPTPP cumulation rules (Korean fabric qualifies as non-third-country content)
-- **Certificate of Origin:** Issued electronically by MOIT via eCoSys
-- **Customs clearance:** VNACCS (Vietnam Automated Cargo Clearance System)
+| Section | What it controls |
+|---------|-----------------|
+| `branding` | App name, logo, theme colors |
+| `nodes` | Organisation definitions for Alpha and Beta |
+| `geography` | Country data, map coordinates, trade routes |
+| `documents` | Document types, templates, seed data |
+| `finance` | Currencies, payment methods, LC/contract seeds |
+| `credentials` | Registration types, blacklists, validation rules |
+
+See `configs/demo-config.schema.json` for the full schema.
+
+### Creating a new corridor
+
+1. Copy an existing config (e.g. `configs/vietnam-us.json`)
+2. Modify organisations, geography, documents, and branding
+3. Validate against the schema
+4. Run: `CONFIG_FILE=configs/your-corridor.json npm run demo`
 
 ---
 
 ## Features
 
 ### Digital Identity
-- Private organisations register a DID using a business registration number
+- Organisations register a DID using a business registration number
 - 5-step animated verification: format check, registry query, licence status, DID generation, credential issuance
-- Government authorities (Vietnam Customs, MOIT, US CBP, EU Customs) act as **attestation authorities**
 - Verifiable Credentials anchored on the distributed ledger
-- Peer organisations can inspect a "View Credential" modal showing DID, issuing authority, and ledger hash
-
-**Test registration numbers:**
-
-| Code | Result |
-|---|---|
-| `MST-123456` | Passes: valid Vietnamese tax code (Ma So Thue) |
-| `KBN-254789` | Passes: valid Korean business number |
-| `EIN-123456` | Passes: valid US Employer Identification Number |
-| `EORI-123456` | Passes: valid EU EORI number |
-| `MST-000000` | Fails step 2: blacklisted |
-| `MST-111111` | Fails step 3: expired licence |
-| `MST-222222` | Fails step 3: suspended |
-| `X-anything` | Fails step 2: invalid prefix |
 
 ### Consignments
-- UCR as primary identifier; Commercial Invoice and Export Declaration as secondary IDs
+- UCR as primary identifier
 - Documents attach to consignment digital twins
 - File upload (stored in memory, downloadable by authorised parties)
-- 8 pre-loaded Alpha consignments (6 regular + 2 error scenarios) and 3 Beta consignments (Korean raw materials)
 
 ### Payments
 - Full payment lifecycle per consignment: Unpaid, Partially Paid, Paid / Overdue
 - Status changes anchored as ledger events
-- Finance access managed independently from document access
 
 ### Trade Finance
-- **Letters of Credit:** Draft, Issued, Advised, Confirmed, Presented, Drawn, with document compliance checklist
-- **Smart Contracts:** Encode payment release conditions tied to Certificate of Origin verification; auto-release when all conditions are met; each state transition anchored on ledger
-- Financiers: Vietcombank (domestic) and HSBC Vietnam (international)
+- **Letters of Credit:** Draft, Issued, Advised, Confirmed, Presented, Drawn
+- **Smart Contracts:** Payment release conditions tied to document verification
 
 ### Cross-Node Sharing
 - Connect Alpha and Beta nodes from the Dashboard
 - Share consignments and documents to organisations on the peer node
-- Peer orgs are searchable; Identity page shows their verified credentials
 
 ### Access Control
 - Visual permission matrix per consignment
 - Grant / revoke per organisation
-- All changes produce an immutable ledger audit entry
 
 ### Analytics (Ledger Explorer)
 - Filterable event log: identity, document, permission, payment, contract, network
@@ -158,6 +165,7 @@ The demo simulates a Vietnam garment/footwear export corridor:
 NODE_ID=alpha
 NODE_NAME=Node Alpha
 PEER_URL=wss://<twin-beta-railway-url>
+CONFIG_FILE=configs/vietnam-us.json
 ```
 
 **twin-beta**
@@ -165,15 +173,18 @@ PEER_URL=wss://<twin-beta-railway-url>
 NODE_ID=beta
 NODE_NAME=Node Beta
 PEER_URL=wss://<twin-alpha-railway-url>
+CONFIG_FILE=configs/vietnam-us.json
 ```
 
 > `PORT` is set automatically by Railway. WebSocket runs on the same port as HTTP.
 
-4. Set the start command for each service:
-   - Alpha: `node server/index.js`
-   - Beta: `node server/index.js`
+### Docker
 
-> **Note:** The build step (`npx vite build --outDir server/public`) runs automatically via the `railway.toml` configuration.
+```bash
+docker compose up --build
+```
+
+Same three services on the same ports (4000, 4001, 4002).
 
 ---
 
