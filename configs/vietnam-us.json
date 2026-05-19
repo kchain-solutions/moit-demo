@@ -986,5 +986,56 @@
       "EU": "Netherlands"
     },
     "trustScoreLabel": "Verified Vietnamese Exporter"
+  },
+  "documentTypes": {
+    "Commercial Invoice": {
+      "uneceCode": "380",
+      "dataClassification": "sourceOfTruth",
+      "sourceSystem": null,
+      "issuingAuthority": null,
+      "requiresNotarization": true
+    },
+    "Bill of Material": {
+      "uneceCode": "420",
+      "dataClassification": "immutableSnapshot",
+      "sourceSystem": null,
+      "issuingAuthority": null,
+      "requiresNotarization": true
+    },
+    "MOIT Certificate of Origin": {
+      "uneceCode": "861",
+      "dataClassification": "sourceOfTruth",
+      "sourceSystem": "eCoSys",
+      "issuingAuthority": "Ministry of Industry and Trade",
+      "requiresNotarization": true
+    },
+    "Export Declaration": {
+      "uneceCode": "315",
+      "dataClassification": "sourceOfTruth",
+      "sourceSystem": "VNACCS",
+      "issuingAuthority": "General Department of Vietnam Customs",
+      "requiresNotarization": true
+    },
+    "Bill of Lading": {
+      "uneceCode": "714",
+      "dataClassification": "immutableSnapshot",
+      "sourceSystem": null,
+      "issuingAuthority": null,
+      "requiresNotarization": true
+    },
+    "Inspection Report": {
+      "uneceCode": "856",
+      "dataClassification": "immutableSnapshot",
+      "sourceSystem": null,
+      "issuingAuthority": "Bureau Veritas Vietnam",
+      "requiresNotarization": false
+    },
+    "Packing List": {
+      "uneceCode": "271",
+      "dataClassification": "immutableSnapshot",
+      "sourceSystem": null,
+      "issuingAuthority": null,
+      "requiresNotarization": false
+    }
   }
 }
