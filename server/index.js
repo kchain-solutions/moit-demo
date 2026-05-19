@@ -23,20 +23,20 @@ const PEER_URL = process.env.PEER_URL  || args.peer || null;
 const NODE_IP  = `127.0.0.1:${PORT}`;
 
 const DATA_DIR = path.join(__dirname, '../data');
-const TANGLE_FILE = path.join(DATA_DIR, `tangle-${NODE_ID}.json`);
+const LEDGER_FILE = path.join(DATA_DIR, `ledger-${NODE_ID}.json`);
 
-function loadTangleLog() {
+function loadLedgerLog() {
   try {
-    if (existsSync(TANGLE_FILE)) return JSON.parse(readFileSync(TANGLE_FILE, 'utf-8'));
-  } catch (e) { console.error(`[${NODE_NAME}] Failed to load tangle log:`, e.message); }
+    if (existsSync(LEDGER_FILE)) return JSON.parse(readFileSync(LEDGER_FILE, 'utf-8'));
+  } catch (e) { console.error(`[${NODE_NAME}] Failed to load ledger log:`, e.message); }
   return [];
 }
 
-function saveTangleLog() {
+function saveLedgerLog() {
   try {
     if (!existsSync(DATA_DIR)) mkdirSync(DATA_DIR, { recursive: true });
-    writeFileSync(TANGLE_FILE, JSON.stringify(store.tangleLog, null, 2));
-  } catch (e) { console.error(`[${NODE_NAME}] Failed to save tangle log:`, e.message); }
+    writeFileSync(LEDGER_FILE, JSON.stringify(store.ledgerLog, null, 2));
+  } catch (e) { console.error(`[${NODE_NAME}] Failed to save ledger log:`, e.message); }
 }
 
 const genId = () => crypto.randomBytes(8).toString('hex');
@@ -74,24 +74,24 @@ const store = {
   orgs: initOrgs(),
   consignments: [], documents: [], permissions: {}, docPermissions: {},
   payments: [], letterOfCredits: [], smartContracts: [], financePermissions: {},
-  tangleLog: loadTangleLog(),
+  ledgerLog: loadLedgerLog(),
   peerOrgs: [], peerConnected: false,
 };
 
 function addLog(type, action, actor, details, extra = {}) {
   const entry = { id: genId(), timestamp: now(), hash: genHash(), type, action, actor, details, ...extra };
-  store.tangleLog.unshift(entry);
-  saveTangleLog();
-  broadcastToClients({ type: 'TANGLE_UPDATE', log: store.tangleLog });
+  store.ledgerLog.unshift(entry);
+  saveLedgerLog();
+  broadcastToClients({ type: 'LEDGER_UPDATE', log: store.ledgerLog });
   const activePeer = [peerWs, peerInWs].find(w => w?.readyState === WebSocket.OPEN);
-  if (store.peerConnected && activePeer) activePeer.send(JSON.stringify({ type: 'TANGLE_ENTRY', entry }));
+  if (store.peerConnected && activePeer) activePeer.send(JSON.stringify({ type: 'LEDGER_ENTRY', entry }));
   return entry;
 }
 
 // Idempotent seed helper — appends historical events without duplicating
 function seedLog(type, action, actor, details, timestamp) {
-  if (store.tangleLog.some(e => e.details === details)) return;
-  store.tangleLog.push({ id: genId(), timestamp, hash: genHash(), type, action, actor, details });
+  if (store.ledgerLog.some(e => e.details === details)) return;
+  store.ledgerLog.push({ id: genId(), timestamp, hash: genHash(), type, action, actor, details });
 }
 
 // ── PDF generator for seeded documents ──
@@ -491,7 +491,7 @@ function seedConsignments() {
         new Date(shipTs.getTime() + 20 * day).toISOString());
     }
   }
-  saveTangleLog();
+  saveLedgerLog();
   console.log(`[${NODE_NAME}] Seeded ${store.consignments.length} consignments`);
 }
 
@@ -866,8 +866,8 @@ app.put('/api/contracts/:id/status', (req, res) => {
   res.json(contract);
 });
 
-// Tangle
-app.get('/api/tangle', (req, res) => res.json(store.tangleLog));
+// Ledger
+app.get('/api/ledger', (req, res) => res.json(store.ledgerLog));
 app.get('/api/peer/orgs', (req, res) => {
   if (!store.peerConnected) return res.json([]);
   let orgs = store.peerOrgs;
@@ -929,7 +929,7 @@ function handlePeerMsg(m) {
   switch (m.type) {
     case 'HANDSHAKE': store.peerOrgs = m.orgs || []; store.peerConnected = true; broadcastToClients({ type: 'PEER_STATUS', connected: true, peerOrgs: store.peerOrgs }); break;
     case 'ORG_DIRECTORY': case 'ORG_UPDATE': store.peerOrgs = m.orgs || []; broadcastToClients({ type: 'PEER_ORGS', peerOrgs: store.peerOrgs }); break;
-    case 'TANGLE_ENTRY': if (!store.tangleLog.some(e => e.id === m.entry.id)) { store.tangleLog.unshift(m.entry); broadcastToClients({ type: 'TANGLE_UPDATE', log: store.tangleLog }); } break;
+    case 'LEDGER_ENTRY': if (!store.ledgerLog.some(e => e.id === m.entry.id)) { store.ledgerLog.unshift(m.entry); broadcastToClients({ type: 'LEDGER_UPDATE', log: store.ledgerLog }); } break;
     case 'SHARE_CONSIGNMENT': {
       const { consignment, documents, permissions, docPermissions } = m;
       if (!store.consignments.some(c => c.id === consignment.id)) store.consignments.push(consignment);
@@ -1021,10 +1021,10 @@ function seedFinanceData() {
     });
   }
 
-  // Seed tangle log entries for finance
+  // Seed ledger log entries for finance
   const seedTs = (t, ts) => {
-    if (!store.tangleLog.some(e => e.details && e.details.includes(t)))
-      store.tangleLog.push({ id: genId(), timestamp: ts, hash: genHash(), type: 'finance', action: 'Finance Seeded', actor: 'System', details: t });
+    if (!store.ledgerLog.some(e => e.details && e.details.includes(t)))
+      store.ledgerLog.push({ id: genId(), timestamp: ts, hash: genHash(), type: 'finance', action: 'Finance Seeded', actor: 'System', details: t });
   };
   for (const p of store.payments) {
     const fmtAmt = `${p.currency} ${p.amount.toLocaleString()}`;
@@ -1036,7 +1036,7 @@ function seedFinanceData() {
   for (const sc of store.smartContracts) {
     seedTs(`Contract ${sc.contractRef} deployed for ${sc.ucr}. ${sc.conditions.length} release conditions. Hash: ${sc.contractHash}.`, sc.createdAt);
   }
-  saveTangleLog();
+  saveLedgerLog();
 
   console.log(`[${NODE_NAME}] Seeded finance data: ${store.payments.length} payments, ${store.letterOfCredits.length} LCs, ${store.smartContracts.length} smart contracts`);
 }

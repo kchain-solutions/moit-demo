@@ -25,7 +25,7 @@ export const api = {
   getPermissions: (cId) => req(`/api/permissions/${cId}`),
   shareConsignment: (d) => req('/api/permissions/share', { method: 'POST', body: JSON.stringify(d) }),
   revokeAccess: (d) => req('/api/permissions/revoke', { method: 'POST', body: JSON.stringify(d) }),
-  getTangle: () => req('/api/tangle'),
+  getLedger: () => req('/api/ledger'),
   searchPeerOrgs: (q) => req(`/api/peer/orgs?q=${encodeURIComponent(q || '')}`),
   // Finance Permissions
   getFinancePermissions: (cId) => req(`/api/finance-permissions/${cId}`),

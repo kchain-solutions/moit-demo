@@ -7,7 +7,7 @@ import { countryFromRoleWithConfig } from '../data/countries';
 import { Server, Link2, Globe } from 'lucide-react';
 
 export default function Network() {
-  const { user, nodeInfo, peerConnected, peerOrgs, tangleLog, refreshKey, refresh } = useNode();
+  const { user, nodeInfo, peerConnected, peerOrgs, ledgerLog, refreshKey, refresh } = useNode();
   const config = useConfig();
   const [orgs, setOrgs] = useState([]);
   const [consignments, setConsignments] = useState([]);
@@ -69,7 +69,7 @@ export default function Network() {
           </div>
           <div className="net-hero-stat">
             <div className="net-hero-stat-label">Ledger events</div>
-            <div className="net-hero-stat-value">{tangleLog.length}</div>
+            <div className="net-hero-stat-value">{ledgerLog.length}</div>
           </div>
         </div>
       </div>

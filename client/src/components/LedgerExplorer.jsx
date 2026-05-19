@@ -10,17 +10,17 @@ const COLORS = {
   network: { bg: '#f8fafc', border: '#94a3b8', text: '#475569' },
 };
 
-export default function TangleExplorer() {
-  const { tangleLog } = useNode();
+export default function LedgerExplorer() {
+  const { ledgerLog } = useNode();
   const [filter, setFilter] = useState('all');
 
-  const filtered = filter === 'all' ? tangleLog : tangleLog.filter(e => e.type === filter);
+  const filtered = filter === 'all' ? ledgerLog : ledgerLog.filter(e => e.type === filter);
   const counts = {
-    all: tangleLog.length,
-    identity: tangleLog.filter(e => e.type === 'identity').length,
-    document: tangleLog.filter(e => e.type === 'document').length,
-    permission: tangleLog.filter(e => e.type === 'permission').length,
-    network: tangleLog.filter(e => e.type === 'network').length,
+    all: ledgerLog.length,
+    identity: ledgerLog.filter(e => e.type === 'identity').length,
+    document: ledgerLog.filter(e => e.type === 'document').length,
+    permission: ledgerLog.filter(e => e.type === 'permission').length,
+    network: ledgerLog.filter(e => e.type === 'network').length,
   };
 
   const filterButtons = [
@@ -35,7 +35,7 @@ export default function TangleExplorer() {
     <div className="stack">
       <div>
         <h2 style={{ fontSize: 17, fontWeight: 700, color: 'var(--text-primary)' }}>Analytics</h2>
-        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>Immutable ledger ledger — all events are cryptographically anchored</div>
+        <div style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 2 }}>IOTA Mainnet — all events are cryptographically anchored</div>
       </div>
 
       {/* Stat cards */}

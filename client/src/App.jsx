@@ -9,7 +9,7 @@ import Consignments from './components/Consignments';
 import Payments from './components/Payments';
 import TradeFinance from './components/TradeFinance';
 import Permissions from './components/Permissions';
-import TangleExplorer from './components/TangleExplorer';
+import LedgerExplorer from './components/LedgerExplorer';
 import { LayoutDashboard, FileStack, Fingerprint, Shield, Activity, LogOut, Wifi, WifiOff, CreditCard, Landmark, Globe, Menu, Search, X } from 'lucide-react';
 
 const PAGES = [
@@ -20,7 +20,7 @@ const PAGES = [
   { id: 'trade-finance', label: 'Trade Finance',   icon: Landmark },
   { id: 'identity',      label: 'Identity',        icon: Fingerprint },
   { id: 'permissions',   label: 'Access Control',  icon: Shield },
-  { id: 'tangle',        label: 'Analytics',       icon: Activity },
+  { id: 'ledger',        label: 'Analytics',       icon: Activity },
 ];
 
 export default function App() {
@@ -141,7 +141,7 @@ export default function App() {
           {page === 'trade-finance' && <TradeFinance />}
           {page === 'identity'      && <Identity />}
           {page === 'permissions'   && <Permissions />}
-          {page === 'tangle'        && <TangleExplorer />}
+          {page === 'ledger'        && <LedgerExplorer />}
         </div>
       </main>
 

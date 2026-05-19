@@ -59,7 +59,7 @@ function DocTypeIcon({ docType }) {
 }
 
 export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
-  const { nodeInfo, peerConnected, peerOrgs, tangleLog, user, refreshKey, refresh } = useNode();
+  const { nodeInfo, peerConnected, peerOrgs, ledgerLog, user, refreshKey, refresh } = useNode();
   const config = useConfig();
   const [orgs, setOrgs] = useState([]);
   const [consignments, setConsignments] = useState([]);
@@ -98,7 +98,7 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
   const errorCount = consignments.filter(c => c.errorType).length;
   // Only count ledger events that belong to consignments visible to this org
   const myUcrs = new Set(consignments.map(c => c.ucr).filter(Boolean));
-  const visibleEvents = tangleLog.filter(e => e.details && [...myUcrs].some(ucr => e.details.includes(ucr)));
+  const visibleEvents = ledgerLog.filter(e => e.details && [...myUcrs].some(ucr => e.details.includes(ucr)));
   const hasData = consignments.length > 0;
 
   const filtered = searchQ
@@ -297,7 +297,7 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
               <div><span className="ns-k">This node</span><span className="ns-v">{nodeInfo?.nodeName || '—'}</span></div>
               <div><span className="ns-k">Local orgs</span><span className="ns-v">{orgs.length}</span></div>
               <div><span className="ns-k">Peer orgs</span><span className="ns-v">{peerConnected ? peerOrgs.length : '—'}</span></div>
-              <div><span className="ns-k">Ledger records</span><span className="ns-v">{tangleLog.length}</span></div>
+              <div><span className="ns-k">Ledger records</span><span className="ns-v">{ledgerLog.length}</span></div>
             </div>
             <div className="node-status-actions">
               {peerConnected
@@ -315,17 +315,17 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
             )}
           </div>
 
-          {/* Recent Tangle Activity */}
+          {/* Recent Ledger Activity */}
           <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--card-border)', display: 'flex', alignItems: 'center', gap: 8 }}>
               <Activity style={{ width: 15, height: 15, color: 'var(--accent)' }} />
               <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Recent Activity</h3>
             </div>
             <div style={{ padding: '10px 14px', maxHeight: 300, overflowY: 'auto' }}>
-              {tangleLog.length === 0 ? (
+              {ledgerLog.length === 0 ? (
                 <div className="empty" style={{ padding: 20 }}>No activity yet.</div>
               ) : (
-                tangleLog.slice(0, 6).map(e => (
+                ledgerLog.slice(0, 6).map(e => (
                   <div key={e.id} className={`te ${e.type === 'permission' ? 'perm' : e.type === 'identity' ? 'id' : e.type === 'network' ? 'net' : ''}`} style={{ animation: 'fadeIn .2s forwards' }}>
                     <div style={{ minWidth: 52 }}>
                       <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: '#94a3b8' }}>{new Date(e.timestamp).toLocaleTimeString()}</div>
