@@ -206,7 +206,20 @@
         "declRef": "VN-EXP-2026-0101",
         "status": "Delivered",
         "creatorOrgId": "org1",
-        "creatorOrgName": "TNG Investment & Trading JSC"
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 65.5,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Fabric", "supplierCountry": "KR", "valuePercent": 30.0, "ftaMember": true },
+            { "material": "Thread", "supplierCountry": "VN", "valuePercent": 15.5, "ftaMember": true },
+            { "material": "Zippers", "supplierCountry": "VN", "valuePercent": 10.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 40.0, "ftaMember": true },
+            { "material": "Elastic", "supplierCountry": "CN", "valuePercent": 4.5, "ftaMember": false }
+          ]
+        }
       },
       {
         "ucr": "VN-2026-EXP-00102",
@@ -228,7 +241,20 @@
         "declRef": "VN-EXP-2026-0102",
         "status": "In Transit",
         "creatorOrgId": "org1",
-        "creatorOrgName": "TNG Investment & Trading JSC"
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 68.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Cotton Fabric", "supplierCountry": "VN", "valuePercent": 28.0, "ftaMember": true },
+            { "material": "Thread", "supplierCountry": "VN", "valuePercent": 12.0, "ftaMember": true },
+            { "material": "Labels & Tags", "supplierCountry": "KR", "valuePercent": 5.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 45.0, "ftaMember": true },
+            { "material": "Packaging", "supplierCountry": "CN", "valuePercent": 10.0, "ftaMember": false }
+          ]
+        }
       },
       {
         "ucr": "VN-2026-EXP-00103",
@@ -250,7 +276,20 @@
         "declRef": "VN-EXP-2026-0103",
         "status": "Customs",
         "creatorOrgId": "org1",
-        "creatorOrgName": "TNG Investment & Trading JSC"
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 62.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Nylon Fabric", "supplierCountry": "KR", "valuePercent": 32.0, "ftaMember": true },
+            { "material": "Lining Fabric", "supplierCountry": "VN", "valuePercent": 10.0, "ftaMember": true },
+            { "material": "Zippers & Hardware", "supplierCountry": "VN", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 44.0, "ftaMember": true },
+            { "material": "Elastic & Velcro", "supplierCountry": "CN", "valuePercent": 6.0, "ftaMember": false }
+          ]
+        }
       },
       {
         "ucr": "VN-2026-EXP-00104",
@@ -272,7 +311,20 @@
         "declRef": "VN-EXP-2026-0104",
         "status": "Submitted",
         "creatorOrgId": "org1",
-        "creatorOrgName": "TNG Investment & Trading JSC"
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 70.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Knitted Fabric", "supplierCountry": "VN", "valuePercent": 25.0, "ftaMember": true },
+            { "material": "Elastic Waistband", "supplierCountry": "KR", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Thread & Trim", "supplierCountry": "VN", "valuePercent": 12.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 48.0, "ftaMember": true },
+            { "material": "Dye Chemicals", "supplierCountry": "CN", "valuePercent": 7.0, "ftaMember": false }
+          ]
+        }
       },
       {
         "ucr": "VN-2026-EXP-00105",
@@ -294,7 +346,20 @@
         "declRef": "VN-EXP-2026-0105",
         "status": "Released",
         "creatorOrgId": "org1",
-        "creatorOrgName": "TNG Investment & Trading JSC"
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 58.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Rubber Soles", "supplierCountry": "VN", "valuePercent": 18.0, "ftaMember": true },
+            { "material": "Synthetic Upper", "supplierCountry": "KR", "valuePercent": 22.0, "ftaMember": true },
+            { "material": "Laces & Insoles", "supplierCountry": "VN", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 42.0, "ftaMember": true },
+            { "material": "Adhesives", "supplierCountry": "CN", "valuePercent": 10.0, "ftaMember": false }
+          ]
+        }
       },
       {
         "ucr": "VN-2026-EXP-00106",
@@ -316,7 +381,20 @@
         "declRef": "VN-EXP-2026-0106",
         "status": "In Transit",
         "creatorOrgId": "org1",
-        "creatorOrgName": "TNG Investment & Trading JSC"
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 60.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Canvas Fabric", "supplierCountry": "VN", "valuePercent": 22.0, "ftaMember": true },
+            { "material": "Rubber Soles", "supplierCountry": "VN", "valuePercent": 15.0, "ftaMember": true },
+            { "material": "Eyelets & Laces", "supplierCountry": "KR", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 43.0, "ftaMember": true },
+            { "material": "Dye & Adhesives", "supplierCountry": "CN", "valuePercent": 12.0, "ftaMember": false }
+          ]
+        }
       },
       {
         "ucr": "VN-2026-EXP-E001",
@@ -340,7 +418,20 @@
         "creatorOrgId": "org1",
         "creatorOrgName": "TNG Investment & Trading JSC",
         "errorType": "HS Code Mismatch",
-        "errorDescription": "Export Declaration filed under HS 6205.30 (man-made fibres) but Commercial Invoice declares HS 6205.20 (cotton). Vietnam Customs (VNACCS) has flagged the shipment for reconciliation."
+        "errorDescription": "Export Declaration filed under HS 6205.30 (man-made fibres) but Commercial Invoice declares HS 6205.20 (cotton). Vietnam Customs (VNACCS) has flagged the shipment for reconciliation.",
+        "originComposition": {
+          "localContentPercent": 63.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Cotton Fabric", "supplierCountry": "VN", "valuePercent": 25.0, "ftaMember": true },
+            { "material": "Buttons & Collar Stays", "supplierCountry": "KR", "valuePercent": 7.0, "ftaMember": true },
+            { "material": "Thread", "supplierCountry": "VN", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 48.0, "ftaMember": true },
+            { "material": "Interfacing", "supplierCountry": "CN", "valuePercent": 12.0, "ftaMember": false }
+          ]
+        }
       },
       {
         "ucr": "VN-2026-EXP-E002",
@@ -364,7 +455,20 @@
         "creatorOrgId": "org1",
         "creatorOrgName": "TNG Investment & Trading JSC",
         "errorType": "Origin Verification Failed",
-        "errorDescription": "Origin composition shows 38% Vietnamese value-added content (below 40% threshold). Fleece fabric from non-CPTPP supplier (China). UFLPA screening flag: supplier region requires additional documentation."
+        "errorDescription": "Origin composition shows 38% Vietnamese value-added content (below 40% threshold). Fleece fabric from non-CPTPP supplier (China). UFLPA screening flag: supplier region requires additional documentation.",
+        "originComposition": {
+          "localContentPercent": 38.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": false,
+          "inputMaterials": [
+            { "material": "Fleece Fabric", "supplierCountry": "CN", "valuePercent": 42.0, "ftaMember": false },
+            { "material": "Thread", "supplierCountry": "VN", "valuePercent": 5.0, "ftaMember": true },
+            { "material": "Zippers", "supplierCountry": "CN", "valuePercent": 8.0, "ftaMember": false },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 38.0, "ftaMember": true },
+            { "material": "Drawcord & Elastic", "supplierCountry": "CN", "valuePercent": 7.0, "ftaMember": false }
+          ]
+        }
       }
     ],
     "beta": [
