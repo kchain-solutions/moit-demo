@@ -205,6 +205,41 @@
         },
         "trustScoreLabel": { "type": "string", "description": "Label for verified entities on the map.", "examples": ["Verified Vietnamese Exporter"] }
       }
+    },
+    "documentTypes": {
+      "type": "object",
+      "description": "Optional registry of document types valid for this corridor. Maps document type name to metadata including UNECE code, source system, issuing authority, and data classification (sourceOfTruth vs immutableSnapshot per ADR-004).",
+      "additionalProperties": {
+        "type": "object",
+        "required": ["uneceCode", "dataClassification"],
+        "additionalProperties": false,
+        "properties": {
+          "uneceCode": {
+            "type": "string",
+            "description": "UN/CEFACT or WCO document type code.",
+            "examples": ["380", "861", "315"]
+          },
+          "dataClassification": {
+            "type": "string",
+            "enum": ["sourceOfTruth", "immutableSnapshot"],
+            "description": "sourceOfTruth = authoritative record maintained by issuer, immutableSnapshot = point-in-time copy anchored on ledger."
+          },
+          "sourceSystem": {
+            "type": "string",
+            "description": "IT system that produces this document (e.g., eCoSys, VNACCS).",
+            "examples": ["eCoSys", "VNACCS"]
+          },
+          "issuingAuthority": {
+            "type": "string",
+            "description": "Organization or body that issues this document type.",
+            "examples": ["Ministry of Industry and Trade", "General Department of Vietnam Customs"]
+          },
+          "requiresNotarization": {
+            "type": "boolean",
+            "description": "Whether this document must be notarized on the ledger for compliance."
+          }
+        }
+      }
     }
   },
   "definitions": {
