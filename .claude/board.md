@@ -8,11 +8,11 @@
 
 | Phase | Total | Backlog | In Progress | Blocked | Done |
 |-------|-------|---------|-------------|---------|------|
-| 1     | 56    | 13      | 0           | 0       | 43    |
+| 1     | 58    | 11      | 0           | 0       | 47    |
 | 2     | 30    | 30      | 0           | 0       | 0    |
 | 3     | 12    | 12      | 0           | 0       | 0    |
 | 4     | 10    | 10      | 0           | 0       | 0    |
-| **Total** | **108** | **65** | **0** | **0** | **43** |
+| **Total** | **110** | **63** | **0** | **0** | **47** |
 
 ---
 
@@ -63,8 +63,10 @@
 | [T-145](tasks/backlog/T-145.md) | End-to-end testing: config system | P0 | backlog | T-143, T-144 |
 | [T-146](tasks/done/T-146.md) | End-to-end testing: mobile responsiveness | P0 | Done | T-128, T-129, T-131, T-132 |
 | [T-147](tasks/backlog/T-147.md) | Update Docker Compose for CONFIG_FILE env var | P1 | backlog | T-104 |
-| [T-148](tasks/backlog/T-148.md) | Fix duplicate fontSize key in Payments.jsx | P2 | backlog | none |
-| [T-149](tasks/backlog/T-149.md) | Reduce Vite bundle size below 500 kB warning | P2 | backlog | none |
+| [T-148](tasks/done/T-148.md) | Fix duplicate fontSize key in Payments.jsx | P2 | done | none |
+| [T-149](tasks/done/T-149.md) | Reduce Vite bundle size below 500 kB warning | P2 | done | none |
+| [T-150](tasks/done/T-150.md) | Rename all "tangle" references to "IOTA Mainnet" / "ledger" | P1 | done | none |
+| [T-151](tasks/done/T-151.md) | Make demo corridor-agnostic and update all documentation | P1 | done | T-150 |
 | [T-1V01](tasks/backlog/T-1V01.md) | Add Vietnam government actor types to config schema | P1 | backlog | none |
 | [T-1V02](tasks/backlog/T-1V02.md) | Add document type registry to config schema | P2 | backlog | none |
 | [T-1V04](tasks/backlog/T-1V04.md) | Create vietnam-eu.json corridor config | P2 | backlog | T-1V03, T-143 |
