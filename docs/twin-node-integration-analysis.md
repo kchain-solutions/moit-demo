@@ -1,20 +1,20 @@
 # TWIN Node Integration Analysis
 
-**Date:** 2026-05-19
-**Status:** Phase 1 substantially complete (48/62), Phase 2+ in backlog
-**Architecture decision:** Two independent TWIN Nodes (Alpha + Beta) from day one
-**Sources:** moit-demo task board, twin-node-reference.mdx, twin-supply-chain-reference.mdx, tutorials.101-reference.mdx, demo-evolution-plan.md
+**Date:** 2026-05-19 (updated 2026-05-12)
+**Status:** Phase 1 substantially complete (51/63), Phase 2 ready for development
+**Architecture decision:** In-process TWIN connectors (ADR-001, Strategy C Hybrid)
+**Sources:** moit-demo task board, twin-etd-poc source code, twin-node-reference.mdx, twin-supply-chain-reference.mdx, tutorials.101-reference.mdx, demo-evolution-plan.md
 
 ## How to start Phase 2
 
 1. **Resolve Phase 1 blockers** (4 tasks): T-1V03 (origin composition) > T-143 (Cambodia config) > T-145 (E2E test) > T-162 (Vitest)
-2. **Deploy two local TWIN Nodes**: T-163 (Docker Compose with Alpha :3000 + Beta :3001)
-3. **Build adapter layer**: T-205 (scaffold) > T-209 (mode toggle) > T-206 (REST client) > T-207 (JWT)
+2. **Set up TWIN connectors**: T-226 (TypeScript pipeline) > T-229 (WASM test) > T-227 (connectors.ts) > T-228 (notarization.ts)
+3. **Build adapter layer**: T-205 (ITwinAdapter interface + InProcessAdapter) > T-209 (mode toggle)
 4. **Integrate real features**: T-210/T-211 (DID) + T-214/T-215 (notarization) in parallel
-5. **Validate**: T-221 (simulated parity) > T-222 (real E2E)
+5. **Validate**: T-221 (simulated parity) > T-222 (in-process E2E)
 
-Key env var: `TWIN_NODE_URL=http://localhost:3000` (Alpha) or `:3001` (Beta)
-Key env var: `ADAPTER_MODE=simulated|entity-storage|real`
+Key env var: `IOTA_MNEMONIC` (BIP-39 seed phrase for testnet wallet)
+Key env var: `ADAPTER_MODE=simulated|in-process|twin-node`
 
 ---
 
@@ -120,75 +120,91 @@ T-160 has been moved to `done/` and the board regenerated.
 
 ---
 
-## 3. Phase 2: Real Node Integration (33 tasks, 0 done)
+## 3. Phase 2: In-Process TWIN Integration (24 tasks, 0 done)
+
+### 3.0 Architecture Decision: ADR-001 (Strategy C Hybrid)
+
+Analysis of the `twin-etd-poc` codebase (TWIN Foundation's own ETD PoC, authored by Alberto Oliveri at IOTA Stiftung) revealed that it does NOT connect to a remote TWIN Node via HTTP. It imports the TWIN connector stack directly as npm packages and runs everything in-process using WASM bindings.
+
+**Decision:** Use in-process connectors for Phase 2, behind an adapter interface (`ITwinAdapter`) that enables a transparent swap to TWIN Node REST client in Phase 3.
+
+Full rationale: `docs/adr/ADR-001-twin-integration-strategy.md`
 
 ### 3.1 What Phase 2 replaces
 
-| Current (simulated) | Target (real) |
-|---------------------|--------------|
-| `did:iota:0x` + random hex | Real `did:iota:testnet:0x...` via IOTA Identity on-chain |
-| Random SHA-256 hash | Real SHA-256 + `Notarization` Move object on IOTA testnet |
-| In-memory `store.documents` base64 | Encrypted TWIN Blob Storage (ChaCha20Poly1305) |
-| Boolean `verified` flag | W3C Verifiable Credential issuance |
-| WebSocket P2P sharing | WebSocket P2P (unchanged in Phase 2, DSC in Phase 3) |
+| Current (simulated) | Target (in-process) |
+|---------------------|---------------------|
+| `did:iota:0x` + random hex | Real `did:iota:testnet:0x...` via `@twin.org/identity-connector-iota` |
+| Random SHA-256 hash | Real SHA-256 + `Notarization` Move object via `@iota/notarization` WASM |
+| In-memory `store.documents` base64 | File-based entity storage (`.data/` directory) |
+| Boolean `verified` flag | Real Ed25519 DataIntegrityProof via DID signing key |
+| WebSocket P2P sharing | WebSocket P2P (unchanged in Phase 2, DSP in Phase 3) |
 | In-memory permissions | In-memory + ODRL stub generation (real enforcement in Phase 3) |
 
-### 3.2 Architecture: Two TWIN Nodes + API Adapter Layer
-
-**Decision (2026-05-19):** Deploy two independent TWIN Nodes from day one for demo realism. Each country operates its own node with its own DID identity, database, and storage.
+### 3.2 Architecture: In-Process Connectors + Adapter Interface
 
 ```
-React SPA (Alpha)  -->  Demo Server Alpha  -->  TWIN Node Alpha (:3000)
-                         (port 4000)              (db-alpha, twin_data_alpha)
-                         ADAPTER_MODE=real
+React SPA (Alpha)  -->  Demo Server Alpha (port 4000)
+                         |-- server/adapter/index.js (ADAPTER_MODE switch)
+                         |     |-- adapter/simulated.js (current demo logic)
+                         |     |-- adapter/in-process.js (TWIN connectors via npm)
+                         |     |-- adapter/twin-node.js (Phase 3: REST client)
+                         |-- server/twin/connectors.ts (adapted from twin-etd-poc)
+                         |-- server/twin/notarization.ts (adapted from twin-etd-poc)
+                         |-- .data/ (file-based entity storage)
+                         --> IOTA Testnet (RPC, in-process)
 
-React SPA (Beta)   -->  Demo Server Beta   -->  TWIN Node Beta (:3001)
-                         (port 4001)              (db-beta, twin_data_beta)
-                         ADAPTER_MODE=real
-
-                         Proxy (:4002)
+React SPA (Beta)   -->  Demo Server Beta (port 4001)
+                         (same packages, different IOTA_MNEMONIC)
+                         --> IOTA Testnet (RPC, in-process)
 ```
 
-Each demo server connects to its own TWIN Node via `TWIN_NODE_URL` env var. `ADAPTER_MODE=real|simulated|entity-storage` toggles between real TWIN Node calls and pass-through to demo server logic.
+`ADAPTER_MODE=simulated|in-process|twin-node` selects the backend:
+- `simulated`: current demo behavior (zero dependencies, offline capable)
+- `in-process`: real IOTA ops via npm packages (Phase 2)
+- `twin-node`: REST client to deployed TWIN Node (Phase 3+, for DSP)
 
-### 3.3 Task coherence with current knowledge
+### 3.3 Phase 2 tasks (revised per ADR-001)
 
-Cross-referencing each Phase 2 task against the latest TWIN Node (v0.0.3-next.37) and TWIN Supply Chain documentation:
+#### Cancelled (9 tasks, replaced by in-process pattern)
 
-| Task | Status | Coherence Notes |
-|------|--------|-----------------|
-| **T-201** Request TWIN Node access | Valid | `tutorials.101` now provides a Docker-based alternative via `twinfoundation/twin-node:0.0.3-next.20`. Can bootstrap locally without waiting for staging access. Consider splitting: (a) local Docker for dev, (b) staging request for shared testing |
-| **T-202** Deploy TWIN Node Alpha | Valid | Docker image available. Env vars documented: `TWIN_IDENTITY_CONNECTOR=iota`, `TWIN_NOTARIZATION_CONNECTOR=iota`, `TWIN_NETWORK=testnet`. Gas Station optional but recommended (`TWIN_IOTA_GAS_STATION_ENDPOINT`) |
-| **T-203** Deploy TWIN Node Beta | Valid | Same Docker image, different config. Consider multi-tenant option (`TWIN_TENANT_ENABLED=true`) for single-node testing, then split for realistic scenarios |
-| **T-204** Fund testnet wallets | Valid | IOTA testnet faucet publicly available. ~0.005 IOTA per transaction |
-| **T-205** Scaffold adapter | Valid | Should mirror existing `server/routes/` structure rather than create a separate server. The modular route architecture (T-160 done) supports plugging in adapter routes alongside simulated ones |
-| **T-206** TWIN Node REST client | **Update needed.** API surface is now well-documented. Key endpoints: `/authentication/login/create`, `/identity`, `/identity/{did}/credentials`, `/notarization`, `/blob-storage`, `/aig`, `/supply-chain/consignments`. Should use `@twin.org/supply-chain-rest-client` if available, otherwise raw fetch |
-| **T-207** Session/JWT middleware | Valid | TWIN Node uses JWT cookies (`access_token`). Login returns JWT, stored in httpOnly cookie |
-| **T-208** Error translation | Valid | Map TWIN Node HTTP errors to demo's simpler format |
-| **T-209** ADAPTER_MODE toggle | **Update suggested.** The TWIN Node itself has an equivalent concept: `entity-storage` connectors simulate capabilities, `iota` connectors use real DLT. Consider aligning modes: `simulated` = current demo server, `entity-storage` = TWIN Node with mock connectors, `iota` = TWIN Node with real DLT connectors |
-| **T-210** Adapter auth routes | Valid | Map `POST /api/login {username, password}` to `POST /authentication/login/create {identity, password}` |
-| **T-211** Identity routes (real DID) | Valid | `POST /identity` creates real `did:iota:testnet:0x...`. `POST /identity/{did}/credentials` issues W3C VC. 5-step animated verification stays in frontend, adapter returns real DID |
-| **T-213** DID resolvability | Valid | `GET /identity/{did}` resolves DID document. Target < 8 seconds |
-| **T-214** Notarization routes | Valid | `POST /notarization` creates SHA-256 hash as Move object on IOTA. Connector: `TWIN_NOTARIZATION_CONNECTOR=iota` |
-| **T-215** Document routes + notarization | Valid | Sequence: SHA-256 hash > blob storage > UNECE document record > notarization |
-| **T-216** On-chain hash verification | Valid | Verify SHA-256 matches on-chain object. Target < 5 seconds |
-| **T-217** Consignment routes | **Update needed.** `IConsignmentView` type is now documented with fields: `id`, `status`, `consignmentNumber`, `departurePort`, `arrivalPort`, `carrier`, `departureDate`. Events Manager Service publishes MATCH/UNMATCHED event types. Adapter should map demo consignment fields to this type |
-| **T-2V01** eCoSys adapter stub | Valid | Aligns with TWIN Adaptor pattern (external or in-node). High risk: eCoSys API availability. Design as manual upload with webhook simulation |
-| **T-2V02** VNACCS adapter stub | Valid | Same adaptor pattern. Asycuda/VNACCS integration via webhook |
-| **T-2V03** Origin composition calculator | Valid | Should produce `IOriginComposition` output. Configuration per HS code with value/weight calculation methods |
-| **T-2V07** ODRL templates for Vietnam | **Update: concrete reference available.** The `EcosystemPolicy` type and ISN Notify Template from twin-supply-chain-reference.mdx section 9 provide a working ODRL template. The template uses `PartyCollection` with JSONPath refinement and geographic targeting. Adapt for Vietnam-specific policy types |
+| Task | Title | Reason |
+|------|-------|--------|
+| ~~T-201~~ | Request TWIN Node access | No external TWIN Node needed |
+| ~~T-202~~ | Deploy TWIN Node Alpha | In-process connectors replace Docker deployment |
+| ~~T-203~~ | Deploy TWIN Node Beta | Same |
+| ~~T-204~~ | Fund testnet wallets | Auto-handled by `walletConnector.ensureBalance()` |
+| ~~T-206~~ | REST client wrapper | Direct function calls replace REST client |
+| ~~T-207~~ | JWT middleware | In-memory controller identities replace JWT sessions |
+| ~~T-208~~ | Error translation | Native JS errors, no HTTP-to-HTTP translation |
+| ~~T-224~~ | Gas Station config | Faucet auto-funding for testnet |
+| ~~T-225~~ | Multi-tenant evaluation | N/A with in-process approach |
 
-### 3.4 Gaps addressed
+#### New (4 tasks, TWIN connector setup)
 
-All identified gaps have been resolved:
+| Task | Title | Priority | Effort |
+|------|-------|----------|--------|
+| T-226 | TypeScript build pipeline for `server/twin/` | P0 | S |
+| T-227 | Adapt `setupTwinConnectors` from twin-etd-poc | P0 | M |
+| T-228 | Adapt notarization helper from twin-etd-poc | P0 | S |
+| T-229 | WASM compatibility validation | P0 | S |
 
-1. **T-163 created:** Two local TWIN Nodes via tutorials.101 Docker (Alpha :3000 + Beta :3001)
-2. **T-206 updated:** REST API mapping table added with 9 documented endpoints
-3. **T-224 created:** Gas Station configuration for testnet transactions
-4. **T-209 updated:** Added `entity-storage` mode aligned with TWIN Node connector architecture
-5. **T-2V07 updated:** EcosystemPolicy type and ISN Notify Template reference added
-6. **T-301 updated:** Risk de-risked, DSP env vars and transfer flow documented
-7. **T-305 updated:** IConsignmentView field mapping table added
+#### Modified (8 tasks, simplified)
+
+| Task | Title | Change |
+|------|-------|--------|
+| T-163 | TWIN Nodes setup | Rescoped: Docker for Phase 3. Phase 2 uses in-process |
+| T-205 | Adapter scaffold | Renamed: `ITwinAdapter` interface + `InProcessAdapter` |
+| T-209 | ADAPTER_MODE toggle | Modes: `simulated|in-process|twin-node` |
+| T-210 | Auth routes | Simplified: no TWIN Node auth mapping, demo login stays |
+| T-211 | Identity routes | Simplified: call `adapter.createDid()` directly |
+| T-214 | Notarization routes | Simplified: call `adapter.createNotarization()` directly |
+| T-215 | Document routes | Simplified: hash > adapter > store result |
+| T-222 | E2E test | Renamed: in-process mode E2E test |
+
+#### Unchanged (11 tasks)
+
+T-212 (org routes), T-213 (DID verify), T-216 (hash verify), T-217 (consignment routes), T-218 (permissions), T-219 (finance), T-220 (hybrid ledger), T-221 (simulated parity), T-223 (Docker Compose), T-2V01-T-2V07 (Vietnam-specific)
 
 ---
 
@@ -240,7 +256,7 @@ Tasks T-401 through T-408, T-4V01, T-4V02 remain valid. Key knowledge updates:
 
 ---
 
-## 6. Critical Path to Real TWIN Node Integration
+## 6. Critical Path (Revised per ADR-001)
 
 ```
           Phase 1 Blockers (parallel tracks)
@@ -257,15 +273,15 @@ Tasks T-401 through T-408, T-4V01, T-4V02 remain valid. Key knowledge updates:
                      |
     +----------------+----------------+
     |                                 |
-    T-163 (2 TWIN Nodes Docker)  T-205 (adapter scaffold)
+    T-226 (TypeScript pipeline)  T-229 (WASM test)
     |                                 |
-    T-224 (Gas Station)          T-209 (mode toggle)
+    T-227 (connectors.ts)       T-228 (notarization.ts)
     |                                 |
     +----------------+----------------+
                      |
-               T-206 (REST client)
+               T-205 (ITwinAdapter + InProcessAdapter)
                      |
-               T-207 (JWT middleware)
+               T-209 (ADAPTER_MODE toggle)
                      |
     +----------------+----------------+
     |                                 |
@@ -279,27 +295,29 @@ Tasks T-401 through T-408, T-4V01, T-4V02 remain valid. Key knowledge updates:
                      |
                T-221 (simulated parity)
                      |
-               T-222 (real E2E)
+               T-222 (in-process E2E)
                      |
           Phase 3 Starts
                      |
-               T-301 (DSC research)
-                     |
-    +----------+----------+----------+
-    |          |          |          |
-    T-302    T-303      T-304    T-309
-    (DSC)    (AIG)     (ODRL)   (Adaptor)
-    |          |          |          |
-    +----------+----------+----------+
+    +----------+----------+----------+----------+
+    |          |          |          |          |
+    T-163    T-301      T-302     T-309    T-310
+    (Docker) (DSC)      (DSC)    (Adaptor) (ActivityStreams)
+    |          |          |          |          |
+    +----------+----------+----------+----------+
                      |
                T-308 (Phase 3 E2E)
 ```
 
+**Critical path:** T-1V03 > T-143 > T-145 > T-226 > T-227 > T-205 > T-209 > T-211 > T-212 > T-221 > T-222
+
+**"Wow moment" fast track:** T-226 > T-227 > manual `createDid()` test (Day 4-5)
+
 ---
 
-## 7. Task Board Corrections (applied 2026-05-19)
+## 7. Task Board Corrections
 
-All corrections have been applied:
+### Applied 2026-05-19
 
 | Task | Correction | Status |
 |------|-----------|--------|
@@ -311,17 +329,14 @@ All corrections have been applied:
 | **T-301** | Risk downgraded, DSP env vars and transfer flow documented | Done |
 | **T-305** | Added IConsignmentView fields and demo-to-UNECE mapping table | Done |
 
----
+### Applied 2026-05-12 (ADR-001 Strategy C)
 
-## 8. Suggested New Tasks
-
-| ID | Title | Priority | Phase | Rationale |
-|----|-------|----------|-------|-----------|
-| T-163 | Set up two local TWIN Nodes via tutorials.101 Docker | P0 | 2 | Two independent nodes (Alpha + Beta) for realistic two-country demo. Unblocks adapter development without waiting for staging |
-| T-224 | Configure Gas Station for testnet | P1 | 2 | Transactions require IOTA gas. `TWIN_IOTA_GAS_STATION_ENDPOINT` needed |
-| T-225 | Evaluate multi-tenant TWIN Node for dev/test | P3 | 2 | Deprioritized: decision taken to use two separate nodes for realism |
-| T-309 | Design TWIN Adaptor deployment model for government systems | P1 | 3 | Choose external/in-node/hybrid pattern for eCoSys and VNACCS |
-| T-310 | Implement W3C Activity Streams data plane | P1 | 3 | DSP data plane uses ActivityPub inbox/outbox for push transfers |
+| Action | Tasks | Rationale |
+|--------|-------|-----------|
+| **Cancelled** | T-201, T-202, T-203, T-204, T-206, T-207, T-208, T-224, T-225 | Replaced by in-process connector pattern (no Docker, no REST client, no JWT) |
+| **Created** | T-226 (TS pipeline), T-227 (connectors.ts), T-228 (notarization.ts), T-229 (WASM test) | TWIN connector setup from twin-etd-poc reference |
+| **Modified** | T-163 (deferred to Phase 3), T-205, T-209, T-210, T-211, T-214, T-215, T-222 | Simplified for in-process pattern |
+| **Source** | `twin-etd-poc/apps/etd-rest-server/src/` | `setupTwinConnectors.ts` (714 lines), `iotaNotarizationHelper.ts` (191 lines) |
 
 ---
 
@@ -329,6 +344,9 @@ All corrections have been applied:
 
 | Document | Location | Relevance |
 |----------|----------|-----------|
+| **ADR-001** | `docs/adr/ADR-001-twin-integration-strategy.md` | Architecture decision: in-process connectors, adapter interface, task impact |
+| **TWIN ETD PoC** (source) | `twin-etd-poc/apps/etd-rest-server/src/` | Reference implementation: `setupTwinConnectors.ts`, `iotaNotarizationHelper.ts` |
+| TWIN ETD PoC Reference | `docs/technical/twin-community/twin-etd-poc-reference.mdx` | API surface, NFT lifecycle, DSP, UNVTD VCs |
 | TWIN Node Reference | `docs/technical/twin-node/twin-node-reference.mdx` | Env vars, connectors, DSP, multi-tenant |
 | TWIN Supply Chain Reference | `docs/technical/twin-node/twin-supply-chain-reference.mdx` | IConsignmentView, ODRL, Events Manager |
 | Tutorials 101 Reference | `docs/technical/twin-community/tutorials.101-reference.mdx` | Docker deployment, local dev env |

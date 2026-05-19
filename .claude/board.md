@@ -9,10 +9,10 @@
 | Phase | Total | Backlog | In Progress | Blocked | Done |
 |-------|-------|---------|-------------|---------|------|
 | 1     | 63    | 12      | 0           | 0       | 51    |
-| 2     | 33    | 33      | 0           | 0       | 0    |
-| 3     | 14    | 14      | 0           | 0       | 0    |
+| 2     | 36    | 27      | 0           | 0       | 0    |
+| 3     | 15    | 15      | 0           | 0       | 0    |
 | 4     | 10    | 10      | 0           | 0       | 0    |
-| **Total** | **120** | **69** | **0** | **0** | **51** |
+| **Total** | **124** | **64** | **0** | **0** | **51** |
 
 ---
 
@@ -117,34 +117,25 @@
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
-| [T-163](tasks/backlog/T-163.md) | Set up two local TWIN Nodes via tutorials.101 Docker | P0 | backlog | none |
-| [T-201](tasks/backlog/T-201.md) | Request TWIN Node staging/testnet access | P0 | backlog | none (can start during Phase 1) |
-| [T-202](tasks/backlog/T-202.md) | Deploy TWIN Node Alpha on testnet | P0 | backlog | T-201 |
-| [T-224](tasks/backlog/T-224.md) | Configure Gas Station for testnet transactions | P1 | backlog | T-202, T-203 |
-| [T-225](tasks/backlog/T-225.md) | Evaluate multi-tenant TWIN Node for dev/test | P3 | backlog | T-163 |
+| [T-201](tasks/cancelled/T-201.md) | Request TWIN Node staging/testnet access | P0 | cancelled | none (can start during Phase 1) |
+| [T-202](tasks/cancelled/T-202.md) | Deploy TWIN Node Alpha on testnet | P0 | cancelled | T-201 |
+| [T-224](tasks/cancelled/T-224.md) | Configure Gas Station for testnet transactions | P1 | cancelled | T-202, T-203 |
+| [T-225](tasks/cancelled/T-225.md) | Evaluate multi-tenant TWIN Node for dev/test | P3 | cancelled | T-163 |
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
-| [T-203](tasks/backlog/T-203.md) | Deploy TWIN Node Beta on testnet | P0 | backlog | T-201 |
-| [T-204](tasks/backlog/T-204.md) | Fund testnet wallets via IOTA faucet | P0 | backlog | T-202, T-203 |
-| [T-205](tasks/backlog/T-205.md) | Scaffold adapter Express server | P0 | backlog | T-145 |
-| [T-206](tasks/backlog/T-206.md) | Implement TWIN Node REST client wrapper | P0 | backlog | T-202 |
-| [T-207](tasks/backlog/T-207.md) | Implement adapter session/JWT middleware | P0 | backlog | T-206 |
-| [T-208](tasks/backlog/T-208.md) | Implement adapter error translation middleware | P1 | backlog | T-205 |
-| [T-210](tasks/backlog/T-210.md) | Implement adapter auth routes | P0 | backlog | T-207, T-209 |
-| [T-211](tasks/backlog/T-211.md) | Implement adapter identity routes (real DID) | P0 | backlog | T-206, T-210 |
+| [T-203](tasks/cancelled/T-203.md) | Deploy TWIN Node Beta on testnet | P0 | cancelled | T-201 |
+| [T-204](tasks/cancelled/T-204.md) | Fund testnet wallets via IOTA faucet | P0 | cancelled | T-202, T-203 |
+| [T-206](tasks/cancelled/T-206.md) | Implement TWIN Node REST client wrapper | P0 | cancelled | T-202 |
+| [T-207](tasks/cancelled/T-207.md) | Implement adapter session/JWT middleware | P0 | cancelled | T-206 |
+| [T-208](tasks/cancelled/T-208.md) | Implement adapter error translation middleware | P1 | cancelled | T-205 |
 | [T-212](tasks/backlog/T-212.md) | Implement adapter org routes | P1 | backlog | T-211 |
 | [T-213](tasks/backlog/T-213.md) | Verify DID resolvability on IOTA Explorer | P0 | backlog | T-211 |
-| [T-214](tasks/backlog/T-214.md) | Implement adapter notarization routes | P0 | backlog | T-206, T-210 |
-| [T-215](tasks/backlog/T-215.md) | Implement adapter document routes with real notarization | P0 | backlog | T-214 |
 | [T-216](tasks/backlog/T-216.md) | Verify notarization on-chain hash matching | P0 | backlog | T-215 |
 | [T-217](tasks/backlog/T-217.md) | Implement adapter consignment routes | P1 | backlog | T-206, T-210 |
 | [T-218](tasks/backlog/T-218.md) | Implement adapter permission routes | P2 | backlog | T-205 |
 | [T-219](tasks/backlog/T-219.md) | Implement adapter finance routes | P2 | backlog | T-205 |
 | [T-220](tasks/backlog/T-220.md) | Implement hybrid Tangle log (real + simulated) | P1 | backlog | T-214 |
-| [T-221](tasks/backlog/T-221.md) | Adapter test: simulated mode parity | P0 | backlog | T-210, T-212, T-214, T-217, T-218, T-219 |
-| [T-222](tasks/backlog/T-222.md) | Adapter test: real mode end-to-end | P0 | backlog | T-221 |
-| [T-223](tasks/backlog/T-223.md) | Update Docker Compose for adapter + TWIN Nodes | P1 | backlog | T-202, T-203, T-205 |
 | [T-2V04](tasks/backlog/T-2V04.md) | Implement Vietnam-specific ISN signal types | P1 | backlog | T-205, T-214 |
 | [T-2V05](tasks/backlog/T-2V05.md) | Add UFLPA attestation field to consignment model | P2 | backlog | T-1V03, T-205 |
 | [T-2V06](tasks/backlog/T-2V06.md) | Test cross-border data flow: Alpha to Beta | P1 | backlog | T-215, T-1V07 |
@@ -153,7 +144,39 @@
 
 | ID | Title | Priority | Status | Dependencies |
 |----|-------|----------|--------|--------------|
+| [T-205](tasks/backlog/T-205.md) | Create ITwinAdapter interface and InProcessAdapter | P0 | backlog | T-227, T-228 |
 | [T-209](tasks/backlog/T-209.md) | Implement ADAPTER_MODE env var toggle | P0 | backlog | T-205 |
+
+### 2C. Real DID and Identity Integration
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-210](tasks/backlog/T-210.md) | Implement adapter auth routes | P0 | backlog | T-209 |
+| [T-211](tasks/backlog/T-211.md) | Implement adapter identity routes (real DID) | P0 | backlog | T-209, T-210 |
+
+### 2D. Real Notarization Integration
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-214](tasks/backlog/T-214.md) | Implement adapter notarization routes | P0 | backlog | T-209, T-210 |
+| [T-215](tasks/backlog/T-215.md) | Implement adapter document routes with real notarization | P0 | backlog | T-214 |
+
+### 2F. Remaining Adapter Routes and Testing
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-221](tasks/backlog/T-221.md) | Adapter test: simulated mode parity | P0 | backlog | T-210, T-212, T-214, T-217, T-218, T-219 |
+| [T-222](tasks/backlog/T-222.md) | Adapter test: in-process mode end-to-end | P0 | backlog | T-221 |
+| [T-223](tasks/backlog/T-223.md) | Frontend real/simulated status indicators | P1 | backlog | T-211, T-215 |
+
+### 2A. TWIN Connector Setup
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-226](tasks/backlog/T-226.md) | Add TypeScript build pipeline for server/twin/ | P0 | backlog | none |
+| [T-227](tasks/backlog/T-227.md) | Adapt setupTwinConnectors from twin-etd-poc | P0 | backlog | T-226 |
+| [T-228](tasks/backlog/T-228.md) | Adapt notarization helper from twin-etd-poc | P0 | backlog | T-226, T-229 |
+| [T-229](tasks/backlog/T-229.md) | WASM compatibility validation | P0 | backlog | T-226 |
 
 ### 2E. Vietnam-Specific Integrations
 
@@ -167,6 +190,12 @@
 ---
 
 ## Phase 3: Full Real Node Integration
+
+### 3. Full TWIN Node Integration
+
+| ID | Title | Priority | Status | Dependencies |
+|----|-------|----------|--------|--------------|
+| [T-163](tasks/backlog/T-163.md) | Set up two local TWIN Nodes via tutorials.101 Docker | P1 | backlog | T-222 |
 
 ### 2F. Remaining Adapter Routes and Testing
 
