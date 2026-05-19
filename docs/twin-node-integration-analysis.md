@@ -1,17 +1,16 @@
 # TWIN Node Integration Analysis
 
-**Date:** 2026-05-19 (updated 2026-05-12)
-**Status:** Phase 1 substantially complete (51/63), Phase 2 ready for development
+**Date:** 2026-05-19
+**Status:** Phase 1 complete (62/62), Phase 2 ready for development
 **Architecture decision:** In-process TWIN connectors (ADR-001, Strategy C Hybrid)
 **Sources:** moit-demo task board, twin-etd-poc source code, twin-node-reference.mdx, twin-supply-chain-reference.mdx, tutorials.101-reference.mdx, demo-evolution-plan.md
 
 ## How to start Phase 2
 
-1. **Resolve Phase 1 blockers** (4 tasks): T-1V03 (origin composition) > T-143 (Cambodia config) > T-145 (E2E test) > T-162 (Vitest)
-2. **Set up TWIN connectors**: T-226 (TypeScript pipeline) > T-229 (WASM test) > T-227 (connectors.ts) > T-228 (notarization.ts)
-3. **Build adapter layer**: T-205 (ITwinAdapter interface + InProcessAdapter) > T-209 (mode toggle)
-4. **Integrate real features**: T-210/T-211 (DID) + T-214/T-215 (notarization) in parallel
-5. **Validate**: T-221 (simulated parity) > T-222 (in-process E2E)
+1. **Set up TWIN connectors**: T-226 (TypeScript pipeline) > T-229 (WASM test) > T-227 (connectors.ts) > T-228 (notarization.ts)
+2. **Build adapter layer**: T-205 (ITwinAdapter interface + InProcessAdapter) > T-209 (mode toggle)
+3. **Integrate real features**: T-210/T-211 (DID) + T-214/T-215 (notarization) in parallel
+4. **Validate**: T-221 (simulated parity) > T-222 (in-process E2E)
 
 Key env var: `IOTA_MNEMONIC` (BIP-39 seed phrase for testnet wallet)
 Key env var: `ADAPTER_MODE=simulated|in-process|twin-node`
@@ -22,7 +21,7 @@ Key env var: `ADAPTER_MODE=simulated|in-process|twin-node`
 
 ### 1A. Configuration System (T-101 through T-120)
 
-The demo is now fully corridor-agnostic. All hardcoded Vietnam data has been extracted into `configs/vietnam-us.json`. A second config `configs/adapt-africa.json` proves the system works for different corridors.
+The demo is now fully corridor-agnostic. All hardcoded Vietnam data has been extracted into `configs/vietnam-us.json`. Four corridor configs prove the system works across different trade corridors: `vietnam-us.json`, `adapt-africa.json`, `cambodia-eu.json`, and `vietnam-eu.json`.
 
 | Component | What was done |
 |-----------|--------------|
@@ -85,42 +84,33 @@ T-160 has been moved to `done/` and the board regenerated.
 
 ---
 
-## 2. Remaining Phase 1 Tasks
+## 2. Phase 1 Completion Summary
 
-### Blockers for Phase 2 (must do first)
+All 62 Phase 1 tasks are now done. Key deliverables completed in the final batch:
 
-| ID | Title | Priority | Notes |
-|----|-------|----------|-------|
-| **T-1V03** | Origin composition fields in schema | P0 | **Core Vietnam differentiator.** Without these the adapter cannot map to `IOriginComposition` |
-| **T-143** | Create Cambodia-EU corridor config | P1 | Validates config system with different actors |
-| **T-145** | End-to-end testing: config system | P0 | Depends on T-143. Prerequisite of T-205 (adapter scaffold) |
-| **T-162** | Add Vitest and baseline server API tests | P0 | Safety net before adapter refactoring. Unblocked (T-160 done) |
+| ID | Title | What was delivered |
+|----|-------|--------------------|
+| T-1V03 | Origin composition fields | `originComposition` block in schema and all vietnam-us consignments |
+| T-1V01 | Government actor types | `regulatoryAuthority`, `governmentSystem`, `digitalSignatureCapability` in org schema |
+| T-1V02 | Document type registry | `documentTypes` top-level property with UNECE codes, data classification |
+| T-1V05 | Regulatory metadata | `regulations` array (CPTPP, EVFTA, UFLPA) in schema and config |
+| T-1V06 | Two-channel architecture | `channels` array (Channel A: NSW/ASW, Channel B: TWIN Network) |
+| T-147 | Docker Compose CONFIG_FILE | `${CONFIG_FILE:-configs/vietnam-us.json}` for command-line overridability |
+| T-1V07 | Vietnamese diacritics | 4 diacritic tests verifying UTF-8 handling across API, XML, and all 12 Vietnamese vowels |
+| T-143 | Cambodia-EU corridor config | Complete corridor with Yakjin Cambodia, H&M, Primark, ASYCUDA World |
+| T-115 | Adaptive login layout | Three-tier rendering: simple (<=8), scrollable (9-12), grouped collapsible (13+) |
+| T-1V04 | Vietnam-EU corridor config | Same origin (TNG, MOIT) but EU destination (Nike EU, Decathlon), EVFTA regulation |
+| T-145 | E2E config testing | 87 validation tests across all 4 configs (132 total with baseline tests) |
 
-### Useful but not blocking
+### Test coverage
 
-| ID | Title | Priority | Notes |
-|----|-------|----------|-------|
-| T-1V07 | Vietnamese diacritics support | P1 | **High embarrassment risk** for MOIT demo |
-| T-147 | Update Docker Compose for CONFIG_FILE | P1 | Needed for docker-compose.twin.yml |
-| T-161 | Extract shared frontend utilities | P1 | StatusPill, DocsPill, Modal, fmtValue duplicates |
-
-### Deferrable
-
-| ID | Title | Priority | Notes |
-|----|-------|----------|-------|
-| T-115 | Adaptive login credential list layout | P2 | Cosmetic |
-| T-164 | Standardize modal patterns | P2 | Depends on T-161 |
-| T-1V01 | Vietnam government actor types in schema | P1 | Useful, not critical |
-| T-1V02 | Document type registry in schema | P2 | UNECE codes, more relevant in Phase 3 |
-| T-1V04 | vietnam-eu.json corridor config | P2 | Depends on T-1V03 and T-143 |
-| T-1V05 | Regulatory metadata in schema | P2 | UFLPA, EVFTA, CPTPP |
-| T-1V06 | Two-channel architecture indicator | P3 | Documentative |
-
-**Recommended order:** T-1V03 > T-162 > T-143 > T-145 > T-1V07 > T-147
+- 132 tests across 11 test files, all passing
+- Tests cover: auth, config loading, consignment CRUD, document CRUD, org management, Vietnamese diacritics, E2E config validation
+- All 4 corridor configs validated structurally and for internal consistency
 
 ---
 
-## 3. Phase 2: In-Process TWIN Integration (24 tasks, 0 done)
+## 3. Phase 2: In-Process TWIN Integration (27 tasks in backlog, 0 done)
 
 ### 3.0 Architecture Decision: ADR-001 (Strategy C Hybrid)
 
@@ -256,20 +246,10 @@ Tasks T-401 through T-408, T-4V01, T-4V02 remain valid. Key knowledge updates:
 
 ---
 
-## 6. Critical Path (Revised per ADR-001)
+## 6. Critical Path (Updated: Phase 1 Complete)
 
 ```
-          Phase 1 Blockers (parallel tracks)
-                     |
-    +----------------+----------------+
-    |                                 |
-    T-1V03 (origin composition)  T-162 (Vitest)
-    |                                 |
-    T-143 (Cambodia config)           |
-    |                                 |
-    T-145 (E2E config test) ----------+
-                     |
-          Phase 2 Starts
+          Phase 2 Starts (all Phase 1 prerequisites met)
                      |
     +----------------+----------------+
     |                                 |
@@ -309,15 +289,25 @@ Tasks T-401 through T-408, T-4V01, T-4V02 remain valid. Key knowledge updates:
                T-308 (Phase 3 E2E)
 ```
 
-**Critical path:** T-1V03 > T-143 > T-145 > T-226 > T-227 > T-205 > T-209 > T-211 > T-212 > T-221 > T-222
+**Critical path:** T-226 > T-227 > T-205 > T-209 > T-211 > T-212 > T-221 > T-222
 
-**"Wow moment" fast track:** T-226 > T-227 > manual `createDid()` test (Day 4-5)
+**"Wow moment" fast track:** T-226 > T-227 > manual `createDid()` test (Day 3-4)
 
 ---
 
 ## 7. Task Board Corrections
 
-### Applied 2026-05-19
+### Applied 2026-05-19 (Phase 1 completion)
+
+| Action | Details |
+|--------|---------|
+| **Phase 1 complete** | All 62 tasks in `done/`. 0 backlog, 0 in-progress, 0 blocked. |
+| **4 new corridor configs** | `vietnam-us.json`, `adapt-africa.json`, `cambodia-eu.json`, `vietnam-eu.json` |
+| **Schema enriched** | Added `originComposition`, `documentTypes`, `regulations`, `channels`, government actor fields |
+| **132 tests passing** | 11 test files: auth, config, consignments, documents, orgs, diacritics, E2E config validation |
+| **Board regenerated** | 123 total tasks: 62 done (Phase 1), 52 backlog (P2-P4), 9 cancelled |
+
+### Applied 2026-05-19 (earlier: analysis updates)
 
 | Task | Correction | Status |
 |------|-----------|--------|
