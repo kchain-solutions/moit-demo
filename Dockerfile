@@ -1,15 +1,24 @@
+FROM node:22-alpine AS build
+
+WORKDIR /app
+
+COPY package.json package-lock.json* ./
+RUN npm install
+
+COPY . .
+
+RUN npx vite build --outDir server/public
+
 FROM node:22-alpine
 
 WORKDIR /app
 
 COPY package.json package-lock.json* ./
-RUN npm ci --production=false
+RUN npm install --omit=dev
 
-COPY . .
-
-RUN npx vite build --outDir ../server/public
-
-RUN npm prune --production
+COPY --from=build /app/server ./server
+COPY configs ./configs
+COPY client/public ./client/public
 
 EXPOSE 4000
 
