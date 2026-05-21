@@ -1,5 +1,5 @@
 {
-  "name": "twin-vietnam-demo",
+  "name": "trade-corridor-demo",
   "version": "2.0.0",
   "private": true,
   "type": "module",
@@ -11,7 +11,9 @@
     "start": "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\"",
     "dev": "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\"",
     "proxy": "node server/proxy.js",
-    "demo": "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\" \"npm run proxy\""
+    "demo": "npm run build && concurrently \"npm run node:alpha\" \"npm run node:beta\" \"npm run proxy\"",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "concurrently": "^8.2.2",
@@ -27,6 +29,8 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.4.2"
+    "supertest": "^7.2.2",
+    "vite": "^5.4.2",
+    "vitest": "^4.1.6"
   }
 }

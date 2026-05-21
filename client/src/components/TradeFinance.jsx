@@ -1,14 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { api } from '../utils/api';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
+import { fmtCurrency as fmtVal } from '../utils/format';
 import { Plus, ChevronRight, CheckCircle, Circle, Clock, Zap, Hash, RefreshCw, Share2, X } from 'lucide-react';
-
-/* ─── helpers ─── */
-const fmtVal = (n, cur = 'USD') => {
-  const symbols = { USD: '$', EUR: '€', VND: '₫' };
-  const s = symbols[cur] || cur + ' ';
-  return `${s}${Number(n || 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-};
+import Modal from './shared/Modal';
 
 const LC_STATUSES = ['Draft', 'Issued', 'Advised', 'Confirmed', 'Presented', 'Drawn'];
 const CONTRACT_STATUSES = ['Draft', 'Active', 'Conditions Met', 'Released', 'Settled'];
@@ -42,10 +38,10 @@ const Pill = ({ label, styles }) => (
 const LCStepper = ({ status }) => {
   const idx = LC_STATUSES.indexOf(status);
   return (
-    <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 16, width: '100%' }}>
+    <div className="lc-stepper">
       {LC_STATUSES.map((s, i) => (
-        <div key={s} style={{ display: 'flex', alignItems: 'center', flex: 1, minWidth: 0 }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3, flex: '0 0 auto' }}>
+        <div key={s} className="lc-step">
+          <div className="lc-step-node">
             <div style={{
               width: 20, height: 20, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center',
               background: i < idx ? '#16a34a' : i === idx ? '#3b82f6' : '#e2e8f0',
@@ -56,7 +52,7 @@ const LCStepper = ({ status }) => {
             <span style={{ fontSize: 8, color: i === idx ? '#3b82f6' : '#94a3b8', fontWeight: i === idx ? 700 : 400, whiteSpace: 'nowrap' }}>{s}</span>
           </div>
           {i < LC_STATUSES.length - 1 && (
-            <div style={{ flex: 1, height: 2, minWidth: 4, background: i < idx ? '#16a34a' : '#e2e8f0', marginBottom: 14 }} />
+            <div className="lc-connector" style={{ background: i < idx ? '#16a34a' : '#e2e8f0' }} />
           )}
         </div>
       ))}
@@ -93,7 +89,7 @@ const ContractTimeline = ({ status }) => {
 /* ══════════════════════════════════════════════════════════
    LETTER OF CREDIT TAB
 ══════════════════════════════════════════════════════════ */
-function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
+function LCTab({ user, consignments, allOrgs, refresh, refreshKey, config }) {
   const [lcs, setLcs] = useState([]);
   const [selected, setSelected] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -152,7 +148,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: selectedLC ? '1fr 360px' : '1fr', gap: 20 }}>
+    <div className={`tf-grid${selectedLC ? ' tf-grid--detail' : ' tf-grid--single'}`}>
       {/* Left: list */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -174,29 +170,56 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
           </div>
         ) : (
           <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['LC Number', 'UCR', 'Issuing Bank', 'Amount', 'Expiry', 'Status', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {lcs.map(lc => (
-                  <tr key={lc.id} onClick={() => setSelected(lc.id === selected ? null : lc.id)}
-                    style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: lc.id === selected ? '#f0f9ff' : 'white' }}>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{lc.lcNumber}</td>
-                    <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{lc.ucr}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 13 }}>{lc.issuingBank}</td>
-                    <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(lc.amount, lc.currency)}</td>
-                    <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{lc.expiryDate ? new Date(lc.expiryDate).toLocaleDateString() : '—'}</td>
-                    <td style={{ padding: '12px 14px' }}><Pill label={lc.status} styles={lcPillStyle[lc.status] || {}} /></td>
-                    <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
+            <div className="desktop-table">
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    {['LC Number', 'UCR', 'Issuing Bank', 'Amount', 'Expiry', 'Status', ''].map(h => (
+                      <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                    ))}
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {lcs.map(lc => (
+                    <tr key={lc.id} onClick={() => setSelected(lc.id === selected ? null : lc.id)}
+                      style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: lc.id === selected ? '#f0f9ff' : 'white' }}>
+                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{lc.lcNumber}</td>
+                      <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{lc.ucr}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 13 }}>{lc.issuingBank}</td>
+                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(lc.amount, lc.currency)}</td>
+                      <td style={{ padding: '12px 14px', fontSize: 12, color: '#64748b' }}>{lc.expiryDate ? new Date(lc.expiryDate).toLocaleDateString() : '—'}</td>
+                      <td style={{ padding: '12px 14px' }}><Pill label={lc.status} styles={lcPillStyle[lc.status] || {}} /></td>
+                      <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="mobile-cards" style={{ padding: 12 }}>
+              {lcs.map(lc => (
+                <div key={lc.id} className="mobile-card" onClick={() => setSelected(lc.id === selected ? null : lc.id)} style={{ cursor: 'pointer', background: lc.id === selected ? '#f0f9ff' : undefined }}>
+                  <div className="mobile-card-header">
+                    <div>
+                      <div className="mobile-card-title">{lc.lcNumber}</div>
+                      <div className="mobile-card-sub">{lc.ucr}</div>
+                    </div>
+                    <Pill label={lc.status} styles={lcPillStyle[lc.status] || {}} />
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Issuing Bank</span>
+                    <span className="mobile-card-value">{lc.issuingBank}</span>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Amount</span>
+                    <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtVal(lc.amount, lc.currency)}</span>
+                  </div>
+                  <div className="mobile-card-row">
+                    <span className="mobile-card-label">Expiry</span>
+                    <span className="mobile-card-value">{lc.expiryDate ? new Date(lc.expiryDate).toLocaleDateString() : '—'}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
@@ -214,7 +237,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
 
           <LCStepper status={selectedLC.status} />
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 16 }}>
+          <div className="g2" style={{ marginBottom: 16 }}>
             {[
               ['Issuing Bank', selectedLC.issuingBank],
               ['Advising Bank', selectedLC.advisingBank || '—'],
@@ -259,95 +282,79 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
       )}
 
       {/* Create LC Modal */}
-      {showCreate && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card" style={{ width: 520, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: 17 }}>New Letter of Credit</h3>
-              <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-              <div style={{ gridColumn: '1/-1' }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
-                <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
-                  <option value="">Select consignment…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.description}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>LC Number *</label>
-                <input className="input" placeholder="LC-2026-001" value={form.lcNumber} onChange={e => setForm(f => ({ ...f, lcNumber: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Expiry Date</label>
-                <input className="input" type="date" value={form.expiryDate} onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Issuing Bank *</label>
-                <input className="input" placeholder="e.g. HSBC Vietnam" value={form.issuingBank} onChange={e => setForm(f => ({ ...f, issuingBank: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Advising Bank</label>
-                <input className="input" placeholder="e.g. Vietcombank" value={form.advisingBank} onChange={e => setForm(f => ({ ...f, advisingBank: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Beneficiary</label>
-                <input className="input" placeholder="Exporter name" value={form.beneficiary} onChange={e => setForm(f => ({ ...f, beneficiary: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Applicant</label>
-                <input className="input" placeholder="Importer name" value={form.applicant} onChange={e => setForm(f => ({ ...f, applicant: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Amount *</label>
-                <input className="input" type="number" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
-                <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                  <option>USD</option><option>EUR</option><option>VND</option>
-                </select>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowCreate(false)}>Cancel</button>
-              <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreate}>Create LC</button>
-            </div>
+      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="New Letter of Credit" width={520}>
+        <div className="tf-form-2col">
+          <div style={{ gridColumn: '1/-1' }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
+            <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
+              <option value="">Select consignment…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.description}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>LC Number *</label>
+            <input className="input" placeholder="LC-2026-001" value={form.lcNumber} onChange={e => setForm(f => ({ ...f, lcNumber: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Expiry Date</label>
+            <input className="input" type="date" value={form.expiryDate} onChange={e => setForm(f => ({ ...f, expiryDate: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Issuing Bank *</label>
+            <input className="input" placeholder="Issuing bank" value={form.issuingBank} onChange={e => setForm(f => ({ ...f, issuingBank: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Advising Bank</label>
+            <input className="input" placeholder="Advising bank" value={form.advisingBank} onChange={e => setForm(f => ({ ...f, advisingBank: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Beneficiary</label>
+            <input className="input" placeholder="Exporter name" value={form.beneficiary} onChange={e => setForm(f => ({ ...f, beneficiary: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Applicant</label>
+            <input className="input" placeholder="Importer name" value={form.applicant} onChange={e => setForm(f => ({ ...f, applicant: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Amount *</label>
+            <input className="input" type="number" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
+            <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
+              {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
           </div>
         </div>
-      )}
+        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+          <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowCreate(false)}>Cancel</button>
+          <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreate}>Create LC</button>
+        </div>
+      </Modal>
 
       {/* Share Finance Modal */}
-      {showShare && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card" style={{ width: 400, padding: 28 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: 17 }}>Share Finance Access</h3>
-              <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment</label>
-                <select className="input" value={shareConsId} onChange={e => setShareConsId(e.target.value)}>
-                  <option value="">Select consignment…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Organisation</label>
-                <select className="input" value={shareOrgId} onChange={e => setShareOrgId(e.target.value)}>
-                  <option value="">Select org…</option>
-                  {allOrgs.filter(o => o.id !== user.id).map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowShare(false)}>Cancel</button>
-              <button className="btn-primary" style={{ flex: 1 }} onClick={handleShare}>Share</button>
-            </div>
+      <Modal open={showShare} onClose={() => setShowShare(false)} title="Share Finance Access" width={400}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment</label>
+            <select className="input" value={shareConsId} onChange={e => setShareConsId(e.target.value)}>
+              <option value="">Select consignment…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Organisation</label>
+            <select className="input" value={shareOrgId} onChange={e => setShareOrgId(e.target.value)}>
+              <option value="">Select org…</option>
+              {allOrgs.filter(o => o.id !== user.id).map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+            </select>
           </div>
         </div>
-      )}
+        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+          <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowShare(false)}>Cancel</button>
+          <button className="btn-primary" style={{ flex: 1 }} onClick={handleShare}>Share</button>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -355,7 +362,7 @@ function LCTab({ user, consignments, allOrgs, refresh, refreshKey }) {
 /* ══════════════════════════════════════════════════════════
    SMART CONTRACTS TAB
 ══════════════════════════════════════════════════════════ */
-function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
+function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey, config }) {
   const [contracts, setContracts] = useState([]);
   const [selected, setSelected] = useState(null);
   const [showCreate, setShowCreate] = useState(false);
@@ -421,7 +428,7 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
   }));
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: selectedContract ? '1fr 380px' : '1fr', gap: 20 }}>
+    <div className={`tf-grid${selectedContract ? ' tf-grid--detail-lg' : ' tf-grid--single'}`}>
       {/* Left: list */}
       <div>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
@@ -438,44 +445,75 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
           </div>
         ) : (
           <div className="card" style={{ overflow: 'hidden', padding: 0 }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
-                  {['Contract Ref', 'UCR', 'Amount', 'Conditions', 'Auto-Release', 'Status', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {contracts.map(c => {
-                  const met = c.conditions.filter(x => x.met).length;
-                  const total = c.conditions.length;
-                  return (
-                    <tr key={c.id} onClick={() => setSelected(c.id === selected ? null : c.id)}
-                      style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: c.id === selected ? '#f0f9ff' : 'white' }}>
-                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{c.contractRef}</td>
-                      <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{c.ucr}</td>
-                      <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(c.amount, c.currency)}</td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                          <div style={{ flex: 1, height: 4, borderRadius: 2, background: '#e2e8f0', overflow: 'hidden', minWidth: 60 }}>
-                            <div style={{ height: '100%', background: met === total ? '#16a34a' : '#3b82f6', width: `${total ? (met / total) * 100 : 0}%` }} />
+            <div className="desktop-table">
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1px solid #f1f5f9' }}>
+                    {['Contract Ref', 'UCR', 'Amount', 'Conditions', 'Auto-Release', 'Status', ''].map(h => (
+                      <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 600, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{h}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {contracts.map(c => {
+                    const met = c.conditions.filter(x => x.met).length;
+                    const total = c.conditions.length;
+                    return (
+                      <tr key={c.id} onClick={() => setSelected(c.id === selected ? null : c.id)}
+                        style={{ borderBottom: '1px solid #f8fafc', cursor: 'pointer', background: c.id === selected ? '#f0f9ff' : 'white' }}>
+                        <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{c.contractRef}</td>
+                        <td style={{ padding: '12px 14px', color: '#64748b', fontSize: 12 }}>{c.ucr}</td>
+                        <td style={{ padding: '12px 14px', fontWeight: 600, fontSize: 13 }}>{fmtVal(c.amount, c.currency)}</td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                            <div style={{ flex: 1, height: 4, borderRadius: 2, background: '#e2e8f0', overflow: 'hidden', minWidth: 60 }}>
+                              <div style={{ height: '100%', background: met === total ? '#16a34a' : '#3b82f6', width: `${total ? (met / total) * 100 : 0}%` }} />
+                            </div>
+                            <span style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{met}/{total}</span>
                           </div>
-                          <span style={{ fontSize: 11, color: '#64748b', whiteSpace: 'nowrap' }}>{met}/{total}</span>
-                        </div>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}>
-                        <span style={{ fontSize: 11, color: c.autoRelease ? '#16a34a' : '#94a3b8', fontWeight: 600 }}>
-                          {c.autoRelease ? '⚡ On' : 'Off'}
-                        </span>
-                      </td>
-                      <td style={{ padding: '12px 14px' }}><Pill label={c.status} styles={contractPillStyle[c.status] || {}} /></td>
-                      <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
+                        </td>
+                        <td style={{ padding: '12px 14px' }}>
+                          <span style={{ fontSize: 11, color: c.autoRelease ? '#16a34a' : '#94a3b8', fontWeight: 600 }}>
+                            {c.autoRelease ? '⚡ On' : 'Off'}
+                          </span>
+                        </td>
+                        <td style={{ padding: '12px 14px' }}><Pill label={c.status} styles={contractPillStyle[c.status] || {}} /></td>
+                        <td style={{ padding: '12px 14px' }}><ChevronRight size={14} color="#94a3b8" /></td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <div className="mobile-cards" style={{ padding: 12 }}>
+              {contracts.map(c => {
+                const met = c.conditions.filter(x => x.met).length;
+                const total = c.conditions.length;
+                return (
+                  <div key={c.id} className="mobile-card" onClick={() => setSelected(c.id === selected ? null : c.id)} style={{ cursor: 'pointer', background: c.id === selected ? '#f0f9ff' : undefined }}>
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{c.contractRef}</div>
+                        <div className="mobile-card-sub">{c.ucr}</div>
+                      </div>
+                      <Pill label={c.status} styles={contractPillStyle[c.status] || {}} />
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Amount</span>
+                      <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtVal(c.amount, c.currency)}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Conditions</span>
+                      <span className="mobile-card-value">{met}/{total} met</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Auto-Release</span>
+                      <span className="mobile-card-value" style={{ color: c.autoRelease ? '#16a34a' : '#94a3b8' }}>{c.autoRelease ? '⚡ On' : 'Off'}</span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         )}
       </div>
@@ -588,88 +626,80 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
       })()}
 
       {/* Create Contract Modal */}
-      {showCreate && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="card" style={{ width: 560, maxHeight: '90vh', overflowY: 'auto', padding: 28 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ margin: 0, fontSize: 17 }}>New Smart Contract</h3>
-              <button onClick={() => setShowCreate(false)} style={{ background: 'none', border: 'none', cursor: 'pointer' }}><X size={18} /></button>
-            </div>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-              <div style={{ gridColumn: '1/-1' }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
-                <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
-                  <option value="">Select consignment…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.description}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Payor Org</label>
-                <select className="input" value={form.payorOrgId} onChange={e => setForm(f => ({ ...f, payorOrgId: e.target.value }))}>
-                  <option value="">Select…</option>
-                  {allOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Payee Org</label>
-                <select className="input" value={form.payeeOrgId} onChange={e => setForm(f => ({ ...f, payeeOrgId: e.target.value }))}>
-                  <option value="">Select…</option>
-                  {allOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
-                </select>
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Amount *</label>
-                <input className="input" type="number" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />
-              </div>
-              <div>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
-                <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                  <option>USD</option><option>EUR</option><option>VND</option>
-                </select>
-              </div>
-              <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <input type="checkbox" id="autoRelease" checked={form.autoRelease} onChange={e => setForm(f => ({ ...f, autoRelease: e.target.checked }))} />
-                <label htmlFor="autoRelease" style={{ fontSize: 13, color: '#1e293b', cursor: 'pointer' }}>
-                  <Zap size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4, color: '#f97316' }} />
-                  Auto-release when all conditions met
-                </label>
-              </div>
-            </div>
-
-            {/* Conditions */}
-            <div style={{ marginTop: 18 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Conditions *</label>
-                <button type="button" style={{ fontSize: 12, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }} onClick={addCondition}>
-                  + Add Condition
-                </button>
-              </div>
-              {form.conditions.map((cond, i) => (
-                <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
-                  <div style={{ flex: 2 }}>
-                    <input className="input" placeholder="Condition description *" value={cond.description}
-                      onChange={e => updateCondition(i, 'description', e.target.value)} />
-                  </div>
-                  <div style={{ flex: 1 }}>
-                    <input className="input" placeholder="Doc type (optional)" value={cond.docType}
-                      onChange={e => updateCondition(i, 'docType', e.target.value)} />
-                  </div>
-                  {form.conditions.length > 1 && (
-                    <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px 4px' }} onClick={() => removeCondition(i)}>
-                      <X size={14} color="#ef4444" />
-                    </button>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
-              <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowCreate(false)}>Cancel</button>
-              <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreate}>Create Contract</button>
-            </div>
+      <Modal open={showCreate} onClose={() => setShowCreate(false)} title="New Smart Contract" width={560}>
+        <div className="tf-form-2col">
+          <div style={{ gridColumn: '1/-1' }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Consignment *</label>
+            <select className="input" value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))}>
+              <option value="">Select consignment…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.description}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Payor Org</label>
+            <select className="input" value={form.payorOrgId} onChange={e => setForm(f => ({ ...f, payorOrgId: e.target.value }))}>
+              <option value="">Select…</option>
+              {allOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Payee Org</label>
+            <select className="input" value={form.payeeOrgId} onChange={e => setForm(f => ({ ...f, payeeOrgId: e.target.value }))}>
+              <option value="">Select…</option>
+              {allOrgs.map(o => <option key={o.id} value={o.id}>{o.name}</option>)}
+            </select>
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Amount *</label>
+            <input className="input" type="number" placeholder="0.00" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />
+          </div>
+          <div>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', display: 'block', marginBottom: 4 }}>Currency</label>
+            <select className="input" value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
+              {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
+            </select>
+          </div>
+          <div style={{ gridColumn: '1/-1', display: 'flex', alignItems: 'center', gap: 8 }}>
+            <input type="checkbox" id="autoRelease" checked={form.autoRelease} onChange={e => setForm(f => ({ ...f, autoRelease: e.target.checked }))} />
+            <label htmlFor="autoRelease" style={{ fontSize: 13, color: '#1e293b', cursor: 'pointer' }}>
+              <Zap size={13} style={{ display: 'inline', verticalAlign: 'middle', marginRight: 4, color: '#f97316' }} />
+              Auto-release when all conditions met
+            </label>
           </div>
         </div>
-      )}
+
+        {/* Conditions */}
+        <div style={{ marginTop: 18 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+            <label style={{ fontSize: 12, fontWeight: 600, color: '#64748b', textTransform: 'uppercase' }}>Conditions *</label>
+            <button type="button" style={{ fontSize: 12, color: '#3b82f6', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }} onClick={addCondition}>
+              + Add Condition
+            </button>
+          </div>
+          {form.conditions.map((cond, i) => (
+            <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8, alignItems: 'flex-start' }}>
+              <div style={{ flex: 2 }}>
+                <input className="input" placeholder="Condition description *" value={cond.description}
+                  onChange={e => updateCondition(i, 'description', e.target.value)} />
+              </div>
+              <div style={{ flex: 1 }}>
+                <input className="input" placeholder="Doc type (optional)" value={cond.docType}
+                  onChange={e => updateCondition(i, 'docType', e.target.value)} />
+              </div>
+              {form.conditions.length > 1 && (
+                <button style={{ background: 'none', border: 'none', cursor: 'pointer', padding: '8px 4px' }} onClick={() => removeCondition(i)}>
+                  <X size={14} color="#ef4444" />
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, marginTop: 20 }}>
+          <button className="btn-secondary" style={{ flex: 1 }} onClick={() => setShowCreate(false)}>Cancel</button>
+          <button className="btn-primary" style={{ flex: 1 }} onClick={handleCreate}>Create Contract</button>
+        </div>
+      </Modal>
     </div>
   );
 }
@@ -679,6 +709,7 @@ function ContractsTab({ user, consignments, allOrgs, refresh, refreshKey }) {
 ══════════════════════════════════════════════════════════ */
 export default function TradeFinance() {
   const { user, refreshKey, refresh } = useNode();
+  const config = useConfig();
   const [tab, setTab] = useState('lc');
   const [consignments, setConsignments] = useState([]);
   const [allOrgs, setAllOrgs] = useState([]);
@@ -718,10 +749,10 @@ export default function TradeFinance() {
       </div>
 
       {tab === 'lc' && (
-        <LCTab user={user} consignments={consignments} allOrgs={allOrgs} refresh={refresh} refreshKey={refreshKey} />
+        <LCTab user={user} consignments={consignments} allOrgs={allOrgs} refresh={refresh} refreshKey={refreshKey} config={config} />
       )}
       {tab === 'contracts' && (
-        <ContractsTab user={user} consignments={consignments} allOrgs={allOrgs} refresh={refresh} refreshKey={refreshKey} />
+        <ContractsTab user={user} consignments={consignments} allOrgs={allOrgs} refresh={refresh} refreshKey={refreshKey} config={config} />
       )}
     </div>
   );

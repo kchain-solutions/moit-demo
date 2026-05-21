@@ -1,0 +1,1090 @@
+{
+  "corridor": {
+    "id": "vietnam-us",
+    "name": "Vietnam Export Corridor",
+    "description": "Vietnam garment and footwear exports to US, EU, and Japan markets",
+    "version": "1.0.0"
+  },
+  "branding": {
+    "appName": "TWIN Vietnam",
+    "tagline": "Trade & Logistics Platform",
+    "logo": "/vietnam.png",
+    "alpha": {
+      "label": "Alpha",
+      "description": "Vietnam Export Corridor"
+    },
+    "beta": {
+      "label": "Beta",
+      "description": "Importers / Destination Markets"
+    }
+  },
+  "theme": {
+    "accent": "#FF7200",
+    "accentLight": "#fff4eb",
+    "navBg": "#FF7200",
+    "navHover": "#fff4eb",
+    "navActive": "#FF7200",
+    "amber": "#FF7200"
+  },
+  "nodes": {
+    "alpha": {
+      "orgs": [
+        {
+          "id": "org1",
+          "name": "TNG Investment & Trading JSC",
+          "role": "Manufacturer - Vietnam",
+          "username": "tng",
+          "password": "demo",
+          "orgType": "private"
+        },
+        {
+          "id": "org2",
+          "name": "General Department of Vietnam Customs",
+          "role": "Customs Authority - Vietnam",
+          "username": "vncustoms",
+          "password": "demo",
+          "orgType": "public",
+          "regulatoryAuthority": "General Department of Vietnam Customs",
+          "governmentSystem": "VNACCS",
+          "digitalSignatureCapability": true
+        },
+        {
+          "id": "org3",
+          "name": "Ministry of Industry and Trade (MOIT)",
+          "role": "Certificate of Origin Authority - Vietnam",
+          "username": "moit",
+          "password": "demo",
+          "orgType": "public",
+          "regulatoryAuthority": "Ministry of Industry and Trade",
+          "governmentSystem": "eCoSys",
+          "digitalSignatureCapability": true
+        },
+        {
+          "id": "org4",
+          "name": "Hyosung TNS Co., Ltd",
+          "role": "Input Supplier - South Korea",
+          "username": "hyosung",
+          "password": "demo",
+          "orgType": "private"
+        },
+        {
+          "id": "org7",
+          "name": "Vietcombank",
+          "role": "Financier - Vietnam",
+          "username": "financier1",
+          "password": "demo",
+          "orgType": "private"
+        },
+        {
+          "id": "org8",
+          "name": "HSBC Vietnam",
+          "role": "Financier - International",
+          "username": "financier2",
+          "password": "demo",
+          "orgType": "private"
+        },
+        {
+          "id": "org9",
+          "name": "Bureau Veritas Vietnam",
+          "role": "Quality Inspector - Vietnam",
+          "username": "bvinspector",
+          "password": "demo",
+          "orgType": "private"
+        },
+        {
+          "id": "org10",
+          "name": "Cat Lai Port Authority",
+          "role": "Port Authority - Ho Chi Minh City",
+          "username": "catlaiport",
+          "password": "demo",
+          "orgType": "public",
+          "regulatoryAuthority": "Vietnam Maritime Administration",
+          "governmentSystem": "VNDCS",
+          "digitalSignatureCapability": false
+        },
+        {
+          "id": "org11",
+          "name": "Gemadept Logistics",
+          "role": "Freight Forwarder - Vietnam",
+          "username": "gemadept",
+          "password": "demo",
+          "orgType": "private"
+        },
+        {
+          "id": "org12",
+          "name": "Maersk Vietnam",
+          "role": "Carrier - Vietnam",
+          "username": "maersk",
+          "password": "demo",
+          "orgType": "private"
+        }
+      ]
+    },
+    "beta": {
+      "orgs": [
+        {
+          "id": "org5",
+          "name": "Nike Inc.",
+          "role": "Importing Buyer - United States",
+          "username": "nike",
+          "password": "demo",
+          "orgType": "private"
+        },
+        {
+          "id": "org6",
+          "name": "Nike Europe B.V.",
+          "role": "Importing Buyer - EU",
+          "username": "nikeeu",
+          "password": "demo",
+          "orgType": "private"
+        },
+        {
+          "id": "org13",
+          "name": "US Customs and Border Protection",
+          "role": "Customs Authority - United States",
+          "username": "uscbp",
+          "password": "demo",
+          "orgType": "public",
+          "regulatoryAuthority": "US Customs and Border Protection",
+          "governmentSystem": "ACE",
+          "digitalSignatureCapability": true
+        },
+        {
+          "id": "org14",
+          "name": "EU Customs (Netherlands)",
+          "role": "Customs Authority - EU",
+          "username": "eucustoms",
+          "password": "demo",
+          "orgType": "public",
+          "regulatoryAuthority": "Netherlands Customs Administration",
+          "governmentSystem": "AGS",
+          "digitalSignatureCapability": true
+        }
+      ]
+    }
+  },
+  "credentials": {
+    "blacklisted": ["MST-000000", "BRN-000000", "TIN-000000", "KBN-000000", "EIN-000000"],
+    "expired": ["MST-111111", "BRN-111111"],
+    "suspended": ["MST-222222", "BRN-222222"],
+    "registrationTypes": {
+      "MST": "Vietnam Tax Code (Ma So Thue)",
+      "BRN": "Business Registration Number",
+      "TIN": "Tax Identification Number",
+      "LEI": "Legal Entity Identifier",
+      "KBN": "Korean Business Number",
+      "EIN": "US Employer Identification Number",
+      "EORI": "EU Economic Operator ID",
+      "DUNS": "DUNS Number"
+    },
+    "attestationAuthorities": [
+      { "roleMatch": "Vietnam", "authority": "General Department of Vietnam Customs" },
+      { "roleMatch": "South Korea", "authority": "Korea Customs Service" },
+      { "roleMatch": "United States", "authority": "US Customs and Border Protection" },
+      { "roleMatch": "EU", "authority": "EU Customs Authority" }
+    ],
+    "defaultAuthority": "National Business Registry",
+    "testCredentials": {
+      "pass": [
+        { "code": "MST-123456", "description": "Vietnam Tax Code (Ma So Thue)" },
+        { "code": "KBN-254789", "description": "Korean Business Number" },
+        { "code": "EIN-123456", "description": "US Employer Identification Number" },
+        { "code": "EORI-123456", "description": "EU Economic Operator ID (EORI)" }
+      ],
+      "fail": [
+        { "code": "MST-000000", "description": "Denied - blacklisted" },
+        { "code": "MST-111111", "description": "Expired licence" },
+        { "code": "MST-222222", "description": "Suspended - under review" },
+        { "code": "X-anything", "description": "Invalid prefix" }
+      ]
+    }
+  },
+  "consignments": {
+    "alpha": [
+      {
+        "ucr": "VN-2026-EXP-00101",
+        "product": "Men's Cotton Polo Shirts (Knitted)",
+        "hsCode": "6105.10",
+        "quantity": "24,000 pcs",
+        "totalValue": 168000,
+        "currency": "USD",
+        "exporter": "TNG Investment & Trading JSC",
+        "importer": "Nike Inc.",
+        "fromCountry": "Vietnam",
+        "toCountry": "United States",
+        "originPort": "Cat Lai Terminal Ho Chi Minh City",
+        "destinationPort": "Port of Los Angeles",
+        "vessel": "MV Maersk Seletar",
+        "shipDate": "2026-03-10",
+        "incoterms": "FOB",
+        "invoiceRef": "INV-2026-TNG-0101",
+        "declRef": "VN-EXP-2026-0101",
+        "status": "Delivered",
+        "creatorOrgId": "org1",
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 65.5,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Fabric", "supplierCountry": "KR", "valuePercent": 30.0, "ftaMember": true },
+            { "material": "Thread", "supplierCountry": "VN", "valuePercent": 15.5, "ftaMember": true },
+            { "material": "Zippers", "supplierCountry": "VN", "valuePercent": 10.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 40.0, "ftaMember": true },
+            { "material": "Elastic", "supplierCountry": "CN", "valuePercent": 4.5, "ftaMember": false }
+          ]
+        }
+      },
+      {
+        "ucr": "VN-2026-EXP-00102",
+        "product": "Women's Cotton T-Shirts (Knitted)",
+        "hsCode": "6109.10",
+        "quantity": "36,000 pcs",
+        "totalValue": 216000,
+        "currency": "USD",
+        "exporter": "TNG Investment & Trading JSC",
+        "importer": "Nike Inc.",
+        "fromCountry": "Vietnam",
+        "toCountry": "United States",
+        "originPort": "Cat Lai Terminal Ho Chi Minh City",
+        "destinationPort": "Port of Los Angeles",
+        "vessel": "MV Maersk Sentosa",
+        "shipDate": "2026-03-18",
+        "incoterms": "FOB",
+        "invoiceRef": "INV-2026-TNG-0102",
+        "declRef": "VN-EXP-2026-0102",
+        "status": "In Transit",
+        "creatorOrgId": "org1",
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 68.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Cotton Fabric", "supplierCountry": "VN", "valuePercent": 28.0, "ftaMember": true },
+            { "material": "Thread", "supplierCountry": "VN", "valuePercent": 12.0, "ftaMember": true },
+            { "material": "Labels & Tags", "supplierCountry": "KR", "valuePercent": 5.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 45.0, "ftaMember": true },
+            { "material": "Packaging", "supplierCountry": "CN", "valuePercent": 10.0, "ftaMember": false }
+          ]
+        }
+      },
+      {
+        "ucr": "VN-2026-EXP-00103",
+        "product": "Men's Synthetic Windbreaker Jackets (Woven)",
+        "hsCode": "6201.93",
+        "quantity": "12,000 pcs",
+        "totalValue": 264000,
+        "currency": "EUR",
+        "exporter": "TNG Investment & Trading JSC",
+        "importer": "Nike Europe B.V.",
+        "fromCountry": "Vietnam",
+        "toCountry": "Netherlands",
+        "originPort": "Cat Lai Terminal Ho Chi Minh City",
+        "destinationPort": "Port of Rotterdam",
+        "vessel": "MV CMA CGM Mekong",
+        "shipDate": "2026-03-25",
+        "incoterms": "CIF",
+        "invoiceRef": "INV-2026-TNG-0103",
+        "declRef": "VN-EXP-2026-0103",
+        "status": "Customs",
+        "creatorOrgId": "org1",
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 62.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Nylon Fabric", "supplierCountry": "KR", "valuePercent": 32.0, "ftaMember": true },
+            { "material": "Lining Fabric", "supplierCountry": "VN", "valuePercent": 10.0, "ftaMember": true },
+            { "material": "Zippers & Hardware", "supplierCountry": "VN", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 44.0, "ftaMember": true },
+            { "material": "Elastic & Velcro", "supplierCountry": "CN", "valuePercent": 6.0, "ftaMember": false }
+          ]
+        }
+      },
+      {
+        "ucr": "VN-2026-EXP-00104",
+        "product": "Women's Knitted Sports Trousers",
+        "hsCode": "6104.63",
+        "quantity": "18,000 pcs",
+        "totalValue": 198000,
+        "currency": "EUR",
+        "exporter": "TNG Investment & Trading JSC",
+        "importer": "Nike Europe B.V.",
+        "fromCountry": "Vietnam",
+        "toCountry": "Germany",
+        "originPort": "Hai Phong International Container Terminal",
+        "destinationPort": "Port of Hamburg",
+        "vessel": "MV Evergreen Harmony",
+        "shipDate": "2026-04-02",
+        "incoterms": "CFR",
+        "invoiceRef": "INV-2026-TNG-0104",
+        "declRef": "VN-EXP-2026-0104",
+        "status": "Submitted",
+        "creatorOrgId": "org1",
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 70.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Knitted Fabric", "supplierCountry": "VN", "valuePercent": 25.0, "ftaMember": true },
+            { "material": "Elastic Waistband", "supplierCountry": "KR", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Thread & Trim", "supplierCountry": "VN", "valuePercent": 12.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 48.0, "ftaMember": true },
+            { "material": "Dye Chemicals", "supplierCountry": "CN", "valuePercent": 7.0, "ftaMember": false }
+          ]
+        }
+      },
+      {
+        "ucr": "VN-2026-EXP-00105",
+        "product": "Athletic Running Shoes (Rubber/Plastic Upper)",
+        "hsCode": "6402.99",
+        "quantity": "8,400 pairs",
+        "totalValue": 378000,
+        "currency": "USD",
+        "exporter": "TNG Investment & Trading JSC",
+        "importer": "Nike Inc.",
+        "fromCountry": "Vietnam",
+        "toCountry": "United States",
+        "originPort": "Cat Lai Terminal Ho Chi Minh City",
+        "destinationPort": "Port of Long Beach",
+        "vessel": "MV Maersk Seletar",
+        "shipDate": "2026-04-08",
+        "incoterms": "FOB",
+        "invoiceRef": "INV-2026-TNG-0105",
+        "declRef": "VN-EXP-2026-0105",
+        "status": "Released",
+        "creatorOrgId": "org1",
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 58.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Rubber Soles", "supplierCountry": "VN", "valuePercent": 18.0, "ftaMember": true },
+            { "material": "Synthetic Upper", "supplierCountry": "KR", "valuePercent": 22.0, "ftaMember": true },
+            { "material": "Laces & Insoles", "supplierCountry": "VN", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 42.0, "ftaMember": true },
+            { "material": "Adhesives", "supplierCountry": "CN", "valuePercent": 10.0, "ftaMember": false }
+          ]
+        }
+      },
+      {
+        "ucr": "VN-2026-EXP-00106",
+        "product": "Casual Canvas Sneakers (Textile Upper)",
+        "hsCode": "6404.19",
+        "quantity": "6,000 pairs",
+        "totalValue": 132000,
+        "currency": "USD",
+        "exporter": "TNG Investment & Trading JSC",
+        "importer": "ABC-Mart Inc.",
+        "fromCountry": "Vietnam",
+        "toCountry": "Japan",
+        "originPort": "Hai Phong International Container Terminal",
+        "destinationPort": "Port of Yokohama",
+        "vessel": "MV ONE Commitment",
+        "shipDate": "2026-04-15",
+        "incoterms": "CIF",
+        "invoiceRef": "INV-2026-TNG-0106",
+        "declRef": "VN-EXP-2026-0106",
+        "status": "In Transit",
+        "creatorOrgId": "org1",
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "originComposition": {
+          "localContentPercent": 60.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Canvas Fabric", "supplierCountry": "VN", "valuePercent": 22.0, "ftaMember": true },
+            { "material": "Rubber Soles", "supplierCountry": "VN", "valuePercent": 15.0, "ftaMember": true },
+            { "material": "Eyelets & Laces", "supplierCountry": "KR", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 43.0, "ftaMember": true },
+            { "material": "Dye & Adhesives", "supplierCountry": "CN", "valuePercent": 12.0, "ftaMember": false }
+          ]
+        }
+      },
+      {
+        "ucr": "VN-2026-EXP-E001",
+        "product": "Men's Cotton Dress Shirts (Woven)",
+        "hsCode": "6205.20",
+        "quantity": "15,000 pcs",
+        "totalValue": 225000,
+        "currency": "USD",
+        "exporter": "TNG Investment & Trading JSC",
+        "importer": "Nike Inc.",
+        "fromCountry": "Vietnam",
+        "toCountry": "United States",
+        "originPort": "Cat Lai Terminal Ho Chi Minh City",
+        "destinationPort": "Port of Los Angeles",
+        "vessel": "MV Maersk Sentosa",
+        "shipDate": "2026-02-20",
+        "incoterms": "FOB",
+        "invoiceRef": "INV-2026-TNG-E001",
+        "declRef": "VN-EXP-2026-E001",
+        "status": "Under Review",
+        "creatorOrgId": "org1",
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "errorType": "HS Code Mismatch",
+        "errorDescription": "Export Declaration filed under HS 6205.30 (man-made fibres) but Commercial Invoice declares HS 6205.20 (cotton). Vietnam Customs (VNACCS) has flagged the shipment for reconciliation.",
+        "originComposition": {
+          "localContentPercent": 63.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": true,
+          "inputMaterials": [
+            { "material": "Cotton Fabric", "supplierCountry": "VN", "valuePercent": 25.0, "ftaMember": true },
+            { "material": "Buttons & Collar Stays", "supplierCountry": "KR", "valuePercent": 7.0, "ftaMember": true },
+            { "material": "Thread", "supplierCountry": "VN", "valuePercent": 8.0, "ftaMember": true },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 48.0, "ftaMember": true },
+            { "material": "Interfacing", "supplierCountry": "CN", "valuePercent": 12.0, "ftaMember": false }
+          ]
+        }
+      },
+      {
+        "ucr": "VN-2026-EXP-E002",
+        "product": "Knitted Fleece Hooded Sweatshirts",
+        "hsCode": "6110.30",
+        "quantity": "20,000 pcs",
+        "totalValue": 340000,
+        "currency": "USD",
+        "exporter": "TNG Investment & Trading JSC",
+        "importer": "Nike Inc.",
+        "fromCountry": "Vietnam",
+        "toCountry": "United States",
+        "originPort": "Cat Lai Terminal Ho Chi Minh City",
+        "destinationPort": "Port of Los Angeles",
+        "vessel": "MV Maersk Seletar",
+        "shipDate": "2026-02-28",
+        "incoterms": "FOB",
+        "invoiceRef": "INV-2026-TNG-E002",
+        "declRef": "VN-EXP-2026-E002",
+        "status": "Under Review",
+        "creatorOrgId": "org1",
+        "creatorOrgName": "TNG Investment & Trading JSC",
+        "errorType": "Origin Verification Failed",
+        "errorDescription": "Origin composition shows 38% Vietnamese value-added content (below 40% threshold). Fleece fabric from non-CPTPP supplier (China). UFLPA screening flag: supplier region requires additional documentation.",
+        "originComposition": {
+          "localContentPercent": 38.0,
+          "calculationMethod": "RVC",
+          "threshold": 55,
+          "cptppCumulationApplied": false,
+          "inputMaterials": [
+            { "material": "Fleece Fabric", "supplierCountry": "CN", "valuePercent": 42.0, "ftaMember": false },
+            { "material": "Thread", "supplierCountry": "VN", "valuePercent": 5.0, "ftaMember": true },
+            { "material": "Zippers", "supplierCountry": "CN", "valuePercent": 8.0, "ftaMember": false },
+            { "material": "Labor", "supplierCountry": "VN", "valuePercent": 38.0, "ftaMember": true },
+            { "material": "Drawcord & Elastic", "supplierCountry": "CN", "valuePercent": 7.0, "ftaMember": false }
+          ]
+        }
+      }
+    ],
+    "beta": [
+      {
+        "ucr": "KR-2026-EXP-00201",
+        "product": "Spandex Yarn (Creora, 40D/70D)",
+        "hsCode": "5402.44",
+        "quantity": "45,000 kg",
+        "totalValue": 135000,
+        "currency": "USD",
+        "exporter": "Hyosung TNS Co., Ltd",
+        "importer": "TNG Investment & Trading JSC",
+        "fromCountry": "South Korea",
+        "toCountry": "Vietnam",
+        "originPort": "Port of Busan",
+        "destinationPort": "Cat Lai Terminal Ho Chi Minh City",
+        "vessel": "MV HMM Promise",
+        "shipDate": "2026-01-20",
+        "incoterms": "CIF",
+        "invoiceRef": "INV-2026-HYO-0201",
+        "declRef": "KR-EXP-2026-0201",
+        "status": "Delivered",
+        "creatorOrgId": "org5",
+        "creatorOrgName": "Nike Inc."
+      },
+      {
+        "ucr": "KR-2026-EXP-00202",
+        "product": "Nylon Woven Fabric (Ripstop, Dyed)",
+        "hsCode": "5407.42",
+        "quantity": "32,000 kg",
+        "totalValue": 192000,
+        "currency": "USD",
+        "exporter": "Hyosung TNS Co., Ltd",
+        "importer": "TNG Investment & Trading JSC",
+        "fromCountry": "South Korea",
+        "toCountry": "Vietnam",
+        "originPort": "Port of Busan",
+        "destinationPort": "Hai Phong International Container Terminal",
+        "vessel": "MV HMM Algeciras",
+        "shipDate": "2026-02-15",
+        "incoterms": "FOB",
+        "invoiceRef": "INV-2026-HYO-0202",
+        "declRef": "KR-EXP-2026-0202",
+        "status": "In Transit",
+        "creatorOrgId": "org5",
+        "creatorOrgName": "Nike Inc."
+      },
+      {
+        "ucr": "KR-2026-EXP-00203",
+        "product": "YKK Metal Zippers and Snap Buttons",
+        "hsCode": "9607.11",
+        "quantity": "500,000 pcs",
+        "totalValue": 45000,
+        "currency": "USD",
+        "exporter": "YKK Korea Co., Ltd",
+        "importer": "TNG Investment & Trading JSC",
+        "fromCountry": "South Korea",
+        "toCountry": "Vietnam",
+        "originPort": "Port of Busan",
+        "destinationPort": "Cat Lai Terminal Ho Chi Minh City",
+        "vessel": "MV HMM Promise",
+        "shipDate": "2026-02-22",
+        "incoterms": "CIF",
+        "invoiceRef": "INV-2026-YKK-0203",
+        "declRef": "KR-EXP-2026-0203",
+        "status": "Customs",
+        "creatorOrgId": "org6",
+        "creatorOrgName": "Nike Europe B.V."
+      }
+    ]
+  },
+  "documents": {
+    "alpha": [
+      {
+        "name": "Commercial Invoice (Inputs)",
+        "docType": "Commercial Invoice (Inputs)",
+        "issuerOrgId": null,
+        "issuerName": "Hyosung TNS Co., Ltd",
+        "suffix": "CI-I"
+      },
+      {
+        "name": "Input Certificate of Origin",
+        "docType": "Input Certificate of Origin",
+        "issuerOrgId": null,
+        "issuerName": "Korea Customs Service",
+        "suffix": "ICO"
+      },
+      {
+        "name": "Bill of Material",
+        "docType": "Bill of Material",
+        "issuerOrgId": "creator",
+        "issuerName": null,
+        "suffix": "BOM"
+      },
+      {
+        "name": "Inspection Report",
+        "docType": "Inspection Report",
+        "issuerOrgId": null,
+        "issuerName": "Bureau Veritas Vietnam",
+        "suffix": "IR"
+      },
+      {
+        "name": "MOIT Certificate of Origin",
+        "docType": "MOIT Certificate of Origin",
+        "issuerOrgId": null,
+        "issuerName": "Ministry of Industry and Trade (MOIT)",
+        "suffix": "CO"
+      },
+      {
+        "name": "Export Declaration",
+        "docType": "Export Declaration",
+        "issuerOrgId": null,
+        "issuerName": "General Department of Vietnam Customs",
+        "suffix": "ED"
+      },
+      {
+        "name": "Commercial Invoice",
+        "docType": "Commercial Invoice",
+        "issuerOrgId": "creator",
+        "issuerName": null,
+        "suffix": "INV"
+      },
+      {
+        "name": "Packing List",
+        "docType": "Packing List",
+        "issuerOrgId": null,
+        "issuerName": "Gemadept Logistics",
+        "suffix": "PL"
+      },
+      {
+        "name": "Bill of Lading",
+        "docType": "Bill of Lading",
+        "issuerOrgId": null,
+        "issuerName": "Maersk Vietnam",
+        "suffix": "BL"
+      }
+    ],
+    "beta": [
+      {
+        "name": "Commercial Invoice",
+        "docType": "Commercial Invoice",
+        "issuerOrgId": "creator",
+        "issuerName": null,
+        "suffix": "INV"
+      },
+      {
+        "name": "Packing List",
+        "docType": "Packing List",
+        "issuerOrgId": "creator",
+        "issuerName": null,
+        "suffix": "PL"
+      },
+      {
+        "name": "Bill of Lading",
+        "docType": "Bill of Lading",
+        "issuerOrgId": null,
+        "issuerName": "HMM Co., Ltd",
+        "suffix": "BL"
+      },
+      {
+        "name": "Certificate of Origin",
+        "docType": "Certificate of Origin",
+        "issuerOrgId": null,
+        "issuerName": "Korea Customs Service",
+        "suffix": "CO"
+      },
+      {
+        "name": "Export Declaration",
+        "docType": "Export Declaration",
+        "issuerOrgId": null,
+        "issuerName": "Korea Customs Service",
+        "suffix": "ED"
+      }
+    ]
+  },
+  "documentTemplates": {
+    "addressBook": {
+      "Vietnam": "Lien Chieu Industrial Zone, Thai Nguyen, Vietnam",
+      "South Korea": "235 Banpo-daero, Seocho-gu, Seoul, South Korea",
+      "United States": "One Bowerman Drive, Beaverton, OR 97005, USA",
+      "Netherlands": "Colosseum 1, 1213 NL Hilversum, Netherlands",
+      "Germany": "Tamara-Danz-Strasse 1, 10243 Berlin, Germany",
+      "Japan": "4-1 Nihonbashi-Muromachi, Chuo-ku, Tokyo, Japan"
+    },
+    "defaultCarrier": "Maersk Line",
+    "pdfTemplates": {
+      "Commercial Invoice (Inputs)": {
+        "lines": [
+          "COMMERCIAL INVOICE (INPUTS)",
+          "Invoice Ref: ${ref}",
+          "Date: ${shipDate}",
+          "",
+          "Supplier: ${exporter}",
+          "Buyer: ${importer}",
+          "Consignment: ${ucr}",
+          "",
+          "Origin: ${fromCountry}",
+          "Destination: ${toCountry}",
+          "",
+          "This invoice covers raw materials and intermediate inputs",
+          "supplied for garment/footwear manufacturing under contract.",
+          "",
+          "Issued by: ${issuer}"
+        ]
+      },
+      "Input Certificate of Origin": {
+        "lines": [
+          "INPUT CERTIFICATE OF ORIGIN",
+          "Reference: ${ref}",
+          "Date: ${shipDate}",
+          "",
+          "Exporter: ${exporter}",
+          "Importer: ${importer}",
+          "Consignment: ${ucr}",
+          "",
+          "Country of Origin: ${fromCountry}",
+          "Country of Destination: ${toCountry}",
+          "",
+          "This certifies that the goods described herein originate",
+          "in ${fromCountry} in accordance with applicable rules of origin.",
+          "",
+          "Issued by: Korea Customs Service"
+        ]
+      },
+      "MOIT Certificate of Origin": {
+        "lines": [
+          "CERTIFICATE OF ORIGIN",
+          "Ministry of Industry and Trade (MOIT) - eCoSys",
+          "Reference: ${ref}",
+          "Date: ${shipDate}",
+          "",
+          "Exporter: ${exporter}",
+          "Importer: ${importer}",
+          "Consignment: ${ucr}",
+          "",
+          "Country of Origin: ${fromCountry}",
+          "Country of Destination: ${toCountry}",
+          "",
+          "This certificate is issued under the eCoSys electronic",
+          "Certificate of Origin system operated by the Ministry of",
+          "Industry and Trade of Vietnam.",
+          "",
+          "Origin criterion: Regional Value Content (RVC)",
+          "Applicable FTA: CPTPP / EVFTA",
+          "",
+          "Issued by: Ministry of Industry and Trade (MOIT)"
+        ]
+      },
+      "Bill of Material": {
+        "lines": [
+          "BILL OF MATERIAL",
+          "Reference: ${ref}",
+          "Date: ${shipDate}",
+          "",
+          "Manufacturer: ${exporter}",
+          "Buyer: ${importer}",
+          "Consignment: ${ucr}",
+          "",
+          "Origin Composition:",
+          "  Local content (Vietnam): 65.5%",
+          "  CPTPP cumulation (South Korea): 30.0%",
+          "  Third-country content (China): 4.5%",
+          "",
+          "Input Materials:",
+          "  - Fabric (South Korea): 30.0%",
+          "  - Thread (Vietnam): 15.5%",
+          "  - Zippers (Vietnam): 10.0%",
+          "  - Labor (Vietnam): 40.0%",
+          "  - Elastic (China): 4.5%",
+          "",
+          "CPTPP cumulation applied: Yes",
+          "",
+          "Issued by: ${issuer}"
+        ]
+      },
+      "Inspection Report": {
+        "lines": [
+          "INSPECTION REPORT",
+          "Reference: ${ref}",
+          "Date: ${shipDate}",
+          "",
+          "Exporter: ${exporter}",
+          "Importer: ${importer}",
+          "Consignment: ${ucr}",
+          "",
+          "Origin: ${fromCountry}",
+          "Destination: ${toCountry}",
+          "",
+          "This inspection report certifies that the goods have been",
+          "inspected and conform to the quality standards and specifications",
+          "required by the buyer and applicable regulations.",
+          "",
+          "Issued by: Bureau Veritas Vietnam"
+        ]
+      },
+      "Export Declaration": {
+        "lines": [
+          "EXPORT DECLARATION",
+          "Vietnam National Automated Cargo and Port Consolidated System (VNACCS)",
+          "Reference: ${ref}",
+          "Date: ${shipDate}",
+          "",
+          "Declarant: ${exporter}",
+          "Importer: ${importer}",
+          "Consignment: ${ucr}",
+          "",
+          "Country of Export: ${fromCountry}",
+          "Country of Destination: ${toCountry}",
+          "",
+          "This declaration has been filed and processed through the",
+          "VNACCS customs clearance system.",
+          "",
+          "Issued by: General Department of Vietnam Customs"
+        ]
+      }
+    },
+    "xmlTemplates": {
+      "Bill of Material": {
+        "originComposition": {
+          "localContentPercent": 65.5,
+          "cptppCumulationApplied": true,
+          "thirdCountryContentPercent": 4.5,
+          "inputMaterials": [
+            { "material": "Fabric", "origin": "KR", "percent": 30.0 },
+            { "material": "Thread", "origin": "VN", "percent": 15.5 },
+            { "material": "Zippers", "origin": "VN", "percent": 10.0 },
+            { "material": "Labor", "origin": "VN", "percent": 40.0 },
+            { "material": "Elastic", "origin": "CN", "percent": 4.5 }
+          ]
+        }
+      },
+      "MOIT Certificate of Origin": {
+        "formType": "EUR.1",
+        "issuingAuthority": "Ministry of Industry and Trade, Vietnam",
+        "issuingSystem": "eCoSys",
+        "originCriterion": "RVC",
+        "cumulationPartnerCountry": "KR",
+        "cumulationMaterialType": "Fabric and yarn"
+      },
+      "Export Declaration": {
+        "declarantName": "General Department of Vietnam Customs (VNACCS)",
+        "customsSystem": "VNACCS"
+      }
+    }
+  },
+  "finance": {
+    "currencies": ["USD", "EUR", "VND"],
+    "paymentMethods": ["Bank Transfer", "Letter of Credit", "Open Account", "Cash Against Documents"],
+    "seedData": {
+      "payments": [
+        {
+          "consignmentUcr": "VN-2026-EXP-00101",
+          "invoiceRef": "INV-2026-TNG-0101",
+          "amount": 168000,
+          "currency": "USD",
+          "dueDate": "2026-05-31",
+          "status": "Partially Paid",
+          "paidAmount": 67200,
+          "paymentMethod": "Letter of Credit",
+          "payorOrgId": "org5",
+          "payeeOrgId": "org1",
+          "notes": "First instalment (40%) received via LC. Balance due on B/L presentation and CBP clearance.",
+          "createdAt": "2026-03-10T09:00:00.000Z"
+        },
+        {
+          "consignmentUcr": "VN-2026-EXP-00103",
+          "invoiceRef": "INV-2026-TNG-0103",
+          "amount": 264000,
+          "currency": "EUR",
+          "dueDate": "2026-04-30",
+          "status": "Overdue",
+          "paidAmount": 0,
+          "paymentMethod": "Open Account",
+          "payorOrgId": "org6",
+          "payeeOrgId": "org1",
+          "notes": "Payment overdue. Nike Europe requested 30-day extension citing customs hold at Rotterdam. EVFTA preference verification pending.",
+          "createdAt": "2026-03-25T11:30:00.000Z"
+        }
+      ],
+      "letterOfCredits": [
+        {
+          "consignmentUcr": "VN-2026-EXP-00101",
+          "lcNumber": "LC-2026-VCB-0101",
+          "issuingBank": "HSBC Vietnam",
+          "advisingBank": "Vietcombank",
+          "beneficiary": "TNG Investment & Trading JSC",
+          "applicant": "Nike Inc.",
+          "amount": 168000,
+          "currency": "USD",
+          "expiryDate": "2026-08-31",
+          "status": "Confirmed",
+          "creatorOrgId": "org1",
+          "createdAt": "2026-03-10T09:00:00.000Z"
+        },
+        {
+          "consignmentUcr": "VN-2026-EXP-00103",
+          "lcNumber": "LC-2026-VCB-0102",
+          "issuingBank": "HSBC Vietnam",
+          "advisingBank": "Vietcombank",
+          "beneficiary": "TNG Investment & Trading JSC",
+          "applicant": "Nike Europe B.V.",
+          "amount": 264000,
+          "currency": "EUR",
+          "expiryDate": "2026-07-31",
+          "status": "Issued",
+          "creatorOrgId": "org1",
+          "createdAt": "2026-03-25T11:30:00.000Z"
+        }
+      ],
+      "smartContracts": [
+        {
+          "consignmentUcr": "VN-2026-EXP-00101",
+          "contractRef": "SC-2026-VN-0101",
+          "payorOrgId": "org5",
+          "payeeOrgId": "org1",
+          "amount": 168000,
+          "currency": "USD",
+          "status": "Active",
+          "autoRelease": true,
+          "createdAt": "2026-03-10T09:00:00.000Z",
+          "conditions": [
+            {
+              "description": "MOIT Certificate of Origin (EUR.1/CPTPP) issued and verified",
+              "docType": "MOIT Certificate of Origin",
+              "met": true,
+              "metAt": "2026-03-12T08:00:00.000Z"
+            },
+            {
+              "description": "Origin composition verified (Vietnam content >= 55%)",
+              "docType": "Bill of Material",
+              "met": true,
+              "metAt": "2026-03-12T09:15:00.000Z"
+            },
+            {
+              "description": "Bill of Lading (eBL) verified and presented",
+              "docType": "Bill of Lading",
+              "met": false,
+              "metAt": null
+            },
+            {
+              "description": "US CBP pre-clearance (no UFLPA hold)",
+              "docType": null,
+              "met": false,
+              "metAt": null
+            }
+          ]
+        },
+        {
+          "consignmentUcr": "VN-2026-EXP-00103",
+          "contractRef": "SC-2026-VN-0102",
+          "payorOrgId": "org6",
+          "payeeOrgId": "org1",
+          "amount": 264000,
+          "currency": "EUR",
+          "status": "Active",
+          "autoRelease": true,
+          "createdAt": "2026-03-25T11:30:00.000Z",
+          "conditions": [
+            {
+              "description": "MOIT Certificate of Origin issued and EVFTA-compliant",
+              "docType": "MOIT Certificate of Origin",
+              "met": false,
+              "metAt": null
+            },
+            {
+              "description": "Export Declaration cleared by Vietnam Customs (VNACCS)",
+              "docType": "Export Declaration",
+              "met": false,
+              "metAt": null
+            },
+            {
+              "description": "Bill of Lading verified and presented",
+              "docType": "Bill of Lading",
+              "met": false,
+              "metAt": null
+            }
+          ]
+        }
+      ],
+      "financeViewers": {
+        "VN-2026-EXP-00101": ["org7", "org8"],
+        "VN-2026-EXP-00103": ["org7", "org8"]
+      }
+    }
+  },
+  "geography": {
+    "countries": {
+      "Vietnam": { "iso": "704", "coords": [108.2772, 14.0583], "spread": 3.5 },
+      "United States": { "iso": "840", "coords": [-95.7129, 37.0902], "spread": 12.0 },
+      "South Korea": { "iso": "410", "coords": [127.7669, 35.9078], "spread": 2.0 },
+      "Netherlands": { "iso": "528", "coords": [5.2913, 52.1326], "spread": 1.5 },
+      "Germany": { "iso": "276", "coords": [10.4515, 51.1657], "spread": 3.2 },
+      "Japan": { "iso": "392", "coords": [139.6917, 35.6895], "spread": 2.5 },
+      "China": { "iso": "156", "coords": [104.1954, 35.8617], "spread": 12.0 },
+      "United Kingdom": { "iso": "826", "coords": [-3.4360, 55.3781], "spread": 3.0 }
+    },
+    "specialMappings": {
+      "Ho Chi Minh City": "Vietnam",
+      "International": null,
+      "EU": "Netherlands"
+    },
+    "trustScoreLabel": "Verified Vietnamese Exporter"
+  },
+  "documentTypes": {
+    "Commercial Invoice": {
+      "uneceCode": "380",
+      "dataClassification": "sourceOfTruth",
+      "sourceSystem": null,
+      "issuingAuthority": null,
+      "requiresNotarization": true
+    },
+    "Bill of Material": {
+      "uneceCode": "420",
+      "dataClassification": "immutableSnapshot",
+      "sourceSystem": null,
+      "issuingAuthority": null,
+      "requiresNotarization": true
+    },
+    "MOIT Certificate of Origin": {
+      "uneceCode": "861",
+      "dataClassification": "sourceOfTruth",
+      "sourceSystem": "eCoSys",
+      "issuingAuthority": "Ministry of Industry and Trade",
+      "requiresNotarization": true
+    },
+    "Export Declaration": {
+      "uneceCode": "315",
+      "dataClassification": "sourceOfTruth",
+      "sourceSystem": "VNACCS",
+      "issuingAuthority": "General Department of Vietnam Customs",
+      "requiresNotarization": true
+    },
+    "Bill of Lading": {
+      "uneceCode": "714",
+      "dataClassification": "immutableSnapshot",
+      "sourceSystem": null,
+      "issuingAuthority": null,
+      "requiresNotarization": true
+    },
+    "Inspection Report": {
+      "uneceCode": "856",
+      "dataClassification": "immutableSnapshot",
+      "sourceSystem": null,
+      "issuingAuthority": "Bureau Veritas Vietnam",
+      "requiresNotarization": false
+    },
+    "Packing List": {
+      "uneceCode": "271",
+      "dataClassification": "immutableSnapshot",
+      "sourceSystem": null,
+      "issuingAuthority": null,
+      "requiresNotarization": false
+    }
+  },
+  "regulations": [
+    {
+      "id": "cptpp",
+      "name": "Comprehensive and Progressive Agreement for Trans-Pacific Partnership",
+      "displayLabel": "CPTPP",
+      "applicableToDestinations": ["United States", "Japan"],
+      "complianceFieldMapping": {
+        "Origin Content": "consignment.originComposition.localContentPercent",
+        "Cumulation Applied": "consignment.originComposition.cptppCumulationApplied",
+        "Calculation Method": "consignment.originComposition.calculationMethod"
+      }
+    },
+    {
+      "id": "evfta",
+      "name": "EU-Vietnam Free Trade Agreement",
+      "displayLabel": "EVFTA",
+      "applicableToDestinations": ["Netherlands", "Germany"],
+      "complianceFieldMapping": {
+        "Origin Content": "consignment.originComposition.localContentPercent",
+        "Certificate of Origin": "documents.MOIT Certificate of Origin"
+      }
+    },
+    {
+      "id": "uflpa",
+      "name": "Uyghur Forced Labor Prevention Act",
+      "displayLabel": "UFLPA",
+      "applicableToDestinations": ["United States"],
+      "complianceFieldMapping": {
+        "Supply Chain Attestation": "consignment.originComposition.inputMaterials",
+        "Forced Labor Screening": "consignment.originComposition.inputMaterials"
+      }
+    }
+  ],
+  "channels": [
+    {
+      "id": "A",
+      "label": "Government NSW/ASW",
+      "description": "Official customs declarations, C/O applications, and regulatory filings processed through Vietnam National Single Window (VNSW) and ASEAN Single Window (ASW)",
+      "documentTypes": ["Export Declaration", "MOIT Certificate of Origin"],
+      "systems": ["VNACCS", "eCoSys", "VNSW", "ASW"]
+    },
+    {
+      "id": "B",
+      "label": "TWIN Network",
+      "description": "Commercial trade documents, notarized copies, supply chain data, and cross-border verification exchanged peer-to-peer via TWIN nodes",
+      "documentTypes": ["Commercial Invoice", "Bill of Material", "Inspection Report", "Packing List", "Bill of Lading"],
+      "systems": ["TWIN Node", "IOTA Ledger"]
+    }
+  ]
+}

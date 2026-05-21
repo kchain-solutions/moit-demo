@@ -1,16 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
+import { fmtValue as fmtVal } from '../utils/format';
 import { CreditCard, Plus, X, ChevronRight, CheckCircle, Clock, AlertCircle, Share2, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
-
-function fmtVal(n, cur = 'USD') {
-  if (!n || isNaN(Number(n))) return '—';
-  const v = Number(n);
-  const sym = cur === 'KES' ? 'KES ' : cur === 'EUR' ? '€' : '$';
-  if (v >= 1_000_000) return `${sym}${(v / 1_000_000).toFixed(2)}M`;
-  if (v >= 1_000) return `${sym}${(v / 1_000).toFixed(1)}K`;
-  return `${sym}${v.toLocaleString()}`;
-}
+import Modal from './shared/Modal';
 
 const STATUS_STYLES = {
   'Unpaid':          { bg: '#fff4eb', color: '#c2410c', dot: '#FF7200' },
@@ -43,6 +37,7 @@ function StatCard({ icon: Icon, label, value, sub, color }) {
 
 export default function Payments() {
   const { user, refreshKey, refresh } = useNode();
+  const config = useConfig();
   const [consignments, setConsignments] = useState([]);
   const [allOrgs, setAllOrgs] = useState([]);
   const [payments, setPayments] = useState([]);
@@ -139,7 +134,7 @@ export default function Payments() {
         <StatCard icon={CreditCard} label="Total Payments" value={payments.length || '—'} sub={`across ${[...new Set(payments.map(p => p.consignmentId))].length} consignments`} color="blue" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: selected ? '1fr 380px' : '1fr', gap: 18 }}>
+      <div className={`pay-grid${selected ? ' pay-grid--detail' : ''}`}>
         {/* Payments table */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '16px 20px 14px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid var(--card-border)' }}>
@@ -161,28 +156,57 @@ export default function Payments() {
               <div>Create a payment record to track invoice settlements.</div>
             </div>
           ) : (
-            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
-              <thead>
-                <tr style={{ background: '#f8fafc' }}>
-                  {['UCR', 'Invoice Ref', 'Amount', 'Due Date', 'Status', 'Method', ''].map(h => (
-                    <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px', borderBottom: '1px solid var(--card-border)' }}>{h}</th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              <div className="desktop-table">
+                <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12.5 }}>
+                  <thead>
+                    <tr style={{ background: '#f8fafc' }}>
+                      {['UCR', 'Invoice Ref', 'Amount', 'Due Date', 'Status', 'Method', ''].map(h => (
+                        <th key={h} style={{ padding: '10px 14px', textAlign: 'left', fontSize: 11, fontWeight: 700, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.6px', borderBottom: '1px solid var(--card-border)' }}>{h}</th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {payments.map(p => (
+                      <tr key={p.id} onClick={() => setSelected(selected?.id === p.id ? null : p)} style={{ cursor: 'pointer', background: selected?.id === p.id ? '#fff4eb' : 'transparent', borderBottom: '1px solid var(--card-border)' }}>
+                        <td style={{ padding: '11px 14px', fontWeight: 600, color: 'var(--accent)', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.ucr}</td>
+                        <td style={{ padding: '11px 14px', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.invoiceRef}</td>
+                        <td style={{ padding: '11px 14px', fontWeight: 600 }}>{fmtVal(p.amount, p.currency)}</td>
+                        <td style={{ padding: '11px 14px', color: p.status === 'Overdue' ? '#ef4444' : 'var(--text-secondary)' }}>{p.dueDate}</td>
+                        <td style={{ padding: '11px 14px' }}><StatusPill status={p.status} /></td>
+                        <td style={{ padding: '11px 14px', color: 'var(--text-muted)' }}>{p.paymentMethod}</td>
+                        <td style={{ padding: '11px 14px' }}><ChevronRight style={{ width: 14, height: 14, color: 'var(--text-muted)' }} /></td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mobile-cards" style={{ padding: 12 }}>
                 {payments.map(p => (
-                  <tr key={p.id} onClick={() => setSelected(selected?.id === p.id ? null : p)} style={{ cursor: 'pointer', background: selected?.id === p.id ? '#fff4eb' : 'transparent', borderBottom: '1px solid var(--card-border)' }}>
-                    <td style={{ padding: '11px 14px', fontWeight: 600, color: 'var(--accent)', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.ucr}</td>
-                    <td style={{ padding: '11px 14px', fontFamily: 'var(--mono)', fontSize: 11.5 }}>{p.invoiceRef}</td>
-                    <td style={{ padding: '11px 14px', fontWeight: 600 }}>{fmtVal(p.amount, p.currency)}</td>
-                    <td style={{ padding: '11px 14px', color: p.status === 'Overdue' ? '#ef4444' : 'var(--text-secondary)' }}>{p.dueDate}</td>
-                    <td style={{ padding: '11px 14px' }}><StatusPill status={p.status} /></td>
-                    <td style={{ padding: '11px 14px', color: 'var(--text-muted)' }}>{p.paymentMethod}</td>
-                    <td style={{ padding: '11px 14px' }}><ChevronRight style={{ width: 14, height: 14, color: 'var(--text-muted)' }} /></td>
-                  </tr>
+                  <div key={p.id} className="mobile-card" onClick={() => setSelected(selected?.id === p.id ? null : p)} style={{ cursor: 'pointer', background: selected?.id === p.id ? '#fff4eb' : undefined }}>
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{p.invoiceRef}</div>
+                        <div className="mobile-card-sub">{p.ucr}</div>
+                      </div>
+                      <StatusPill status={p.status} />
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Amount</span>
+                      <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtVal(p.amount, p.currency)}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Due Date</span>
+                      <span className="mobile-card-value" style={{ color: p.status === 'Overdue' ? '#ef4444' : undefined }}>{p.dueDate || '—'}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Method</span>
+                      <span className="mobile-card-value">{p.paymentMethod}</span>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
 
@@ -209,7 +233,7 @@ export default function Payments() {
               ].map(([l, v]) => (
                 <div key={l} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 8 }}>
                   <span style={{ fontSize: 11.5, color: 'var(--text-muted)', flexShrink: 0 }}>{l}</span>
-                  <span style={{ fontSize: 12, fontWeight: 500, color: 'var(--text-primary)', textAlign: 'right', fontFamily: l === 'UCR' || l === 'Invoice' ? 'var(--mono)' : 'inherit', fontSize: l === 'UCR' || l === 'Invoice' ? 11 : 12 }}>{v}</span>
+                  <span style={{ fontSize: l === 'UCR' || l === 'Invoice' ? 11 : 12, fontWeight: 500, color: 'var(--text-primary)', textAlign: 'right', fontFamily: l === 'UCR' || l === 'Invoice' ? 'var(--mono)' : 'inherit' }}>{v}</span>
                 </div>
               ))}
 
@@ -245,96 +269,80 @@ export default function Payments() {
       </div>
 
       {/* New Payment Modal */}
-      {showNew && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card" style={{ width: 480, maxHeight: '90vh', overflow: 'auto', padding: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700 }}>New Payment Record</h3>
-              <button onClick={() => setShowNew(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X style={{ width: 18, height: 18 }} /></button>
-            </div>
-            <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="fg">
-                <label>Consignment</label>
-                <select value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))} required>
-                  <option value="">Select consignment…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.product}</option>)}
-                </select>
-              </div>
-              <div className="fg">
-                <label>Invoice Reference</label>
-                <input value={form.invoiceRef} onChange={e => setForm(f => ({ ...f, invoiceRef: e.target.value }))} placeholder="e.g. INV-APM-2026-0821" required />
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 100px', gap: 10 }}>
-                <div className="fg">
-                  <label>Amount</label>
-                  <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="0.00" required />
-                </div>
-                <div className="fg">
-                  <label>Currency</label>
-                  <select value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
-                    <option>USD</option><option>EUR</option><option>KES</option>
-                  </select>
-                </div>
-              </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-                <div className="fg">
-                  <label>Due Date</label>
-                  <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))} required />
-                </div>
-                <div className="fg">
-                  <label>Payment Method</label>
-                  <select value={form.paymentMethod} onChange={e => setForm(f => ({ ...f, paymentMethod: e.target.value }))}>
-                    <option>Bank Transfer</option><option>Letter of Credit</option><option>Open Account</option><option>Cash Against Documents</option>
-                  </select>
-                </div>
-              </div>
-              <div className="fg">
-                <label>Notes</label>
-                <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Optional notes…" />
-              </div>
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
-                <button type="button" className="btn btn-s" onClick={() => setShowNew(false)}>Cancel</button>
-                <button type="submit" className="btn btn-p">Create Payment</button>
-              </div>
-            </form>
+      <Modal open={showNew} onClose={() => setShowNew(false)} title="New Payment Record" width={480}>
+        <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="fg">
+            <label>Consignment</label>
+            <select value={form.consignmentId} onChange={e => setForm(f => ({ ...f, consignmentId: e.target.value }))} required>
+              <option value="">Select consignment…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr} — {c.product}</option>)}
+            </select>
           </div>
-        </div>
-      )}
+          <div className="fg">
+            <label>Invoice Reference</label>
+            <input value={form.invoiceRef} onChange={e => setForm(f => ({ ...f, invoiceRef: e.target.value }))} placeholder="e.g. INV-APM-2026-0821" required />
+          </div>
+          <div className="pay-form-amount">
+            <div className="fg">
+              <label>Amount</label>
+              <input type="number" value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} placeholder="0.00" required />
+            </div>
+            <div className="fg">
+              <label>Currency</label>
+              <select value={form.currency} onChange={e => setForm(f => ({ ...f, currency: e.target.value }))}>
+                {(config?.finance?.currencies || ['USD', 'EUR']).map(c => <option key={c} value={c}>{c}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="pay-form-2col">
+            <div className="fg">
+              <label>Due Date</label>
+              <input type="date" value={form.dueDate} onChange={e => setForm(f => ({ ...f, dueDate: e.target.value }))} required />
+            </div>
+            <div className="fg">
+              <label>Payment Method</label>
+              <select value={form.paymentMethod} onChange={e => setForm(f => ({ ...f, paymentMethod: e.target.value }))}>
+                {(config?.finance?.paymentMethods || ['Bank Transfer', 'Letter of Credit', 'Open Account', 'Cash Against Documents']).map(m => <option key={m} value={m}>{m}</option>)}
+              </select>
+            </div>
+          </div>
+          <div className="fg">
+            <label>Notes</label>
+            <input value={form.notes} onChange={e => setForm(f => ({ ...f, notes: e.target.value }))} placeholder="Optional notes…" />
+          </div>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end', marginTop: 4 }}>
+            <button type="button" className="btn btn-s" onClick={() => setShowNew(false)}>Cancel</button>
+            <button type="submit" className="btn btn-p">Create Payment</button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Finance Share Modal */}
-      {showShare && (
-        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.4)', zIndex: 100, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-          <div className="card" style={{ width: 400, padding: 24 }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 20 }}>
-              <h3 style={{ fontSize: 15, fontWeight: 700 }}>Share Finance Access</h3>
-              <button onClick={() => setShowShare(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-muted)' }}><X style={{ width: 18, height: 18 }} /></button>
-            </div>
-            <form onSubmit={handleShare} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <div className="fg">
-                <label>Consignment</label>
-                <select value={shareConsignment} onChange={e => setShareConsignment(e.target.value)} required>
-                  <option value="">Select…</option>
-                  {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr}</option>)}
-                </select>
-              </div>
-              <div className="fg">
-                <label>Share With</label>
-                <select value={shareOrgId} onChange={e => setShareOrgId(e.target.value)} required>
-                  <option value="">Select organisation…</option>
-                  {sharable.map(o => <option key={o.id} value={o.id}>{o.name} ({o.role})</option>)}
-                </select>
-              </div>
-              <p style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-                The selected organisation will gain viewer access to payment records, letters of credit, and smart contracts for this consignment.
-              </p>
-              <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
-                <button type="button" className="btn btn-s" onClick={() => setShowShare(false)}>Cancel</button>
-                <button type="submit" className="btn btn-p"><Share2 style={{ width: 13, height: 13 }} /> Grant Access</button>
-              </div>
-            </form>
+      <Modal open={showShare} onClose={() => setShowShare(false)} title="Share Finance Access" width={400}>
+        <form onSubmit={handleShare} style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+          <div className="fg">
+            <label>Consignment</label>
+            <select value={shareConsignment} onChange={e => setShareConsignment(e.target.value)} required>
+              <option value="">Select…</option>
+              {consignments.map(c => <option key={c.id} value={c.id}>{c.ucr}</option>)}
+            </select>
           </div>
-        </div>
-      )}
+          <div className="fg">
+            <label>Share With</label>
+            <select value={shareOrgId} onChange={e => setShareOrgId(e.target.value)} required>
+              <option value="">Select organisation…</option>
+              {sharable.map(o => <option key={o.id} value={o.id}>{o.name} ({o.role})</option>)}
+            </select>
+          </div>
+          <p style={{ fontSize: 11.5, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+            The selected organisation will gain viewer access to payment records, letters of credit, and smart contracts for this consignment.
+          </p>
+          <div style={{ display: 'flex', gap: 10, justifyContent: 'flex-end' }}>
+            <button type="button" className="btn btn-s" onClick={() => setShowShare(false)}>Cancel</button>
+            <button type="submit" className="btn btn-p"><Share2 style={{ width: 13, height: 13 }} /> Grant Access</button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

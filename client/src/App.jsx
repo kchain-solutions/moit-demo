@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNode } from './context/NodeContext';
+import { useConfig } from './context/ConfigContext';
 import Login from './components/Login';
 import Dashboard from './components/Dashboard';
 import Network from './components/Network';
@@ -8,8 +9,8 @@ import Consignments from './components/Consignments';
 import Payments from './components/Payments';
 import TradeFinance from './components/TradeFinance';
 import Permissions from './components/Permissions';
-import TangleExplorer from './components/TangleExplorer';
-import { LayoutDashboard, FileStack, Fingerprint, Shield, Activity, LogOut, Wifi, WifiOff, CreditCard, Landmark, Globe } from 'lucide-react';
+import LedgerExplorer from './components/LedgerExplorer';
+import { LayoutDashboard, FileStack, Fingerprint, Shield, Activity, LogOut, Wifi, WifiOff, CreditCard, Landmark, Globe, Menu, Search, X } from 'lucide-react';
 
 const PAGES = [
   { id: 'dashboard',     label: 'Dashboard',      icon: LayoutDashboard },
@@ -19,14 +20,17 @@ const PAGES = [
   { id: 'trade-finance', label: 'Trade Finance',   icon: Landmark },
   { id: 'identity',      label: 'Identity',        icon: Fingerprint },
   { id: 'permissions',   label: 'Access Control',  icon: Shield },
-  { id: 'tangle',        label: 'Analytics',       icon: Activity },
+  { id: 'ledger',        label: 'Analytics',       icon: Activity },
 ];
 
 export default function App() {
   const { user, nodeInfo, peerConnected, logout } = useNode();
+  const config = useConfig();
   const [page, setPage] = useState('dashboard');
   const [searchQ, setSearchQ] = useState('');
   const [targetConsignment, setTargetConsignment] = useState(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   if (!user) return <Login />;
 
@@ -37,20 +41,32 @@ export default function App() {
     setPage('consignments');
   };
 
+  const navigateTo = (id) => {
+    setPage(id);
+    setSidebarOpen(false);
+  };
+
+  const BOTTOM_TABS = PAGES.filter(p =>
+    ['dashboard', 'consignments', 'payments', 'trade-finance', 'network'].includes(p.id)
+  );
+
   return (
     <div className="layout">
-      <aside className="sidebar">
+      {/* Sidebar overlay (mobile/tablet) */}
+      <div className={`sidebar-overlay${sidebarOpen ? ' open' : ''}`} onClick={() => setSidebarOpen(false)} />
+
+      <aside className={`sidebar${sidebarOpen ? ' open' : ''}`}>
         <div className="sb-brand">
-          <img src="/vietnam.png" alt="Vietnam" style={{ height: 22, width: 22, objectFit: 'contain', flexShrink: 0 }} />
+          <img src={config?.branding?.logo || '/logo.png'} alt="Logo" style={{ height: 22, width: 22, objectFit: 'contain', flexShrink: 0 }} />
           <div style={{ display: 'flex', flexDirection: 'column', lineHeight: 1.25, minWidth: 0 }}>
-            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>TWIN Vietnam</span>
-            
+            <span style={{ fontWeight: 700, fontSize: 14, color: 'var(--text-primary)', letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>{config?.branding?.appName || 'TWIN'}</span>
+
           </div>
         </div>
 
         <nav className="sb-nav">
           {PAGES.map(p => (
-            <button key={p.id} className={page === p.id ? 'active' : ''} onClick={() => setPage(p.id)}>
+            <button key={p.id} className={page === p.id ? 'active' : ''} onClick={() => navigateTo(p.id)}>
               <p.icon /> {p.label}
             </button>
           ))}
@@ -83,6 +99,9 @@ export default function App() {
       <main className="main">
         <header className="hdr">
           <div className="hdr-left">
+            <button className="hamburger" onClick={() => setSidebarOpen(true)}>
+              <Menu size={20} />
+            </button>
             <div className="hdr-org">{user.name}</div>
             <div className="hdr-search">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -96,6 +115,9 @@ export default function App() {
             </div>
           </div>
           <div className="hdr-right">
+            <button className="search-btn-mobile" onClick={() => setSearchOpen(true)}>
+              <Search size={18} />
+            </button>
             <button className="hdr-bell">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
@@ -119,9 +141,36 @@ export default function App() {
           {page === 'trade-finance' && <TradeFinance />}
           {page === 'identity'      && <Identity />}
           {page === 'permissions'   && <Permissions />}
-          {page === 'tangle'        && <TangleExplorer />}
+          {page === 'ledger'        && <LedgerExplorer />}
         </div>
       </main>
+
+      {/* Mobile search overlay */}
+      {searchOpen && (
+        <div className="search-overlay open">
+          <div className="search-overlay-bar">
+            <input
+              autoFocus
+              placeholder="Search consignments, documents, entities..."
+              value={searchQ}
+              onChange={e => setSearchQ(e.target.value)}
+            />
+            <button className="search-overlay-close" onClick={() => setSearchOpen(false)}>
+              <X size={20} />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom tab bar (mobile) */}
+      <nav className="bottom-tabs">
+        {BOTTOM_TABS.map(t => (
+          <button key={t.id} className={`bottom-tab${page === t.id ? ' active' : ''}`} onClick={() => navigateTo(t.id)}>
+            <t.icon />
+            <span>{t.label}</span>
+          </button>
+        ))}
+      </nav>
     </div>
   );
 }

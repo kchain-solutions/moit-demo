@@ -5,4 +5,12 @@ server/public/
 *.log
 .env
 .env.*
-.claude/
+# Generated ledger data (corridor-specific, regenerated on startup)
+data/ledger-*.json
+# Claude Code internal files (keep project files tracked)
+.claude/*
+!.claude/CLAUDE.md
+!.claude/board.md
+!.claude/tasks/
+!.claude/agents/
+!.claude/settings.json

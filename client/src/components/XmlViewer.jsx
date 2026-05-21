@@ -208,7 +208,7 @@ function parseBOM(doc) {
     {
       title: 'Origin Composition',
       fields: [
-        { label: 'Vietnam Content', value: get('VietnamContentPercent') ? `${get('VietnamContentPercent')}%` : '' },
+        { label: 'Local Content', value: get('LocalContentPercent') ? `${get('LocalContentPercent')}%` : '' },
         { label: 'Third Country Content', value: get('ThirdCountryContentPercent') ? `${get('ThirdCountryContentPercent')}%` : '' },
         { label: 'CPTPP Cumulation', value: get('CPTPPCumulationApplied') === 'true' ? 'Yes' : 'No' },
       ],

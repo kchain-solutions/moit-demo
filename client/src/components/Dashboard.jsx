@@ -1,64 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
+import { fmtValue } from '../utils/format';
+import { StatusPill, DocsPill, DocTypeIcon } from './shared/Pills';
 import XmlViewer from './XmlViewer';
 import {
   FileStack, TrendingUp, Activity, Wifi, WifiOff, Radio, Link2, Unlink, Server,
   AlertTriangle, FileText, Download, Eye, Code2, X, ChevronLeft, Globe, ArrowRight
 } from 'lucide-react';
 
-function fmtValue(val, currency = 'USD') {
-  if (!val || isNaN(Number(val))) return '—';
-  const n = Number(val);
-  if (currency === 'KES') {
-    if (n >= 1_000_000) return `KES ${(n / 1_000_000).toFixed(2)}M`;
-    if (n >= 1_000)     return `KES ${(n / 1_000).toFixed(1)}K`;
-    return `KES ${n.toLocaleString()}`;
-  }
-  const sym = currency === 'EUR' ? '€' : '$';
-  if (n >= 1_000_000) return `${sym}${(n / 1_000_000).toFixed(2)}M`;
-  if (n >= 1_000)     return `${sym}${(n / 1_000).toFixed(0)}K`;
-  return `${sym}${n.toLocaleString()}`;
-}
-
-function StatusPill({ status }) {
-  const map = {
-    'In Transit': 'pill pill-dot pill-active',
-    'Customs':    'pill pill-dot pill-active',
-    'Submitted':  'pill pill-dot pill-active',
-    'Released':   'pill pill-dot pill-active',
-    'Delivered':  'pill pill-dot pill-delivered',
-    'Draft':      'pill pill-dot pill-draft',
-    'Under Review': 'pill pill-dot pill-review',
-  };
-  return <span className={map[status] || 'pill pill-dot pill-draft'}>{status || 'Draft'}</span>;
-}
-
-function DocsPill({ count, total }) {
-  const cls = count === total ? 'docs-pill docs-complete' : count < total / 2 ? 'docs-pill docs-low' : 'docs-pill docs-partial';
-  return <span className={cls}>{count}/{total}</span>;
-}
-
-const DOC_COLORS = {
-  'Bill of Lading':          { bg: '#fff4eb', color: '#FF7200' },
-  'Insurance Certificate':   { bg: '#fff4eb', color: '#FF7200' },
-  'Certificate of Origin':   { bg: '#f0fdf4', color: '#16a34a' },
-  'Commercial Invoice':      { bg: '#e8ecf4', color: '#11224E' },
-  'Packing List':            { bg: '#e8ecf4', color: '#11224E' },
-  'Export Declaration':      { bg: '#e8ecf4', color: '#11224E' },
-};
-
-function DocTypeIcon({ docType }) {
-  const c = DOC_COLORS[docType] || { bg: '#f1f5f9', color: '#64748b' };
-  return (
-    <div style={{ width: 30, height: 30, borderRadius: 7, background: c.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-      <FileText style={{ width: 14, height: 14, color: c.color }} />
-    </div>
-  );
-}
-
 export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
-  const { nodeInfo, peerConnected, peerOrgs, tangleLog, user, refreshKey, refresh } = useNode();
+  const { nodeInfo, peerConnected, peerOrgs, ledgerLog, user, refreshKey, refresh } = useNode();
+  const config = useConfig();
   const [orgs, setOrgs] = useState([]);
   const [consignments, setConsignments] = useState([]);
   const [discoverable, setDiscoverable] = useState([]);
@@ -96,7 +50,7 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
   const errorCount = consignments.filter(c => c.errorType).length;
   // Only count ledger events that belong to consignments visible to this org
   const myUcrs = new Set(consignments.map(c => c.ucr).filter(Boolean));
-  const visibleEvents = tangleLog.filter(e => e.details && [...myUcrs].some(ucr => e.details.includes(ucr)));
+  const visibleEvents = ledgerLog.filter(e => e.details && [...myUcrs].some(ucr => e.details.includes(ucr)));
   const hasData = consignments.length > 0;
 
   const filtered = searchQ
@@ -176,13 +130,13 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
             <div style={{ height: '100%', borderRadius: 3, background: '#FF7200', width: verified > 0 ? '87%' : '0%', transition: 'width 0.6s ease' }} />
           </div>
           <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', fontWeight: 500 }}>
-            {verified > 0 ? 'Verified Vietnamese Exporter' : 'Register a DID to get a score'}
+            {verified > 0 ? (config?.geography?.trustScoreLabel || 'Verified Exporter') : 'Register a DID to get a score'}
           </div>
         </div>
       </div>
 
       {/* Two-column layout */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 360px', gap: 18, alignItems: 'start' }}>
+      <div className="dash-grid">
 
         {/* Recent Consignments table */}
         <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
@@ -196,51 +150,84 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
           {recent.length === 0 ? (
             <div className="empty">No consignments visible. Create one or connect to a peer node.</div>
           ) : (
-            <table style={{ tableLayout: 'fixed' }}>
-              <thead>
-                <tr>
-                  <th style={{ width: '28%' }}>Reference</th>
-                  <th style={{ width: '28%' }}>Route & Product</th>
-                  <th style={{ width: '12%' }}>Docs</th>
-                  <th style={{ width: '16%' }}>Status</th>
-                  <th style={{ width: '16%', textAlign: 'right' }}>Value</th>
-                </tr>
-              </thead>
-              <tbody>
+            <>
+              <div className="desktop-table">
+                <table style={{ tableLayout: 'fixed' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ width: '28%' }}>Reference</th>
+                      <th style={{ width: '28%' }}>Route & Product</th>
+                      <th style={{ width: '12%' }}>Docs</th>
+                      <th style={{ width: '16%' }}>Status</th>
+                      <th style={{ width: '16%', textAlign: 'right' }}>Value</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {recent.map(c => (
+                      <tr
+                        key={c.id}
+                        onClick={() => setSelectedC(selectedC?.id === c.id ? null : c)}
+                        style={{ background: selectedC?.id === c.id ? 'var(--accent-light)' : undefined, cursor: 'pointer' }}
+                      >
+                        <td>
+                          <button className="ucr-link" onClick={e => { e.stopPropagation(); onViewDocs?.(c); }}>{c.ucr}</button>
+                          <div className="ucr-date">{c.shipDate || new Date(c.createdAt).toLocaleDateString()}</div>
+                        </td>
+                        <td>
+                          {c.fromCountry && c.toCountry ? (
+                            <div className="route-display">
+                              <span>{c.fromCountry}</span>
+                              <span className="route-arrow">→</span>
+                              <span>{c.toCountry}</span>
+                            </div>
+                          ) : (
+                            <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', fontWeight: 500 }}>{c.creatorOrgName}</div>
+                          )}
+                          <div className="route-product">{(c.product || c.description || '—').slice(0, 38)}</div>
+                        </td>
+                        <td><DocsPill count={c.documentCount || 0} total={6} /></td>
+                        <td>
+                          <StatusPill status={c.status} />
+                          {c.errorType && <span title={c.errorDescription} style={{ marginLeft: 5 }}><AlertTriangle style={{ width: 12, height: 12, color: '#b91c1c', verticalAlign: 'middle' }} /></span>}
+                        </td>
+                        <td style={{ textAlign: 'right' }}>
+                          <span className="value-cell">{fmtValue(c.totalValue, c.currency)}</span>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div className="mobile-cards" style={{ padding: '0 12px 12px' }}>
                 {recent.map(c => (
-                  <tr
-                    key={c.id}
-                    onClick={() => setSelectedC(selectedC?.id === c.id ? null : c)}
-                    style={{ background: selectedC?.id === c.id ? 'var(--accent-light)' : undefined, cursor: 'pointer' }}
-                  >
-                    <td>
-                      <button className="ucr-link" onClick={e => { e.stopPropagation(); onViewDocs?.(c); }}>{c.ucr}</button>
-                      <div className="ucr-date">{c.shipDate || new Date(c.createdAt).toLocaleDateString()}</div>
-                    </td>
-                    <td>
-                      {c.fromCountry && c.toCountry ? (
-                        <div className="route-display">
-                          <span>{c.fromCountry}</span>
-                          <span className="route-arrow">→</span>
-                          <span>{c.toCountry}</span>
-                        </div>
-                      ) : (
-                        <div style={{ fontSize: 12.5, color: 'var(--text-secondary)', fontWeight: 500 }}>{c.creatorOrgName}</div>
-                      )}
-                      <div className="route-product">{(c.product || c.description || '—').slice(0, 38)}</div>
-                    </td>
-                    <td><DocsPill count={c.documentCount || 0} total={6} /></td>
-                    <td>
+                  <div key={c.id} className="mobile-card" onClick={() => onViewDocs?.(c)} style={{ cursor: 'pointer' }}>
+                    <div className="mobile-card-header">
+                      <div>
+                        <div className="mobile-card-title">{c.ucr}</div>
+                        <div className="mobile-card-sub">{c.shipDate || new Date(c.createdAt).toLocaleDateString()}</div>
+                      </div>
                       <StatusPill status={c.status} />
-                      {c.errorType && <span title={c.errorDescription} style={{ marginLeft: 5 }}><AlertTriangle style={{ width: 12, height: 12, color: '#b91c1c', verticalAlign: 'middle' }} /></span>}
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <span className="value-cell">{fmtValue(c.totalValue, c.currency)}</span>
-                    </td>
-                  </tr>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Route</span>
+                      <span className="mobile-card-value">{c.fromCountry && c.toCountry ? `${c.fromCountry} → ${c.toCountry}` : c.creatorOrgName}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Product</span>
+                      <span className="mobile-card-value">{(c.product || c.description || '—').slice(0, 30)}</span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Docs</span>
+                      <span className="mobile-card-value"><DocsPill count={c.documentCount || 0} total={6} /></span>
+                    </div>
+                    <div className="mobile-card-row">
+                      <span className="mobile-card-label">Value</span>
+                      <span className="mobile-card-value" style={{ fontWeight: 700 }}>{fmtValue(c.totalValue, c.currency)}</span>
+                    </div>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </>
           )}
         </div>
 
@@ -262,7 +249,7 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
               <div><span className="ns-k">This node</span><span className="ns-v">{nodeInfo?.nodeName || '—'}</span></div>
               <div><span className="ns-k">Local orgs</span><span className="ns-v">{orgs.length}</span></div>
               <div><span className="ns-k">Peer orgs</span><span className="ns-v">{peerConnected ? peerOrgs.length : '—'}</span></div>
-              <div><span className="ns-k">Ledger records</span><span className="ns-v">{tangleLog.length}</span></div>
+              <div><span className="ns-k">Ledger records</span><span className="ns-v">{ledgerLog.length}</span></div>
             </div>
             <div className="node-status-actions">
               {peerConnected
@@ -280,17 +267,17 @@ export default function Dashboard({ searchQ = '', onViewDocs, onNavigate }) {
             )}
           </div>
 
-          {/* Recent Tangle Activity */}
+          {/* Recent Ledger Activity */}
           <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
             <div style={{ padding: '14px 18px', borderBottom: '1px solid var(--card-border)', display: 'flex', alignItems: 'center', gap: 8 }}>
               <Activity style={{ width: 15, height: 15, color: 'var(--accent)' }} />
               <h3 style={{ fontSize: 14, fontWeight: 700, color: 'var(--text-primary)' }}>Recent Activity</h3>
             </div>
             <div style={{ padding: '10px 14px', maxHeight: 300, overflowY: 'auto' }}>
-              {tangleLog.length === 0 ? (
+              {ledgerLog.length === 0 ? (
                 <div className="empty" style={{ padding: 20 }}>No activity yet.</div>
               ) : (
-                tangleLog.slice(0, 6).map(e => (
+                ledgerLog.slice(0, 6).map(e => (
                   <div key={e.id} className={`te ${e.type === 'permission' ? 'perm' : e.type === 'identity' ? 'id' : e.type === 'network' ? 'net' : ''}`} style={{ animation: 'fadeIn .2s forwards' }}>
                     <div style={{ minWidth: 52 }}>
                       <div style={{ fontFamily: 'var(--mono)', fontSize: 9.5, color: '#94a3b8' }}>{new Date(e.timestamp).toLocaleTimeString()}</div>

@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit(.claude/**)",
+      "Write(.claude/**)",
+      "Read(.claude/**)",
+      "Bash(mv *)",
+      "Bash(cp *)",
+      "Bash(mkdir *)",
+      "Bash(node scripts/regen-board.cjs)",
+      "Bash(ls *)",
+      "Bash(git *)"
+    ]
+  }
+}

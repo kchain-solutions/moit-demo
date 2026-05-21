@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNode } from '../context/NodeContext';
+import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
 import { CheckCircle, XCircle, Loader, Shield, Edit3, Search, AlertTriangle, ExternalLink } from 'lucide-react';
 
 export default function Identity() {
   const { user, peerOrgs, peerConnected, refresh, refreshKey } = useNode();
+  const config = useConfig();
   const [orgs, setOrgs] = useState([]);
   const [verifying, setVerifying] = useState(null);
   const [regNum, setRegNum] = useState('');
@@ -177,10 +179,10 @@ export default function Identity() {
             <div style={{ fontSize: 12, fontWeight: 700, color: '#166534', marginBottom: 8 }}>✓ Will PASS verification</div>
             <table>
               <tbody>
-                {[['MST-123456', 'Vietnam Tax Code (Ma So Thue)'], ['KBN-254789', 'Korean Business Number'], ['EIN-123456', 'US Employer Identification Number'], ['EORI-123456', 'EU Economic Operator ID (EORI)']].map(([code, desc]) => (
+                {(config?.credentials?.testCredentials?.pass || []).map(({ code, description }) => (
                   <tr key={code}>
                     <td style={{ fontFamily: 'var(--mono)', fontSize: 11, paddingRight: 12 }}>{code}</td>
-                    <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{desc}</td>
+                    <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -190,10 +192,10 @@ export default function Identity() {
             <div style={{ fontSize: 12, fontWeight: 700, color: '#991b1b', marginBottom: 8 }}>✗ Will FAIL verification</div>
             <table>
               <tbody>
-                {[['MST-000000', 'Denied — blacklisted'], ['MST-111111', 'Expired licence'], ['MST-222222', 'Suspended — under review'], ['X-anything', 'Invalid prefix']].map(([code, desc]) => (
+                {(config?.credentials?.testCredentials?.fail || []).map(({ code, description }) => (
                   <tr key={code}>
                     <td style={{ fontFamily: 'var(--mono)', fontSize: 11, paddingRight: 12 }}>{code}</td>
-                    <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{desc}</td>
+                    <td style={{ fontSize: 11.5, color: 'var(--text-muted)' }}>{description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -221,37 +223,71 @@ export default function Identity() {
               </div>
             </div>
             {filteredPeer.length === 0 ? <div className="empty">No matches.</div> : (
-              <table>
-                <thead><tr><th>Organisation</th><th>Role</th><th>Node</th><th>DID</th><th>Status</th><th></th></tr></thead>
-                <tbody>
-                  {filteredPeer.map(o => (
-                    <tr key={o.id}>
-                      <td style={{ fontWeight: 600 }}>{o.name}</td>
-                      <td>{o.role}</td>
-                      <td>{o.nodeName}</td>
-                      <td style={{ fontFamily: 'var(--mono)', fontSize: 10 }}>{o.did ? o.did.slice(0, 22) + '...' : '—'}</td>
-                      <td>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-                          {o.verified ? <span className="pill pill-g">Verified</span> : <span className="pill pill-gr">Unverified</span>}
-                          {o.verified && o.attestedBy && (
-                            <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 20, padding: '2px 8px', width: 'fit-content' }}>
-                              <CheckCircle style={{ width: 10, height: 10, color: '#16a34a', flexShrink: 0 }} />
-                              <span style={{ fontSize: 10, color: '#166534', fontWeight: 600, whiteSpace: 'nowrap' }}>Attested by {o.attestedBy}</span>
+              <>
+                <div className="desktop-table">
+                  <table>
+                    <thead><tr><th>Organisation</th><th>Role</th><th>Node</th><th>DID</th><th>Status</th><th></th></tr></thead>
+                    <tbody>
+                      {filteredPeer.map(o => (
+                        <tr key={o.id}>
+                          <td style={{ fontWeight: 600 }}>{o.name}</td>
+                          <td>{o.role}</td>
+                          <td>{o.nodeName}</td>
+                          <td style={{ fontFamily: 'var(--mono)', fontSize: 10 }}>{o.did ? o.did.slice(0, 22) + '...' : '—'}</td>
+                          <td>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                              {o.verified ? <span className="pill pill-g">Verified</span> : <span className="pill pill-gr">Unverified</span>}
+                              {o.verified && o.attestedBy && (
+                                <div style={{ display: 'inline-flex', alignItems: 'center', gap: 4, background: '#f0fdf4', border: '1px solid #86efac', borderRadius: 20, padding: '2px 8px', width: 'fit-content' }}>
+                                  <CheckCircle style={{ width: 10, height: 10, color: '#16a34a', flexShrink: 0 }} />
+                                  <span style={{ fontSize: 10, color: '#166534', fontWeight: 600, whiteSpace: 'nowrap' }}>Attested by {o.attestedBy}</span>
+                                </div>
+                              )}
                             </div>
-                          )}
+                          </td>
+                          <td>
+                            {o.verified && (
+                              <button className="btn btn-s btn-sm" style={{ fontSize: 10.5, padding: '4px 10px' }} onClick={() => setCredentialOrg(o)}>
+                                <ExternalLink style={{ width: 11, height: 11 }} /> View Credential
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <div className="mobile-cards" style={{ padding: 12 }}>
+                  {filteredPeer.map(o => (
+                    <div key={o.id} className="mobile-card">
+                      <div className="mobile-card-header">
+                        <div>
+                          <div className="mobile-card-title">{o.name}</div>
+                          <div className="mobile-card-sub">{o.role}</div>
                         </div>
-                      </td>
-                      <td>
-                        {o.verified && (
-                          <button className="btn btn-s btn-sm" style={{ fontSize: 10.5, padding: '4px 10px' }} onClick={() => setCredentialOrg(o)}>
+                        {o.verified ? <span className="pill pill-g">Verified</span> : <span className="pill pill-gr">Unverified</span>}
+                      </div>
+                      <div className="mobile-card-row">
+                        <span className="mobile-card-label">Node</span>
+                        <span className="mobile-card-value">{o.nodeName}</span>
+                      </div>
+                      {o.did && (
+                        <div className="mobile-card-row">
+                          <span className="mobile-card-label">DID</span>
+                          <span className="mobile-card-value" style={{ fontFamily: 'var(--mono)', fontSize: 10 }}>{o.did.slice(0, 22)}...</span>
+                        </div>
+                      )}
+                      {o.verified && (
+                        <div style={{ marginTop: 8 }}>
+                          <button className="btn btn-s btn-sm" style={{ fontSize: 10.5, padding: '4px 10px', width: '100%', justifyContent: 'center' }} onClick={() => setCredentialOrg(o)}>
                             <ExternalLink style={{ width: 11, height: 11 }} /> View Credential
                           </button>
-                        )}
-                      </td>
-                    </tr>
+                        </div>
+                      )}
+                    </div>
                   ))}
-                </tbody>
-              </table>
+                </div>
+              </>
             )}
           </>
         )}
@@ -264,8 +300,8 @@ export default function Identity() {
             <h3>Register {verifying.name}</h3>
             {stage === 'input' && (
               <>
-                <p style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 16 }}>Enter a business registration number. Use MST-123456 to pass or MST-000000 to see a denial.</p>
-                <div className="fg"><label>Registration Number</label><input value={regNum} onChange={e => setRegNum(e.target.value)} placeholder="e.g. MST-123456" autoFocus /></div>
+                <p style={{ fontSize: 12.5, color: 'var(--text-muted)', marginBottom: 16 }}>Enter a business registration number. Use {config?.credentials?.testCredentials?.pass?.[0]?.code || 'a valid code'} to pass or {config?.credentials?.testCredentials?.fail?.[0]?.code || 'an invalid code'} to see a denial.</p>
+                <div className="fg"><label>Registration Number</label><input value={regNum} onChange={e => setRegNum(e.target.value)} placeholder={`e.g. ${config?.credentials?.testCredentials?.pass?.[0]?.code || 'REG-123456'}`} autoFocus /></div>
                 <div className="modal-act">
                   <button className="btn btn-s" onClick={() => setVerifying(null)}>Cancel</button>
                   <button className="btn btn-p" onClick={runVerification} disabled={regNum.length < 4}>Verify & Register</button>
@@ -320,7 +356,7 @@ export default function Identity() {
       {/* Credential modal — shown when viewing a peer org's credential */}
       {credentialOrg && (
         <div className="modal-bg" onClick={() => setCredentialOrg(null)}>
-          <div className="modal" style={{ maxWidth: 500 }} onClick={e => e.stopPropagation()}>
+          <div className="modal modal-md" onClick={e => e.stopPropagation()}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 18 }}>
               <div style={{ width: 36, height: 36, borderRadius: '50%', background: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
                 <Shield style={{ width: 18, height: 18, color: '#fff' }} />
