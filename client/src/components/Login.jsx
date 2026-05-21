@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { ChevronRight } from 'lucide-react';
 import { useNode } from '../context/NodeContext';
 import { useConfig } from '../context/ConfigContext';
 import { api } from '../utils/api';
@@ -12,6 +13,29 @@ function guessNode() {
   if (cookieNode) return cookieNode;
   if (window.location.port === '4001') return 'beta';
   return null; // unknown — wait for /api/node
+}
+
+function CredRow({ cred, selected, onSelect }) {
+  const { username, label, role } = cred;
+  return (
+    <div
+      className={`cred-row${selected ? ' cred-row--selected' : ''}`}
+      role="button"
+      tabIndex={0}
+      onClick={() => onSelect(username)}
+      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); onSelect(username); } }}
+      aria-label={`Sign in as ${label}, ${role}`}
+    >
+      <div className="cred-row-icon">{label.charAt(0).toUpperCase()}</div>
+      <div className="cred-row-body">
+        <span className="cred-row-org">{label}</span>
+        <div className="cred-row-meta">
+          <span className="cred-row-role">{role}</span>
+          <span className="cred-row-login">{username} / demo</span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default function Login() {
@@ -115,45 +139,40 @@ export default function Login() {
         </form>
 
         <div className="demo-creds">
-          <div className="dc-title">Quick Sign-In</div>
+          <div className="dc-header">
+            <span className="dc-title">Quick Sign-In</span>
+            <span className="dc-hint">Select to pre-fill</span>
+          </div>
           {creds.length <= 8 ? (
-            /* Simple list for small org counts */
-            creds.map(c => (
-              <div key={c.username} className="cred-row" style={{ cursor: 'pointer', padding: '5px 0' }} onClick={() => handleQuick(c.username)}>
-                <span className="role">{c.role}</span>
-                <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 11.5 }}>{c.label}</span>
-                <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 10.5 }}>{c.username} / demo</span>
-              </div>
-            ))
-          ) : creds.length <= 12 ? (
-            /* Scrollable list for medium org counts */
-            <div style={{ maxHeight: 280, overflowY: 'auto', paddingRight: 4 }}>
+            <div className="cred-list">
               {creds.map(c => (
-                <div key={c.username} className="cred-row" style={{ cursor: 'pointer', padding: '5px 0' }} onClick={() => handleQuick(c.username)}>
-                  <span className="role">{c.role}</span>
-                  <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 11.5 }}>{c.label}</span>
-                  <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 10.5 }}>{c.username} / demo</span>
-                </div>
+                <CredRow key={c.username} cred={c} selected={username === c.username} onSelect={handleQuick} />
               ))}
             </div>
+          ) : creds.length <= 12 ? (
+            <div className="cred-scroll">
+              <div className="cred-list">
+                {creds.map(c => (
+                  <CredRow key={c.username} cred={c} selected={username === c.username} onSelect={handleQuick} />
+                ))}
+              </div>
+            </div>
           ) : (
-            /* Grouped collapsible sections for large org counts */
-            <div style={{ maxHeight: 320, overflowY: 'auto', paddingRight: 4 }}>
+            <div className="cred-scroll" style={{ maxHeight: 360 }}>
               {Object.entries(groupByCategory(creds)).map(([cat, items]) => (
-                <div key={cat}>
-                  <div
-                    style={{ cursor: 'pointer', padding: '6px 0 4px', fontSize: 11, fontWeight: 700, color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: 4, borderBottom: '1px solid var(--border)' }}
-                    onClick={() => toggleGroup(cat)}
-                  >
-                    <span style={{ fontSize: 9, transform: collapsed[cat] ? 'rotate(-90deg)' : 'rotate(0deg)', transition: 'transform 0.15s', display: 'inline-block' }}>&#9660;</span>
-                    {cat} ({items.length})
-                  </div>
-                  {!collapsed[cat] && items.map(c => (
-                    <div key={c.username} className="cred-row" style={{ cursor: 'pointer', padding: '4px 0 4px 12px' }} onClick={() => handleQuick(c.username)}>
-                      <span style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: 11.5 }}>{c.label}</span>
-                      <span style={{ marginLeft: 'auto', color: 'var(--text-muted)', fontSize: 10.5 }}>{c.username} / demo</span>
+                <div key={cat} className="cred-group">
+                  <button className="cred-group-header" onClick={() => toggleGroup(cat)} aria-expanded={!collapsed[cat]}>
+                    <ChevronRight size={12} className="cred-group-chevron" style={{ transform: collapsed[cat] ? 'rotate(0deg)' : 'rotate(90deg)' }} />
+                    {cat}
+                    <span className="cred-group-count">{items.length}</span>
+                  </button>
+                  {!collapsed[cat] && (
+                    <div className="cred-group-items">
+                      {items.map(c => (
+                        <CredRow key={c.username} cred={c} selected={username === c.username} onSelect={handleQuick} />
+                      ))}
                     </div>
-                  ))}
+                  )}
                 </div>
               ))}
             </div>
