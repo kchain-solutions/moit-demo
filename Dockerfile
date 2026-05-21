@@ -7,7 +7,7 @@ RUN npm install
 
 COPY . .
 
-RUN npx vite build --outDir server/public
+RUN npm run build
 
 FROM node:22-alpine
 
